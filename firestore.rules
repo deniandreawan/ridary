@@ -1,0 +1,250 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(ownerId) {
+      return signedIn() && request.auth.uid == ownerId;
+    }
+
+    function isString(value) {
+      return value is string;
+    }
+
+    function isNumber(value) {
+      return value is number;
+    }
+
+    function isInt(value) {
+      return value is int;
+    }
+
+    function isBool(value) {
+      return value is bool;
+    }
+
+    function isTimestamp(value) {
+      return value is timestamp;
+    }
+
+    function validMode(value) {
+      return value in ['motorcycle', 'bicycle', 'car', 'running', 'transit'];
+    }
+
+    function validEventType(value) {
+      return value in [
+        'hard_brake',
+        'sharp_swerve',
+        'impact',
+        'crash_candidate',
+        'long_stop',
+        'route_deviation',
+        'manual'
+      ];
+    }
+
+    function validGeohash(value) {
+      return value is string && value.matches('^[0-9a-z]{6,8}$');
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'mode',
+          'consentShareDerived',
+          'consentShareRoute',
+          'createdAt',
+          'updatedAt',
+          'schemaVersion'
+        ])
+        && isString(request.resource.data.displayName)
+        && request.resource.data.displayName.size() <= 80
+        && validMode(request.resource.data.mode)
+        && isBool(request.resource.data.consentShareDerived)
+        && isBool(request.resource.data.consentShareRoute)
+        && isTimestamp(request.resource.data.createdAt)
+        && isTimestamp(request.resource.data.updatedAt)
+        && isInt(request.resource.data.schemaVersion)
+        && request.resource.data.schemaVersion == 1;
+      allow delete: if isOwner(userId);
+    }
+
+    match /rides/{rideId} {
+      allow read: if isOwner(resource.data.uid);
+      allow create, update: if isOwner(request.resource.data.uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'mode',
+          'startedAt',
+          'endedAt',
+          'distanceM',
+          'durationS',
+          'avgSpeedKph',
+          'maxSpeedKph',
+          'score',
+          'summary',
+          'inferenceSource',
+          'geohash',
+          'routePreview',
+          'createdAt',
+          'schemaVersion'
+        ])
+        && validMode(request.resource.data.mode)
+        && isTimestamp(request.resource.data.startedAt)
+        && isTimestamp(request.resource.data.endedAt)
+        && request.resource.data.endedAt >= request.resource.data.startedAt
+        && isNumber(request.resource.data.distanceM)
+        && request.resource.data.distanceM >= 0
+        && isNumber(request.resource.data.durationS)
+        && request.resource.data.durationS >= 0
+        && isNumber(request.resource.data.avgSpeedKph)
+        && request.resource.data.avgSpeedKph >= 0
+        && isNumber(request.resource.data.maxSpeedKph)
+        && request.resource.data.maxSpeedKph >= 0
+        && isInt(request.resource.data.score)
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 100
+        && isString(request.resource.data.summary)
+        && request.resource.data.summary.size() <= 4000
+        && request.resource.data.inferenceSource in [
+          'on_device',
+          'in_cloud',
+          'fallback',
+          'deterministic'
+        ]
+        && validGeohash(request.resource.data.geohash)
+        && (!('routePreview' in request.resource.data)
+          || (request.resource.data.routePreview is list
+            && request.resource.data.routePreview.size() <= 128))
+        && isTimestamp(request.resource.data.createdAt)
+        && isInt(request.resource.data.schemaVersion)
+        && request.resource.data.schemaVersion == 1;
+      allow delete: if isOwner(resource.data.uid);
+    }
+
+    match /events/{eventId} {
+      allow read: if isOwner(resource.data.uid);
+      allow create, update: if isOwner(request.resource.data.uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'rideId',
+          'mode',
+          'type',
+          'severity',
+          'confidence',
+          'geohash',
+          'occurredAt',
+          'summary',
+          'source',
+          'createdAt',
+          'schemaVersion'
+        ])
+        && isString(request.resource.data.rideId)
+        && request.resource.data.rideId.size() <= 128
+        && validMode(request.resource.data.mode)
+        && validEventType(request.resource.data.type)
+        && isInt(request.resource.data.severity)
+        && request.resource.data.severity >= 1
+        && request.resource.data.severity <= 5
+        && isNumber(request.resource.data.confidence)
+        && request.resource.data.confidence >= 0
+        && request.resource.data.confidence <= 1
+        && validGeohash(request.resource.data.geohash)
+        && isTimestamp(request.resource.data.occurredAt)
+        && isString(request.resource.data.summary)
+        && request.resource.data.summary.size() <= 2000
+        && request.resource.data.source in ['deterministic', 'on_device', 'in_cloud']
+        && isTimestamp(request.resource.data.createdAt)
+        && isInt(request.resource.data.schemaVersion)
+        && request.resource.data.schemaVersion == 1;
+      allow delete: if isOwner(resource.data.uid);
+    }
+
+    match /incidents/{incidentId} {
+      allow read: if isOwner(resource.data.uid);
+      allow create, update: if isOwner(request.resource.data.uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'rideId',
+          'lockedAt',
+          'hash',
+          'summary',
+          'status',
+          'createdAt',
+          'schemaVersion'
+        ])
+        && isString(request.resource.data.rideId)
+        && request.resource.data.rideId.size() <= 128
+        && isTimestamp(request.resource.data.lockedAt)
+        && isString(request.resource.data.hash)
+        && request.resource.data.hash.matches('^[a-f0-9]{64}$')
+        && isString(request.resource.data.summary)
+        && request.resource.data.summary.size() <= 4000
+        && request.resource.data.status in ['locked', 'draft', 'shared', 'archived']
+        && isTimestamp(request.resource.data.createdAt)
+        && isInt(request.resource.data.schemaVersion)
+        && request.resource.data.schemaVersion == 1;
+      allow delete: if isOwner(resource.data.uid);
+    }
+
+    match /riskCells/{cellId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /credentials/{credentialId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /feedback/{userId}/weeks/{weekId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'weekStart',
+          'summary',
+          'insights',
+          'action',
+          'generatedAt',
+          'inferenceSource',
+          'schemaVersion'
+        ])
+        && isTimestamp(request.resource.data.weekStart)
+        && isString(request.resource.data.summary)
+        && request.resource.data.summary.size() <= 4000
+        && request.resource.data.insights is list
+        && request.resource.data.insights.size() <= 5
+        && isString(request.resource.data.action)
+        && request.resource.data.action.size() <= 500
+        && isTimestamp(request.resource.data.generatedAt)
+        && request.resource.data.inferenceSource in [
+          'on_device',
+          'in_cloud',
+          'fallback',
+          'deterministic'
+        ]
+        && isInt(request.resource.data.schemaVersion)
+        && request.resource.data.schemaVersion == 1;
+      allow delete: if isOwner(userId);
+    }
+
+    match /insurerViews/{token} {
+      allow read: if resource.data.expiresAtTimestamp is timestamp
+        && resource.data.expiresAtTimestamp > request.time;
+      allow write: if false;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "ridary",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ridary - private ride witness and safety credential",
+  "license": "Apache-2.0",
+  "scripts": {
+    "generate:prompts": "node shared/scripts/generate-prompts.mjs",
+    "install:web": "npm --prefix web install",
+    "install:functions": "npm --prefix functions install",
+    "install:all": "npm run install:web && npm run install:functions",
+    "dev:web": "npm --prefix web run dev",
+    "build:web": "npm --prefix web run build",
+    "lint:web": "npm --prefix web run lint",
+    "typecheck:web": "npm --prefix web run typecheck",
+    "test:web": "npm --prefix web run test",
+    "dev:functions": "npm --prefix functions run dev",
+    "build:functions": "npm --prefix functions run build",
+    "lint:functions": "npm --prefix functions run lint",
+    "typecheck:functions": "npm --prefix functions run typecheck",
+    "test:functions": "npm --prefix functions run test",
+    "verify": "npm run generate:prompts && npm run lint:web && npm run typecheck:web && npm run test:web && npm run build:web && npm run lint:functions && npm run typecheck:functions && npm run test:functions && npm run build:functions"
+  }
+}

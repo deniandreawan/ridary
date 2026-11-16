@@ -1,0 +1,897 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04D73CB84574FFD3669E58DA /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA1F8C30D6778335FACCE87 /* AuthView.swift */; };
+		054206FC2EDBB879CD75497F /* RideMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEA0A08EAF3886F72479CB8 /* RideMode.swift */; };
+		0E1EF949607C5E8BBC2FBE20 /* RideScoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EF850D76B29CAC4ADD49F63 /* RideScoring.swift */; };
+		10F376BECCADF4FB1079669C /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 4A1D57E06806BDB72D64AFE5 /* FirebaseAppCheck */; };
+		1194C0E9559D0B8EFD0F2354 /* RideEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC56987256EAA5A13B78B3D2 /* RideEvent.swift */; };
+		121BDB67AAAD69CE5736EC38 /* GeohashTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13F464B791D82B9F4894755 /* GeohashTests.swift */; };
+		151B41C740CAAAB0844657C3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB93EEABF7B5B870D0C953 /* HomeView.swift */; };
+		1DAD1F65856097B85D99631C /* StatTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F663AF4E1B2E5ADB41141C /* StatTile.swift */; };
+		27AE6E962FD02D6C8C375331 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86EA1DD81D2A66AB672D4411 /* HistoryView.swift */; };
+		2B61C2AD1B580FD200419CC3 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719AC56E9C3F794ACD3A17C1 /* AuthService.swift */; };
+		2FCEA188AA1205D309D65CF7 /* EvidencePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4EB97767501D084F3EA721C /* EvidencePacket.swift */; };
+		304D5CAB17E98BBC9B55157B /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85E50E94ADA492C30001CD /* UserProfile.swift */; };
+		31E93E0A10F35185845118E9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A4F73BE21D8C0B2070C27CE /* GoogleService-Info.plist */; };
+		3ACE701D2956A2E5326EE156 /* RideStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25C6756C270A7DDFDABA6A0 /* RideStats.swift */; };
+		4257618D3012ED3A2968F490 /* CredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D7845AF79B09D672FF6D0E /* CredentialView.swift */; };
+		461BD66B9C5D10EB25016870 /* RidaryFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5494934C0D19222253F9198E /* RidaryFormatters.swift */; };
+		4680B32B0E7704C0A3FEF307 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C123092F100D0C1C2F8EECEF /* MainTabView.swift */; };
+		47B98B7A43A68C320EFD8051 /* Geohash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A645EDD41165230C12D74BA4 /* Geohash.swift */; };
+		51492076A8034E6E7D886E87 /* RemoteConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF181B72D966EE35A331A4E7 /* RemoteConfigService.swift */; };
+		51A42435304118A79C9498E2 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A79C166A353569E46631E4 /* ButtonStyles.swift */; };
+		5269AC3C90ECF8ED7ECB8353 /* RideSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4764727FE098B3B271EA0E3E /* RideSnapshot.swift */; };
+		55C034FC6C4D36E3DF5D961F /* GeoMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8237EAA0785C49F0DCF1DC5 /* GeoMath.swift */; };
+		587E1FC2E6D12FB8674E03DE /* SensorSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32267385E673273BDA1BCB09 /* SensorSample.swift */; };
+		600E4002A918F70E4EFBE730 /* RidaryLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0740409F543F5E965C9C2175 /* RidaryLog.swift */; };
+		65323269A45EF07558C9DC7B /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C881A7E7C1F96BB9173314 /* EventRow.swift */; };
+		69A5A4218614310EE27A5269 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 51A6CD4068ADE1AA2B1671C4 /* FirebaseFunctions */; };
+		69FBDF011DE852AF25A8E8CB /* RideCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA14B5194E0D909EBA1CDFF /* RideCaptureService.swift */; };
+		6BFC70528B3FBA71E4D36691 /* JSONCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F406DCEB89989C0759DA6BA /* JSONCodingTests.swift */; };
+		6F82D19B1C9453F5B6C4E935 /* RidaryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EAABFCDDAB3838E559E474 /* RidaryTheme.swift */; };
+		702FCB01FB4B5BB0976A70B1 /* RideStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE4920E592F421A8018E7DF /* RideStatsTests.swift */; };
+		72B5F08CD48A40879CB382C5 /* IncidentPDFRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E710C8A3D0F0083D62A883 /* IncidentPDFRenderer.swift */; };
+		766F0342FA23C1F64A2AB4BE /* EvidenceVaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2DE84FBE9D6FCBA7C3F9 /* EvidenceVaultTests.swift */; };
+		78AE7176CC5C19C1081C4486 /* Incident.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FFFC86A8460BC72F2B0821A /* Incident.swift */; };
+		7DEE7A49CFF7A5957F1A72C2 /* MockAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1CCF3768D1110BC96AE9B2 /* MockAIService.swift */; };
+		7F1F1624D7CBEA19B642606D /* RideSummaryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8352E06FFA23ED99EB5A05 /* RideSummaryServiceTests.swift */; };
+		8427996D62986A30BB1328BF /* RideSummaryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9F0F06D414D81EB7CDF4C /* RideSummaryService.swift */; };
+		896A3167812780763ED2B7C6 /* ScoreRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95647F21EF337265DD099C24 /* ScoreRing.swift */; };
+		8C23D2712D475A13C8EB172F /* FirebaseBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F6CD85056F236FCBBAA997 /* FirebaseBootstrap.swift */; };
+		8F007B3C4D4F94CC809F943D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = ED984BE30942DFA126C6104A /* FirebaseAuth */; };
+		8FA980FEE0FD8F03E7D35C1D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1116C9AEB3DA2B799375A64 /* SettingsView.swift */; };
+		960E58D409B21154E514BC09 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233E3621A41287C0D2DFB831 /* AIService.swift */; };
+		97DB0AEA9747892B23A0BA90 /* EventDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1B4262E6CC7B22C56077BA /* EventDetector.swift */; };
+		9938F202F814A6DB0B4F842F /* EventThresholds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421926CFD7DC6310D68AE288 /* EventThresholds.swift */; };
+		9ED50404CF179A8EF7C387ED /* Credential.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79C46941FE9728CA387B5FF /* Credential.swift */; };
+		A66B18E3A6017D3E758E9C23 /* PromptTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226A5A0F4A8D9EF44BC3ECE6 /* PromptTemplate.swift */; };
+		A785B4385B04C447CB240381 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 0BB13C567B8C6FF4EDB27BBF /* FirebaseAI */; };
+		ABF409BF2125A3053E7BF299 /* RideScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE7720898C893021F0B6BF7 /* RideScoringTests.swift */; };
+		AFF5948F2AE99B11D3569648 /* WeeklyFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF52ED432E41A1C79CFBC7C /* WeeklyFeedbackService.swift */; };
+		B4A1D45E2B757FE1A42055B8 /* RideSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A18145623CA42425D3911C7 /* RideSyncService.swift */; };
+		B4B0ABFAF9F7A13F48BEB877 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7E601D4A236AF5EC6A61824D /* FirebaseFirestore */; };
+		B80EBA5648B3E664AEFDD7F7 /* EvidenceVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9292E22267D3F8E33AE53F /* EvidenceVault.swift */; };
+		BBB684093F9ABD7D2B397AE1 /* RideSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E7FE7D506068322A9C17AA /* RideSummaryView.swift */; };
+		BD5E58FBB8AA60754C9228CD /* Ride.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65CD9BEDBF8E65E1BF5041C /* Ride.swift */; };
+		BDA68D902E950E30ED9CFAA8 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9650CF96347C832D51305 /* AppSettings.swift */; };
+		BFF323867E00787487139129 /* IncidentPDFRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5E4D8903B88C5B8D4701F9 /* IncidentPDFRendererTests.swift */; };
+		C530E15EF334CBA048163906 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 038A285C57D576FED0A7CD0A /* FirebaseRemoteConfig */; };
+		CAC685ED0D7A1F58850718FC /* IncidentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4156E557C7D939DB7A1440AD /* IncidentView.swift */; };
+		CD3F43DD11F29058F3EF3163 /* FirebaseAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0216D68511E645AF795741EB /* FirebaseAIService.swift */; };
+		D4F34C2F7159211DBE52EB4F /* RidaryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97E635E30688A80C0BB12D74 /* RidaryApp.swift */; };
+		D683681C3AAEA1F6A8759470 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B513E6294185D2FF1483B1C9 /* ActivityView.swift */; };
+		D71F95A078F656E234A2B305 /* WeeklyStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6734A3032B16F728EA38BA4 /* WeeklyStats.swift */; };
+		D95B40270C608BB9AE3D0642 /* JSONCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8270FCFE2DA38E62A2D13F1 /* JSONCoding.swift */; };
+		D9EC914AB1B75C089BDB8410 /* BackendFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9271646C3AF58E1F98CE66 /* BackendFunctions.swift */; };
+		DB71B4420780C3983C4FC33C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F22D21B62AE012C6890847 /* RootView.swift */; };
+		DC18FE0A4DEEF41C1268DF59 /* RideEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D030F2B9EACC4702385E4599 /* RideEventType.swift */; };
+		DD5CDE79E25029A541362D4C /* SourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4590925BC78A48CEA9EAB2 /* SourceBadge.swift */; };
+		DE7FC39A69F357372D70749D /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCCD1BF0B33644103492ADD /* Prompts.swift */; };
+		DEF8FA13B6A3F7A5E9A7D19A /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A20B8D983DE3EC035C3A1 /* AppEnvironment.swift */; };
+		E5B1682B84B6E53CE5862193 /* ActiveRideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B6D61EC758493FB1DADF67 /* ActiveRideView.swift */; };
+		E8C1988356C071900846A79D /* RideListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADD84D42FA5DFBF794799E5 /* RideListRow.swift */; };
+		E9FF663AC13F7F4B8A9EAFC6 /* LocalRideStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2070E3B4468C86E55C5649BC /* LocalRideStoreTests.swift */; };
+		F2F95487274F29C6AAD0332F /* IncidentInterviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B92E3621D80617D73DCAAB /* IncidentInterviewService.swift */; };
+		F3DD29864FD8480373E0E577 /* InferenceSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844F88711D969A8ED95F3375 /* InferenceSource.swift */; };
+		F457259D11988C690B4DEAAA /* LocalRideStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3994B4A2F5677A5920D5A7 /* LocalRideStore.swift */; };
+		F7584B3A457CE1546CE7375C /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7985172A7B62D92234D2A58C /* FirebaseCore */; };
+		FBE9C19A9B8D650277D8FA9B /* EventDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AEC1EF5197A6CCFCD19B63 /* EventDetectorTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22BC87D9B5DE84BF6ED58BB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A81D7202D8A0C704B9A0490E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DF9376BD1653128190E74AE;
+			remoteInfo = Ridary;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0216D68511E645AF795741EB /* FirebaseAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAIService.swift; sourceTree = "<group>"; };
+		04E710C8A3D0F0083D62A883 /* IncidentPDFRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentPDFRenderer.swift; sourceTree = "<group>"; };
+		0740409F543F5E965C9C2175 /* RidaryLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RidaryLog.swift; sourceTree = "<group>"; };
+		0EF850D76B29CAC4ADD49F63 /* RideScoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideScoring.swift; sourceTree = "<group>"; };
+		0FA14B5194E0D909EBA1CDFF /* RideCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideCaptureService.swift; sourceTree = "<group>"; };
+		13552A8C0A7BE683E6C110F2 /* Ridary.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ridary.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		167A2DE84FBE9D6FCBA7C3F9 /* EvidenceVaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvidenceVaultTests.swift; sourceTree = "<group>"; };
+		181A20B8D983DE3EC035C3A1 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		1ADD84D42FA5DFBF794799E5 /* RideListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideListRow.swift; sourceTree = "<group>"; };
+		2070E3B4468C86E55C5649BC /* LocalRideStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRideStoreTests.swift; sourceTree = "<group>"; };
+		20EAABFCDDAB3838E559E474 /* RidaryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RidaryTheme.swift; sourceTree = "<group>"; };
+		226A5A0F4A8D9EF44BC3ECE6 /* PromptTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptTemplate.swift; sourceTree = "<group>"; };
+		233E3621A41287C0D2DFB831 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
+		2D1B4262E6CC7B22C56077BA /* EventDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetector.swift; sourceTree = "<group>"; };
+		32267385E673273BDA1BCB09 /* SensorSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSample.swift; sourceTree = "<group>"; };
+		40B6D61EC758493FB1DADF67 /* ActiveRideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveRideView.swift; sourceTree = "<group>"; };
+		4156E557C7D939DB7A1440AD /* IncidentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentView.swift; sourceTree = "<group>"; };
+		421926CFD7DC6310D68AE288 /* EventThresholds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventThresholds.swift; sourceTree = "<group>"; };
+		4764727FE098B3B271EA0E3E /* RideSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSnapshot.swift; sourceTree = "<group>"; };
+		5494934C0D19222253F9198E /* RidaryFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RidaryFormatters.swift; sourceTree = "<group>"; };
+		57F663AF4E1B2E5ADB41141C /* StatTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatTile.swift; sourceTree = "<group>"; };
+		5FEA0A08EAF3886F72479CB8 /* RideMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideMode.swift; sourceTree = "<group>"; };
+		64F22D21B62AE012C6890847 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		65A79C166A353569E46631E4 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
+		6A18145623CA42425D3911C7 /* RideSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSyncService.swift; sourceTree = "<group>"; };
+		6A4F73BE21D8C0B2070C27CE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6D4590925BC78A48CEA9EAB2 /* SourceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceBadge.swift; sourceTree = "<group>"; };
+		6FCCD1BF0B33644103492ADD /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
+		6FF52ED432E41A1C79CFBC7C /* WeeklyFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyFeedbackService.swift; sourceTree = "<group>"; };
+		719AC56E9C3F794ACD3A17C1 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		74D7845AF79B09D672FF6D0E /* CredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialView.swift; sourceTree = "<group>"; };
+		7FFFC86A8460BC72F2B0821A /* Incident.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Incident.swift; sourceTree = "<group>"; };
+		82B92E3621D80617D73DCAAB /* IncidentInterviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentInterviewService.swift; sourceTree = "<group>"; };
+		844F88711D969A8ED95F3375 /* InferenceSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceSource.swift; sourceTree = "<group>"; };
+		86EA1DD81D2A66AB672D4411 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		8DA9F0F06D414D81EB7CDF4C /* RideSummaryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSummaryService.swift; sourceTree = "<group>"; };
+		8F406DCEB89989C0759DA6BA /* JSONCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCodingTests.swift; sourceTree = "<group>"; };
+		95647F21EF337265DD099C24 /* ScoreRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreRing.swift; sourceTree = "<group>"; };
+		97E635E30688A80C0BB12D74 /* RidaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RidaryApp.swift; sourceTree = "<group>"; };
+		98AEC1EF5197A6CCFCD19B63 /* EventDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetectorTests.swift; sourceTree = "<group>"; };
+		A13F464B791D82B9F4894755 /* GeohashTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeohashTests.swift; sourceTree = "<group>"; };
+		A4B9650CF96347C832D51305 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		A645EDD41165230C12D74BA4 /* Geohash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geohash.swift; sourceTree = "<group>"; };
+		AD1CCF3768D1110BC96AE9B2 /* MockAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAIService.swift; sourceTree = "<group>"; };
+		AF181B72D966EE35A331A4E7 /* RemoteConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigService.swift; sourceTree = "<group>"; };
+		AFE7720898C893021F0B6BF7 /* RideScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideScoringTests.swift; sourceTree = "<group>"; };
+		B513E6294185D2FF1483B1C9 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		BF5E4D8903B88C5B8D4701F9 /* IncidentPDFRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentPDFRendererTests.swift; sourceTree = "<group>"; };
+		C123092F100D0C1C2F8EECEF /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		C4EB97767501D084F3EA721C /* EvidencePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvidencePacket.swift; sourceTree = "<group>"; };
+		C65CD9BEDBF8E65E1BF5041C /* Ride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ride.swift; sourceTree = "<group>"; };
+		C7C881A7E7C1F96BB9173314 /* EventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRow.swift; sourceTree = "<group>"; };
+		CBE5A33104B9A544D7BCBFFB /* RidaryTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RidaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC9292E22267D3F8E33AE53F /* EvidenceVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvidenceVault.swift; sourceTree = "<group>"; };
+		CD9271646C3AF58E1F98CE66 /* BackendFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendFunctions.swift; sourceTree = "<group>"; };
+		D030F2B9EACC4702385E4599 /* RideEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEventType.swift; sourceTree = "<group>"; };
+		D6E7FE7D506068322A9C17AA /* RideSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSummaryView.swift; sourceTree = "<group>"; };
+		D79C46941FE9728CA387B5FF /* Credential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credential.swift; sourceTree = "<group>"; };
+		DBA1F8C30D6778335FACCE87 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		DC56987256EAA5A13B78B3D2 /* RideEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideEvent.swift; sourceTree = "<group>"; };
+		E25C6756C270A7DDFDABA6A0 /* RideStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideStats.swift; sourceTree = "<group>"; };
+		E8270FCFE2DA38E62A2D13F1 /* JSONCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>"; };
+		ED85E50E94ADA492C30001CD /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		EE3994B4A2F5677A5920D5A7 /* LocalRideStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRideStore.swift; sourceTree = "<group>"; };
+		EE8352E06FFA23ED99EB5A05 /* RideSummaryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSummaryServiceTests.swift; sourceTree = "<group>"; };
+		EEE4920E592F421A8018E7DF /* RideStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideStatsTests.swift; sourceTree = "<group>"; };
+		F1116C9AEB3DA2B799375A64 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F6734A3032B16F728EA38BA4 /* WeeklyStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyStats.swift; sourceTree = "<group>"; };
+		F7BB93EEABF7B5B870D0C953 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F8237EAA0785C49F0DCF1DC5 /* GeoMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoMath.swift; sourceTree = "<group>"; };
+		F8F6CD85056F236FCBBAA997 /* FirebaseBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseBootstrap.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		97ECB0DEC004314BE4504E86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A785B4385B04C447CB240381 /* FirebaseAI in Frameworks */,
+				10F376BECCADF4FB1079669C /* FirebaseAppCheck in Frameworks */,
+				8F007B3C4D4F94CC809F943D /* FirebaseAuth in Frameworks */,
+				F7584B3A457CE1546CE7375C /* FirebaseCore in Frameworks */,
+				B4B0ABFAF9F7A13F48BEB877 /* FirebaseFirestore in Frameworks */,
+				69A5A4218614310EE27A5269 /* FirebaseFunctions in Frameworks */,
+				C530E15EF334CBA048163906 /* FirebaseRemoteConfig in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		015EA97B8AFB525946FF9406 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13552A8C0A7BE683E6C110F2 /* Ridary.app */,
+				CBE5A33104B9A544D7BCBFFB /* RidaryTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		21400063603164D9ACF14548 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D79C46941FE9728CA387B5FF /* Credential.swift */,
+				421926CFD7DC6310D68AE288 /* EventThresholds.swift */,
+				C4EB97767501D084F3EA721C /* EvidencePacket.swift */,
+				7FFFC86A8460BC72F2B0821A /* Incident.swift */,
+				844F88711D969A8ED95F3375 /* InferenceSource.swift */,
+				C65CD9BEDBF8E65E1BF5041C /* Ride.swift */,
+				DC56987256EAA5A13B78B3D2 /* RideEvent.swift */,
+				D030F2B9EACC4702385E4599 /* RideEventType.swift */,
+				5FEA0A08EAF3886F72479CB8 /* RideMode.swift */,
+				4764727FE098B3B271EA0E3E /* RideSnapshot.swift */,
+				32267385E673273BDA1BCB09 /* SensorSample.swift */,
+				ED85E50E94ADA492C30001CD /* UserProfile.swift */,
+				F6734A3032B16F728EA38BA4 /* WeeklyStats.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		27335A8E39E4AD1AA136BBFF /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A645EDD41165230C12D74BA4 /* Geohash.swift */,
+				F8237EAA0785C49F0DCF1DC5 /* GeoMath.swift */,
+				04E710C8A3D0F0083D62A883 /* IncidentPDFRenderer.swift */,
+				E8270FCFE2DA38E62A2D13F1 /* JSONCoding.swift */,
+				226A5A0F4A8D9EF44BC3ECE6 /* PromptTemplate.swift */,
+				5494934C0D19222253F9198E /* RidaryFormatters.swift */,
+				0740409F543F5E965C9C2175 /* RidaryLog.swift */,
+				0EF850D76B29CAC4ADD49F63 /* RideScoring.swift */,
+				E25C6756C270A7DDFDABA6A0 /* RideStats.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		288FB0CE7503040019E4D096 /* RidaryTests */ = {
+			isa = PBXGroup;
+			children = (
+				98AEC1EF5197A6CCFCD19B63 /* EventDetectorTests.swift */,
+				167A2DE84FBE9D6FCBA7C3F9 /* EvidenceVaultTests.swift */,
+				A13F464B791D82B9F4894755 /* GeohashTests.swift */,
+				BF5E4D8903B88C5B8D4701F9 /* IncidentPDFRendererTests.swift */,
+				8F406DCEB89989C0759DA6BA /* JSONCodingTests.swift */,
+				2070E3B4468C86E55C5649BC /* LocalRideStoreTests.swift */,
+				AFE7720898C893021F0B6BF7 /* RideScoringTests.swift */,
+				EEE4920E592F421A8018E7DF /* RideStatsTests.swift */,
+				EE8352E06FFA23ED99EB5A05 /* RideSummaryServiceTests.swift */,
+			);
+			path = RidaryTests;
+			sourceTree = "<group>";
+		};
+		2EE1AE5A8830FC41D0FE3E61 /* Incident */ = {
+			isa = PBXGroup;
+			children = (
+				4156E557C7D939DB7A1440AD /* IncidentView.swift */,
+			);
+			path = Incident;
+			sourceTree = "<group>";
+		};
+		40D496B53DB1CE38A605393E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				21400063603164D9ACF14548 /* Models */,
+				676953820ACBA0EC320AF994 /* Services */,
+				27335A8E39E4AD1AA136BBFF /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		4747D2371B7CD81CC536A3B5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C123092F100D0C1C2F8EECEF /* MainTabView.swift */,
+				97E635E30688A80C0BB12D74 /* RidaryApp.swift */,
+				64F22D21B62AE012C6890847 /* RootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4AD293D334BDEB0838CE8DEC /* Ride */ = {
+			isa = PBXGroup;
+			children = (
+				40B6D61EC758493FB1DADF67 /* ActiveRideView.swift */,
+				D6E7FE7D506068322A9C17AA /* RideSummaryView.swift */,
+			);
+			path = Ride;
+			sourceTree = "<group>";
+		};
+		4FC7A339F93605E79E1DF7C3 /* Ridary */ = {
+			isa = PBXGroup;
+			children = (
+				4747D2371B7CD81CC536A3B5 /* App */,
+				40D496B53DB1CE38A605393E /* Core */,
+				9BAFA1E217942DA719348EB4 /* Features */,
+				EC23D09F63E62B65B1B5CE2D /* Generated */,
+			);
+			path = Ridary;
+			sourceTree = "<group>";
+		};
+		676953820ACBA0EC320AF994 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				233E3621A41287C0D2DFB831 /* AIService.swift */,
+				181A20B8D983DE3EC035C3A1 /* AppEnvironment.swift */,
+				A4B9650CF96347C832D51305 /* AppSettings.swift */,
+				719AC56E9C3F794ACD3A17C1 /* AuthService.swift */,
+				CD9271646C3AF58E1F98CE66 /* BackendFunctions.swift */,
+				2D1B4262E6CC7B22C56077BA /* EventDetector.swift */,
+				CC9292E22267D3F8E33AE53F /* EvidenceVault.swift */,
+				0216D68511E645AF795741EB /* FirebaseAIService.swift */,
+				F8F6CD85056F236FCBBAA997 /* FirebaseBootstrap.swift */,
+				82B92E3621D80617D73DCAAB /* IncidentInterviewService.swift */,
+				EE3994B4A2F5677A5920D5A7 /* LocalRideStore.swift */,
+				AD1CCF3768D1110BC96AE9B2 /* MockAIService.swift */,
+				AF181B72D966EE35A331A4E7 /* RemoteConfigService.swift */,
+				0FA14B5194E0D909EBA1CDFF /* RideCaptureService.swift */,
+				8DA9F0F06D414D81EB7CDF4C /* RideSummaryService.swift */,
+				6A18145623CA42425D3911C7 /* RideSyncService.swift */,
+				6FF52ED432E41A1C79CFBC7C /* WeeklyFeedbackService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		67C4ABEF810AB1C74F4CF446 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				6A4F73BE21D8C0B2070C27CE /* GoogleService-Info.plist */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		707835545F5B752B553E7E49 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F1116C9AEB3DA2B799375A64 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		787C4B12F801A9C71559B7BE /* History */ = {
+			isa = PBXGroup;
+			children = (
+				86EA1DD81D2A66AB672D4411 /* HistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		8E07B128F2FA984BEB09A89C /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				DBA1F8C30D6778335FACCE87 /* AuthView.swift */,
+				F7BB93EEABF7B5B870D0C953 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9BAFA1E217942DA719348EB4 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				EEE7185B4EFA12AEB799EC39 /* Components */,
+				F4041B3FA10D0431228D4CE5 /* Credential */,
+				787C4B12F801A9C71559B7BE /* History */,
+				8E07B128F2FA984BEB09A89C /* Home */,
+				2EE1AE5A8830FC41D0FE3E61 /* Incident */,
+				4AD293D334BDEB0838CE8DEC /* Ride */,
+				707835545F5B752B553E7E49 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		DD52B8F6A07470BB4C41B794 = {
+			isa = PBXGroup;
+			children = (
+				67C4ABEF810AB1C74F4CF446 /* Config */,
+				4FC7A339F93605E79E1DF7C3 /* Ridary */,
+				288FB0CE7503040019E4D096 /* RidaryTests */,
+				015EA97B8AFB525946FF9406 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EC23D09F63E62B65B1B5CE2D /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				6FCCD1BF0B33644103492ADD /* Prompts.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
+		EEE7185B4EFA12AEB799EC39 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B513E6294185D2FF1483B1C9 /* ActivityView.swift */,
+				65A79C166A353569E46631E4 /* ButtonStyles.swift */,
+				C7C881A7E7C1F96BB9173314 /* EventRow.swift */,
+				20EAABFCDDAB3838E559E474 /* RidaryTheme.swift */,
+				1ADD84D42FA5DFBF794799E5 /* RideListRow.swift */,
+				95647F21EF337265DD099C24 /* ScoreRing.swift */,
+				6D4590925BC78A48CEA9EAB2 /* SourceBadge.swift */,
+				57F663AF4E1B2E5ADB41141C /* StatTile.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		F4041B3FA10D0431228D4CE5 /* Credential */ = {
+			isa = PBXGroup;
+			children = (
+				74D7845AF79B09D672FF6D0E /* CredentialView.swift */,
+			);
+			path = Credential;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5DF9376BD1653128190E74AE /* Ridary */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BBD8F04D85F53983A5A80B60 /* Build configuration list for PBXNativeTarget "Ridary" */;
+			buildPhases = (
+				DC4B1C9E018FF6C05C9967BE /* Sources */,
+				CA1B19AED68C6858BA84A7C4 /* Resources */,
+				97ECB0DEC004314BE4504E86 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ridary;
+			packageProductDependencies = (
+				0BB13C567B8C6FF4EDB27BBF /* FirebaseAI */,
+				4A1D57E06806BDB72D64AFE5 /* FirebaseAppCheck */,
+				ED984BE30942DFA126C6104A /* FirebaseAuth */,
+				7985172A7B62D92234D2A58C /* FirebaseCore */,
+				7E601D4A236AF5EC6A61824D /* FirebaseFirestore */,
+				51A6CD4068ADE1AA2B1671C4 /* FirebaseFunctions */,
+				038A285C57D576FED0A7CD0A /* FirebaseRemoteConfig */,
+			);
+			productName = Ridary;
+			productReference = 13552A8C0A7BE683E6C110F2 /* Ridary.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9BA0B19BC84CEAEC8F91B6E0 /* RidaryTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6C7DD22E92C5F32F4C05D724 /* Build configuration list for PBXNativeTarget "RidaryTests" */;
+			buildPhases = (
+				2C4672709F7622A1610D4E5C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A267F10480D3D183CD3EF785 /* PBXTargetDependency */,
+			);
+			name = RidaryTests;
+			packageProductDependencies = (
+			);
+			productName = RidaryTests;
+			productReference = CBE5A33104B9A544D7BCBFFB /* RidaryTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A81D7202D8A0C704B9A0490E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					5DF9376BD1653128190E74AE = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					9BA0B19BC84CEAEC8F91B6E0 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 5B9E6EB1DFC73B5DEB2383F6 /* Build configuration list for PBXProject "Ridary" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = DD52B8F6A07470BB4C41B794;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 015EA97B8AFB525946FF9406 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DF9376BD1653128190E74AE /* Ridary */,
+				9BA0B19BC84CEAEC8F91B6E0 /* RidaryTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CA1B19AED68C6858BA84A7C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31E93E0A10F35185845118E9 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2C4672709F7622A1610D4E5C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBE9C19A9B8D650277D8FA9B /* EventDetectorTests.swift in Sources */,
+				766F0342FA23C1F64A2AB4BE /* EvidenceVaultTests.swift in Sources */,
+				121BDB67AAAD69CE5736EC38 /* GeohashTests.swift in Sources */,
+				BFF323867E00787487139129 /* IncidentPDFRendererTests.swift in Sources */,
+				6BFC70528B3FBA71E4D36691 /* JSONCodingTests.swift in Sources */,
+				E9FF663AC13F7F4B8A9EAFC6 /* LocalRideStoreTests.swift in Sources */,
+				ABF409BF2125A3053E7BF299 /* RideScoringTests.swift in Sources */,
+				702FCB01FB4B5BB0976A70B1 /* RideStatsTests.swift in Sources */,
+				7F1F1624D7CBEA19B642606D /* RideSummaryServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC4B1C9E018FF6C05C9967BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				960E58D409B21154E514BC09 /* AIService.swift in Sources */,
+				E5B1682B84B6E53CE5862193 /* ActiveRideView.swift in Sources */,
+				D683681C3AAEA1F6A8759470 /* ActivityView.swift in Sources */,
+				DEF8FA13B6A3F7A5E9A7D19A /* AppEnvironment.swift in Sources */,
+				BDA68D902E950E30ED9CFAA8 /* AppSettings.swift in Sources */,
+				2B61C2AD1B580FD200419CC3 /* AuthService.swift in Sources */,
+				04D73CB84574FFD3669E58DA /* AuthView.swift in Sources */,
+				D9EC914AB1B75C089BDB8410 /* BackendFunctions.swift in Sources */,
+				51A42435304118A79C9498E2 /* ButtonStyles.swift in Sources */,
+				9ED50404CF179A8EF7C387ED /* Credential.swift in Sources */,
+				4257618D3012ED3A2968F490 /* CredentialView.swift in Sources */,
+				97DB0AEA9747892B23A0BA90 /* EventDetector.swift in Sources */,
+				65323269A45EF07558C9DC7B /* EventRow.swift in Sources */,
+				9938F202F814A6DB0B4F842F /* EventThresholds.swift in Sources */,
+				2FCEA188AA1205D309D65CF7 /* EvidencePacket.swift in Sources */,
+				B80EBA5648B3E664AEFDD7F7 /* EvidenceVault.swift in Sources */,
+				CD3F43DD11F29058F3EF3163 /* FirebaseAIService.swift in Sources */,
+				8C23D2712D475A13C8EB172F /* FirebaseBootstrap.swift in Sources */,
+				55C034FC6C4D36E3DF5D961F /* GeoMath.swift in Sources */,
+				47B98B7A43A68C320EFD8051 /* Geohash.swift in Sources */,
+				27AE6E962FD02D6C8C375331 /* HistoryView.swift in Sources */,
+				151B41C740CAAAB0844657C3 /* HomeView.swift in Sources */,
+				78AE7176CC5C19C1081C4486 /* Incident.swift in Sources */,
+				F2F95487274F29C6AAD0332F /* IncidentInterviewService.swift in Sources */,
+				72B5F08CD48A40879CB382C5 /* IncidentPDFRenderer.swift in Sources */,
+				CAC685ED0D7A1F58850718FC /* IncidentView.swift in Sources */,
+				F3DD29864FD8480373E0E577 /* InferenceSource.swift in Sources */,
+				D95B40270C608BB9AE3D0642 /* JSONCoding.swift in Sources */,
+				F457259D11988C690B4DEAAA /* LocalRideStore.swift in Sources */,
+				4680B32B0E7704C0A3FEF307 /* MainTabView.swift in Sources */,
+				7DEE7A49CFF7A5957F1A72C2 /* MockAIService.swift in Sources */,
+				A66B18E3A6017D3E758E9C23 /* PromptTemplate.swift in Sources */,
+				DE7FC39A69F357372D70749D /* Prompts.swift in Sources */,
+				51492076A8034E6E7D886E87 /* RemoteConfigService.swift in Sources */,
+				D4F34C2F7159211DBE52EB4F /* RidaryApp.swift in Sources */,
+				461BD66B9C5D10EB25016870 /* RidaryFormatters.swift in Sources */,
+				600E4002A918F70E4EFBE730 /* RidaryLog.swift in Sources */,
+				6F82D19B1C9453F5B6C4E935 /* RidaryTheme.swift in Sources */,
+				BD5E58FBB8AA60754C9228CD /* Ride.swift in Sources */,
+				69FBDF011DE852AF25A8E8CB /* RideCaptureService.swift in Sources */,
+				1194C0E9559D0B8EFD0F2354 /* RideEvent.swift in Sources */,
+				DC18FE0A4DEEF41C1268DF59 /* RideEventType.swift in Sources */,
+				E8C1988356C071900846A79D /* RideListRow.swift in Sources */,
+				054206FC2EDBB879CD75497F /* RideMode.swift in Sources */,
+				0E1EF949607C5E8BBC2FBE20 /* RideScoring.swift in Sources */,
+				5269AC3C90ECF8ED7ECB8353 /* RideSnapshot.swift in Sources */,
+				3ACE701D2956A2E5326EE156 /* RideStats.swift in Sources */,
+				8427996D62986A30BB1328BF /* RideSummaryService.swift in Sources */,
+				BBB684093F9ABD7D2B397AE1 /* RideSummaryView.swift in Sources */,
+				B4A1D45E2B757FE1A42055B8 /* RideSyncService.swift in Sources */,
+				DB71B4420780C3983C4FC33C /* RootView.swift in Sources */,
+				896A3167812780763ED2B7C6 /* ScoreRing.swift in Sources */,
+				587E1FC2E6D12FB8674E03DE /* SensorSample.swift in Sources */,
+				8FA980FEE0FD8F03E7D35C1D /* SettingsView.swift in Sources */,
+				DD5CDE79E25029A541362D4C /* SourceBadge.swift in Sources */,
+				1DAD1F65856097B85D99631C /* StatTile.swift in Sources */,
+				304D5CAB17E98BBC9B55157B /* UserProfile.swift in Sources */,
+				AFF5948F2AE99B11D3569648 /* WeeklyFeedbackService.swift in Sources */,
+				D71F95A078F656E234A2B305 /* WeeklyStats.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A267F10480D3D183CD3EF785 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DF9376BD1653128190E74AE /* Ridary */;
+			targetProxy = 22BC87D9B5DE84BF6ED58BB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		453C093DF25D2B2D87165372 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.ridary.ios.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ridary.app/Ridary";
+			};
+			name = Debug;
+		};
+		4FBDF20C5557BE9620CDFE80 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.ridary.ios;
+				PRODUCT_NAME = Ridary;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6A9A22A6EEAC882903379BC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.ridary.ios;
+				PRODUCT_NAME = Ridary;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F6B37A3B1C0F87ECDA75112 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APPINTENTS_DEPLOYMENT_AWARE_PROCESSING = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXTRACT_APP_INTENTS_METADATA = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		911D3C4AF31907F506D76062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.ridary.ios.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ridary.app/Ridary";
+			};
+			name = Release;
+		};
+		D3B53FF858493860D036CDC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APPINTENTS_DEPLOYMENT_AWARE_PROCESSING = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXTRACT_APP_INTENTS_METADATA = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5B9E6EB1DFC73B5DEB2383F6 /* Build configuration list for PBXProject "Ridary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F6B37A3B1C0F87ECDA75112 /* Debug */,
+				D3B53FF858493860D036CDC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6C7DD22E92C5F32F4C05D724 /* Build configuration list for PBXNativeTarget "RidaryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				453C093DF25D2B2D87165372 /* Debug */,
+				911D3C4AF31907F506D76062 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BBD8F04D85F53983A5A80B60 /* Build configuration list for PBXNativeTarget "Ridary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A9A22A6EEAC882903379BC3 /* Debug */,
+				4FBDF20C5557BE9620CDFE80 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 12.13.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		038A285C57D576FED0A7CD0A /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		0BB13C567B8C6FF4EDB27BBF /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		4A1D57E06806BDB72D64AFE5 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		51A6CD4068ADE1AA2B1671C4 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		7985172A7B62D92234D2A58C /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		7E601D4A236AF5EC6A61824D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		ED984BE30942DFA126C6104A /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DB6ECD977D230BEA8E050D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A81D7202D8A0C704B9A0490E /* Project object */;
+}

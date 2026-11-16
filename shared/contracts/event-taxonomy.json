@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "types": {
+    "hard_brake": {
+      "label": "Hard brake",
+      "defaultSeverity": 3,
+      "defaultConfidence": 0.85
+    },
+    "sharp_swerve": {
+      "label": "Sharp swerve",
+      "defaultSeverity": 3,
+      "defaultConfidence": 0.75
+    },
+    "impact": {
+      "label": "Impact",
+      "defaultSeverity": 5,
+      "defaultConfidence": 0.9
+    },
+    "crash_candidate": {
+      "label": "Crash candidate",
+      "defaultSeverity": 5,
+      "defaultConfidence": 0.8
+    },
+    "long_stop": {
+      "label": "Long stop",
+      "defaultSeverity": 1,
+      "defaultConfidence": 0.9
+    },
+    "route_deviation": {
+      "label": "Route deviation",
+      "defaultSeverity": 2,
+      "defaultConfidence": 0.6
+    },
+    "manual": {
+      "label": "Manual lock",
+      "defaultSeverity": 2,
+      "defaultConfidence": 1.0
+    }
+  },
+  "thresholds": {
+    "hardBrakeDecelMps2": 3.2,
+    "hardBrakeMinDurationS": 0.4,
+    "impactG": 2.5,
+    "swerveLateralMps2": 2.2,
+    "longStopSpeedMps": 1.0,
+    "longStopDurationS": 120,
+    "crashSpeedDropRatio": 0.7,
+    "crashStillnessS": 4.0,
+    "sampleWindowSeconds": 8,
+    "maxEventsPerRide": 40
+  }
+}

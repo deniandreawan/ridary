@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ridary.app/contracts/ride-snapshot.schema.json",
+  "title": "RideSnapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "headline",
+    "summary",
+    "riskMoments",
+    "score",
+    "scoreRationale",
+    "coachingTip"
+  ],
+  "properties": {
+    "headline": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "riskMoments": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "atSeconds", "severity", "explanation"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "hard_brake",
+              "sharp_swerve",
+              "impact",
+              "crash_candidate",
+              "long_stop",
+              "route_deviation",
+              "manual"
+            ]
+          },
+          "atSeconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          }
+        }
+      }
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "scoreRationale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "coachingTip": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  }
+}

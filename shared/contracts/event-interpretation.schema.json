@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ridary.app/contracts/event-interpretation.schema.json",
+  "title": "EventInterpretation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventType",
+    "severity",
+    "confidence",
+    "explanation",
+    "recommendedAction"
+  ],
+  "properties": {
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "hard_brake",
+        "sharp_swerve",
+        "impact",
+        "crash_candidate",
+        "long_stop",
+        "route_deviation",
+        "manual"
+      ]
+    },
+    "severity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "explanation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "recommendedAction": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  }
+}

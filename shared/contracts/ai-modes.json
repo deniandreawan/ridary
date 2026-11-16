@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "features": {
+    "ride_snapshot": {
+      "mode": "prefer_on_device",
+      "why": "Private, offline summary after a ride; cloud fallback keeps older devices working."
+    },
+    "event_interpretation": {
+      "mode": "prefer_on_device",
+      "why": "Sensor windows are sensitive and often captured in dead zones."
+    },
+    "incident_interview": {
+      "mode": "only_on_device",
+      "why": "Incident evidence and statements must not leave the device unless the user exports them."
+    },
+    "incident_photo": {
+      "mode": "prefer_in_cloud",
+      "why": "iOS 26 on-device Foundation Models is text-only; cloud handles the image."
+    },
+    "weekly_feedback": {
+      "mode": "prefer_in_cloud",
+      "why": "Cross-ride context and larger reasoning benefit from cloud Gemini."
+    },
+    "risk_analyst": {
+      "mode": "only_in_cloud",
+      "why": "Requires cross-rider aggregates that only the cloud can see."
+    },
+    "credential_narrative": {
+      "mode": "only_in_cloud",
+      "why": "The credential is issued from aggregate data and signed server-side."
+    },
+    "insurer_report": {
+      "mode": "prefer_in_cloud",
+      "why": "Final document generation benefits from the larger cloud model."
+    }
+  },
+  "platforms": {
+    "ios": {
+      "onDevice": "apple_foundation_models",
+      "cloud": "gemini"
+    },
+    "web": {
+      "onDevice": "gemini_nano",
+      "cloud": "gemini"
+    },
+    "android": {
+      "onDevice": "gemini_nano",
+      "cloud": "gemini"
+    }
+  }
+}
