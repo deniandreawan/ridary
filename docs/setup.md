@@ -10,7 +10,7 @@
 - Java 17+ if you want to run the Firestore emulator
 - An iPhone with iOS 26+ and Apple Intelligence for on-device iOS inference
 - Desktop Chrome 139+ for Chrome Nano
-- A Firebase project with AI Logic enabled
+- A Firebase project on Blaze with AI Logic and the Agent Platform Gemini API enabled
 
 The iOS app and web dashboard run in demo mode without any Firebase
 configuration. That is the fastest way to inspect the UI.
@@ -18,8 +18,12 @@ configuration. That is the fastest way to inspect the UI.
 ## Firebase
 
 1. Create a project in the Firebase console.
-2. Enable **AI Logic** and select the **Gemini Developer API** provider.
-3. Enable **App Check** and enforce it for AI Logic.
+2. Enable **AI Logic** and select the **Agent Platform Gemini API** (formerly
+   Vertex AI). The tested demo path uses this provider because it runs on Blaze
+   Cloud billing instead of Gemini API prepay credits.
+3. Enable **App Check** and enforce it for AI Logic. The web and iOS clients use
+   `useLimitedUseAppCheckTokens: true`, which AI Logic requires for these
+   models.
 4. Enable **Authentication** providers:
    - Email/Password
    - Anonymous
@@ -43,13 +47,16 @@ xcodegen generate
 open Ridary.xcodeproj
 ```
 
-1. Download `GoogleService-Info.plist` from the Firebase iOS app settings.
-2. Replace `ios/Config/GoogleService-Info.plist` with it.
+1. Download `GoogleService-Info.plist` from the Firebase iOS app settings and
+   save it as `ios/Config/GoogleService-Info.plist`.
+2. For a demo-only build, copy `ios/Config/GoogleService-Info.plist.example`
+   instead. The project generates without a real config.
 3. Select your development team in Xcode.
 4. Run on an iPhone or the simulator.
 
-If `GoogleService-Info.plist` still contains `REPLACE_ME`, the app deliberately
-runs in local demo mode and shows that state on the Home and Settings screens.
+If `GoogleService-Info.plist` is missing or still contains `REPLACE_ME`, the app
+deliberately runs in local demo mode and shows that state on the Home and
+Settings screens.
 
 ### App Check debug provider
 
@@ -129,8 +136,8 @@ If it says `downloadable`, run `await LanguageModel.create()` and let the model
 download. The first on-device request can also trigger the download, but that
 makes the first request slow.
 
-Without Chrome Nano, Firebase AI Logic automatically falls back to cloud
-Gemini. The review card shows the actual source.
+Without Chrome Nano, Firebase AI Logic automatically falls back to Gemini via
+the Agent Platform Gemini API. The review card shows the actual source.
 
 ## Functions
 
@@ -186,9 +193,11 @@ firebase deploy --only hosting
 
 | Symptom | Fix |
 |---|---|
-| iOS says “Local demo mode” | Replace `ios/Config/GoogleService-Info.plist` and rebuild |
+| iOS says “Local demo mode” | Add a real `ios/Config/GoogleService-Info.plist` and rebuild |
 | Web says “Demo mode” | Fill `web/.env.local` and restart Vite |
 | AI Logic returns 403 | Register the App Check debug token / set the web site key; enforce AI Logic |
+| AI Logic returns 401 “App Check token is invalid” | Use `useLimitedUseAppCheckTokens: true` and initialize App Check before `getAI`; reCAPTCHA Enterprise must be configured for the web app |
+| AI Logic returns 429 “prepayment credits are depleted” | Use the Agent Platform Gemini API backend (Blaze), not Gemini Developer API prepay credits |
 | On-device review says fallback | Check Apple Intelligence / Chrome Nano; the UI is reporting the truth |
 | Firestore “index required” | Deploy `firestore.indexes.json` or click the console link |
 | Functions fail to sign | `functions/.env` keys are missing or malformed |

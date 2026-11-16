@@ -4,36 +4,18 @@ import {
   Map as MapLibreMap,
   NavigationControl,
   Popup,
-  type GeoJSONSource,
-  type StyleSpecification
+  setWorkerUrl,
+  type GeoJSONSource
 } from "maplibre-gl";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { riskFeatureCollection } from "../lib/risk";
 import type { Ride, RiskCell } from "../types";
 
-const DARK_STYLE: StyleSpecification = {
-  version: 8,
-  sources: {
-    carto: {
-      type: "raster",
-      tiles: [
-        "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png"
-      ],
-      tileSize: 256,
-      attribution: "© OpenStreetMap © CARTO"
-    }
-  },
-  layers: [
-    {
-      id: "carto",
-      type: "raster",
-      source: "carto",
-      minzoom: 0,
-      maxzoom: 20
-    }
-  ]
-};
+const DARK_STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
+
+setWorkerUrl(workerUrl);
 
 const EMPTY_LINE: FeatureCollection<LineString> = {
   type: "FeatureCollection",
@@ -104,7 +86,7 @@ export function RiskMap({
     try {
       map = new MapLibreMap({
         container,
-        style: DARK_STYLE,
+        style: DARK_STYLE_URL,
         center: [106.8456, -6.2088],
         zoom: 11.4
       });

@@ -13,6 +13,15 @@ larger model is genuinely useful.
 
 ![iOS home](docs/screenshots/ios-home.png)
 
+## Live demo
+
+- Web dashboard: <https://ridary-demo.web.app>
+- Demo-only account (seeded with sample rides and one signed credential):
+  `[REDACTED]` / `[REDACTED]`
+- You can also click **Explore the demo dashboard** without an account.
+
+The demo account is for judging only. Do not put real ride data in it.
+
 ## Why this project
 
 Most ride apps ask riders to upload everything, then sell them a dashboard.
@@ -87,7 +96,7 @@ platform limitations.
 ## Repository layout
 
 ```
-ios/         SwiftUI iOS app (XcodeGen + SPM Firebase 12.13.0)
+ios/         SwiftUI iOS app (XcodeGen + SPM Firebase 12.19.3)
 web/         Vite + React + TypeScript dashboard + Chrome Nano
 functions/   TypeScript Firebase Functions (Node 22 runtime)
 shared/      JSON contracts, prompt templates, prompt codegen
@@ -102,8 +111,11 @@ detect a missing configuration and enter a clearly labelled local demo mode.
 ### 1. Firebase project
 
 1. Create a Firebase project.
-2. Enable **AI Logic** and choose the **Gemini Developer API**.
-3. Enable **App Check** and enforce it for AI Logic.
+2. Enable **AI Logic** and choose the **Agent Platform Gemini API** (formerly
+   Vertex AI). This path needs the Blaze plan; it avoids Gemini API prepay
+   credit limits during the demo.
+3. Enable **App Check** and enforce it for AI Logic. The clients request
+   limited-use App Check tokens for AI Logic.
 4. Enable **Authentication** (Email/Password and Anonymous), **Firestore**, and
    **Cloud Functions**.
 5. Register an iOS app with bundle id `app.ridary.ios`.
@@ -117,8 +129,10 @@ xcodegen generate
 open Ridary.xcodeproj
 ```
 
-- Download `GoogleService-Info.plist` from Firebase and replace
-  `ios/Config/GoogleService-Info.plist`.
+- Download `GoogleService-Info.plist` from Firebase to
+  `ios/Config/GoogleService-Info.plist`. For a demo-only build, copy
+  `ios/Config/GoogleService-Info.plist.example` instead; the project generates
+  and runs in local demo mode without a real config.
 - Run on an iPhone with **iOS 26+ and Apple Intelligence enabled** for on-device
   inference. On the simulator or a non-Apple-Intelligence device, Ridary falls
   back to cloud/rule-based output and labels it honestly.
@@ -144,7 +158,7 @@ npm run dev
 - Chrome Nano requires desktop Chrome 139+ and the multimodal prompt flag:
   `chrome://flags/#prompt-api-for-gemini-nano-multimodal-input`.
 - If Nano is unavailable, Firebase AI Logic automatically falls back to Gemini
-  in the cloud.
+  via the Agent Platform Gemini API.
 - Without `.env.local`, the dashboard runs with sample data and clearly labels
   every screen as demo mode.
 

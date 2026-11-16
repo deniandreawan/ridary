@@ -5,7 +5,11 @@ the idea and the hybrid AI reason. Show real functionality, not a slide deck.
 
 ## Pre-flight
 
+- Live web: <https://ridary-demo.web.app>
+- Demo account for the video: `[REDACTED]` / `[REDACTED]`
+  (seeded rides, one signed credential; never use real data here).
 - Firebase configured on iOS and web; App Check debug token registered.
+- Functions deployed on Blaze; AI Logic is using the Agent Platform Gemini API.
 - iPhone with iOS 26+ and Apple Intelligence enabled.
 - Desktop Chrome 139+ with the Nano flag enabled and the model downloaded.
 - At least three rides synced, or use the clearly labelled demo dashboard for

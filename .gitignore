@@ -15,7 +15,7 @@ build/
 Package.resolved.lock
 
 # iOS secrets and generated config
-ios/Ridary/Config/GoogleService-Info.plist
+ios/Config/GoogleService-Info.plist
 
 # Node
 node_modules/

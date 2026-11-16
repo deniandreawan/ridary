@@ -9,7 +9,7 @@ options:
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
-    exactVersion: 12.13.0
+    exactVersion: 12.19.3
 
 settings:
   base:
@@ -31,6 +31,7 @@ targets:
       - path: Ridary
       - path: Config/GoogleService-Info.plist
         buildPhase: resources
+        optional: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.ridary.ios

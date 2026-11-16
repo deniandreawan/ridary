@@ -7,7 +7,10 @@ final class FirebaseAIService: AIService {
 
     init(cloudModelName: String = "gemini-3.5-flash-lite") {
         self.cloudModelName = cloudModelName
-        self.service = FirebaseAI.firebaseAI(backend: .googleAI())
+        self.service = FirebaseAI.firebaseAI(
+            backend: .agentPlatform(),
+            useLimitedUseAppCheckTokens: true
+        )
     }
 
     func onDeviceAvailability() async -> OnDeviceAvailability {

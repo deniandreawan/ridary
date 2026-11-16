@@ -10,9 +10,9 @@ deliberate trust boundary:
 
 | Platform | On-device model | Cloud fallback |
 |---|---|---|
-| iOS 26+ | Apple Foundation Models via Firebase AI Logic (`firebase-ios-sdk` 12.13.0, `FirebaseAI`) | Gemini Developer API |
-| Chrome desktop 139+ | Gemini Nano via the Chrome Prompt API, wrapped by `firebase/ai` | Gemini Developer API |
-| Android (roadmap) | Gemini Nano 4 via `firebase-ai-ondevice` | Gemini Developer API |
+| iOS 26+ | Apple Foundation Models via Firebase AI Logic (`firebase-ios-sdk` 12.19.3, `FirebaseAI`) | Agent Platform Gemini API (formerly Vertex AI) |
+| Chrome desktop 139+ | Gemini Nano via the Chrome Prompt API, wrapped by `firebase/ai` | Agent Platform Gemini API |
+| Android (roadmap) | Gemini Nano 4 via `firebase-ai-ondevice` | Agent Platform Gemini API |
 
 The project intentionally uses **native SwiftUI + Web** instead of Flutter.
 Firebase AI Logic's hybrid on-device path is a native platform integration for
@@ -70,7 +70,7 @@ fallback is a model result.
 Every AI output is labelled:
 
 - `On device` — Apple Foundation Models or Chrome Nano.
-- `In cloud` — Gemini via Firebase AI Logic.
+- `In cloud` — Gemini via Firebase AI Logic on the Agent Platform Gemini API.
 - `Fallback` — the preferred path failed and the SDK used the other path.
 - `Rules` — the local deterministic fallback.
 

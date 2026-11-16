@@ -1,5 +1,9 @@
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
-import { getAI, GoogleAIBackend, type AI } from "firebase/ai";
+import {
+  CustomProvider,
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider
+} from "firebase/app-check";
+import { AgentPlatformBackend, getAI, type AI } from "firebase/ai";
 import { getApps, initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
@@ -37,7 +41,6 @@ if (isFirebaseConfigured) {
   firebaseAuth = getAuth(firebaseApp);
   firebaseDb = getFirestore(firebaseApp);
   firebaseFunctions = getFunctions(firebaseApp, functionsRegion);
-  firebaseAi = getAI(firebaseApp, { backend: new GoogleAIBackend() });
 
   const siteKey = env.VITE_APP_CHECK_SITE_KEY;
   const debugToken = env.VITE_APP_CHECK_DEBUG_TOKEN;
@@ -56,7 +59,23 @@ if (isFirebaseConfigured) {
       isTokenAutoRefreshEnabled: true
     });
     appCheckReady = true;
+  } else if (debugToken) {
+    initializeAppCheck(firebaseApp, {
+      provider: new CustomProvider({
+        getToken: async () => ({
+          token: debugToken,
+          expireTimeMillis: Date.now() + 30 * 60 * 1000
+        })
+      }),
+      isTokenAutoRefreshEnabled: true
+    });
+    appCheckReady = true;
   }
+
+  firebaseAi = getAI(firebaseApp, {
+    backend: new AgentPlatformBackend(),
+    useLimitedUseAppCheckTokens: true
+  });
 }
 
 export {
