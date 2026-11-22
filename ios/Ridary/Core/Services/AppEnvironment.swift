@@ -76,6 +76,7 @@ final class AppEnvironment: ObservableObject {
         didBootstrap = true
 
         try? await store.prepare()
+
         rides = (try? await store.loadRides()) ?? []
         incidents = (try? await store.loadIncidents()) ?? []
 
@@ -104,7 +105,7 @@ final class AppEnvironment: ObservableObject {
         isReady = true
     }
 
-    func startRide() async -> Bool {
+    func startRide(mode: RideMode? = nil) async -> Bool {
         guard !capture.isRecording else {
             return false
         }
@@ -112,11 +113,14 @@ final class AppEnvironment: ObservableObject {
         errorMessage = nil
         defer { isBusy = false }
 
+        let selectedMode = mode ?? settings.mode
+
         do {
             try await capture.start(
-                mode: settings.mode,
+                mode: selectedMode,
                 thresholds: remoteConfig.thresholds
             )
+            settings.mode = selectedMode
             return true
         } catch {
             errorMessage = error.localizedDescription
@@ -406,6 +410,44 @@ final class AppEnvironment: ObservableObject {
         )
     }
 
+    private static func credential(from data: [String: Any], id: String) -> Credential? {
+        guard let periodStart = data["periodStart"] as? String,
+              let periodEnd = data["periodEnd"] as? String,
+              let modeRaw = data["mode"] as? String,
+              let mode = RideMode(rawValue: modeRaw),
+              let issuedAt = data["issuedAt"] as? String,
+              let expiresAt = data["expiresAt"] as? String,
+              let issuer = data["issuer"] as? String,
+              let publicKeyId = data["publicKeyId"] as? String,
+              let payloadHash = data["payloadHash"] as? String,
+              let signature = data["signature"] as? String else {
+            return nil
+        }
+
+        let credentialId = data["credentialId"] as? String ?? id
+        let uid = data["uid"] as? String ?? ""
+        let score = (data["score"] as? NSNumber)?.intValue ?? 0
+        let rideCount = (data["rideCount"] as? NSNumber)?.intValue ?? 0
+        let eventCount = (data["eventCount"] as? NSNumber)?.intValue ?? 0
+
+        return Credential(
+            credentialId: credentialId,
+            uid: uid,
+            periodStart: periodStart,
+            periodEnd: periodEnd,
+            mode: mode,
+            score: score,
+            rideCount: rideCount,
+            eventCount: eventCount,
+            issuedAt: issuedAt,
+            expiresAt: expiresAt,
+            issuer: issuer,
+            publicKeyId: publicKeyId,
+            payloadHash: payloadHash,
+            signature: signature
+        )
+    }
+
     private func loadCredentials() async {
         guard let userID else { return }
         do {
@@ -416,12 +458,7 @@ final class AppEnvironment: ObservableObject {
                 .limit(to: 20)
                 .getDocuments()
             credentials = snapshot.documents.compactMap { document in
-                guard let json = try? JSONSerialization.data(
-                    withJSONObject: document.data()
-                ) else {
-                    return nil
-                }
-                return try? RidaryJSON.decode(Credential.self, from: json)
+                Self.credential(from: document.data(), id: document.documentID)
             }
         } catch {
             RidaryLog.app.error(
@@ -435,6 +472,9 @@ final class AppEnvironment: ObservableObject {
             .sink { [weak self] id in
                 Task { @MainActor in
                     self?.userID = id
+                    if let id, id != "local-demo-user" {
+                        await self?.loadCredentials()
+                    }
                 }
             }
             .store(in: &cancellables)

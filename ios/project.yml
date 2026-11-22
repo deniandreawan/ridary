@@ -41,10 +41,11 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Config/Info.plist
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: ""
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: "7KZLVMSTUP"
     dependencies:
+      - sdk: AppIntents.framework
       - package: Firebase
         product: FirebaseAI
       - package: Firebase
@@ -62,6 +63,7 @@ targets:
     scheme:
       testTargets:
         - RidaryTests
+        - RidaryUITests
 
   RidaryTests:
     type: bundle.unit-test
@@ -70,8 +72,24 @@ targets:
       - path: RidaryTests
     dependencies:
       - target: Ridary
+      - sdk: AppIntents.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.ridary.ios.tests
         GENERATE_INFOPLIST_FILE: YES
         TARGETED_DEVICE_FAMILY: "1,2"
+
+  RidaryUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: RidaryUITests
+    dependencies:
+      - target: Ridary
+      - sdk: AppIntents.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.ridary.ios.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        TEST_TARGET_NAME: Ridary

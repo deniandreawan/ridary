@@ -50,6 +50,17 @@
                ReferencedContainer = "container:Ridary.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FCF4CB056CD0CFFFF0638102"
+               BuildableName = "RidaryUITests.xctest"
+               BlueprintName = "RidaryUITests"
+               ReferencedContainer = "container:Ridary.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

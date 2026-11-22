@@ -23,10 +23,10 @@ describe("risk", () => {
   });
 
   it("maps severity to color", () => {
-    expect(severityColor(4.5)).toBe("#ff6b6b");
-    expect(severityColor(3.2)).toBe("#ff9f5a");
-    expect(severityColor(2.1)).toBe("#ffb84d");
-    expect(severityColor(1)).toBe("#5be3c0");
+    expect(severityColor(4.5)).toBe("#d92d20");
+    expect(severityColor(3.2)).toBe("#e64a19");
+    expect(severityColor(2.1)).toBe("#b26a00");
+    expect(severityColor(1)).toBe("#00796b");
   });
 
   it("finds the hottest cell", () => {

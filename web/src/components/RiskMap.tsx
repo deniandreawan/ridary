@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { riskFeatureCollection } from "../lib/risk";
 import type { Ride, RiskCell } from "../types";
 
-const DARK_STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
+const LIGHT_STYLE_URL = "https://tiles.openfreemap.org/styles/bright";
 
 setWorkerUrl(workerUrl);
 
@@ -37,6 +37,30 @@ export function RiskMap({
   const dataRef = useRef({ riskCells, ride });
   const lastRideRef = useRef<string | undefined>(undefined);
   const [mapError, setMapError] = useState(false);
+
+  const fitData = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    const bounds = new LngLatBounds();
+    let hasBounds = false;
+
+    for (const cell of dataRef.current.riskCells) {
+      const point = riskFeatureCollection([cell]).features[0];
+      if (point?.geometry.type === "Point") {
+        bounds.extend(point.geometry.coordinates as [number, number]);
+        hasBounds = true;
+      }
+    }
+
+    for (const [lat, lon] of dataRef.current.ride?.routePreview ?? []) {
+      bounds.extend([lon, lat]);
+      hasBounds = true;
+    }
+
+    if (hasBounds) {
+      map.fitBounds(bounds, { padding: 52, maxZoom: 13, duration: 0 });
+    }
+  }, []);
 
   const applyData = useCallback(() => {
     const map = mapRef.current;
@@ -63,15 +87,11 @@ export function RiskMap({
     }
 
     const currentRideID = dataRef.current.ride?.id;
-    if (currentRideID && currentRideID !== lastRideRef.current && route.length > 1) {
-      const bounds = new LngLatBounds();
-      for (const [lat, lon] of route) {
-        bounds.extend([lon, lat]);
-      }
-      map.fitBounds(bounds, { padding: 48, maxZoom: 14, duration: 0 });
+    if (currentRideID && currentRideID !== lastRideRef.current) {
       lastRideRef.current = currentRideID;
+      fitData();
     }
-  }, []);
+  }, [fitData]);
 
   useEffect(() => {
     dataRef.current = { riskCells, ride };
@@ -86,7 +106,7 @@ export function RiskMap({
     try {
       map = new MapLibreMap({
         container,
-        style: DARK_STYLE_URL,
+        style: LIGHT_STYLE_URL,
         center: [106.8456, -6.2088],
         zoom: 11.4
       });
@@ -112,7 +132,7 @@ export function RiskMap({
         paint: {
           "circle-radius": ["*", ["get", "radius"], 1.9],
           "circle-color": ["get", "color"],
-          "circle-opacity": 0.08
+          "circle-opacity": 0.12
         }
       });
       map.addLayer({
@@ -122,7 +142,7 @@ export function RiskMap({
         paint: {
           "circle-radius": ["get", "radius"],
           "circle-color": ["get", "color"],
-          "circle-opacity": 0.28,
+          "circle-opacity": 0.46,
           "circle-stroke-color": ["get", "color"],
           "circle-stroke-width": 1.4
         }
@@ -133,6 +153,20 @@ export function RiskMap({
         data: EMPTY_LINE
       });
       map.addLayer({
+        id: "route-casing",
+        type: "line",
+        source: "route",
+        layout: {
+          "line-cap": "round",
+          "line-join": "round"
+        },
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": 9,
+          "line-opacity": 0.94
+        }
+      });
+      map.addLayer({
         id: "route-line",
         type: "line",
         source: "route",
@@ -141,10 +175,9 @@ export function RiskMap({
           "line-join": "round"
         },
         paint: {
-          "line-color": "#ffb84d",
-          "line-width": 4,
-          "line-opacity": 0.92,
-          "line-blur": 0.4
+          "line-color": "#0e7490",
+          "line-width": 5,
+          "line-opacity": 0.96
         }
       });
 
@@ -163,7 +196,7 @@ export function RiskMap({
         title.style.marginBottom = "4px";
         const detail = document.createElement("div");
         detail.textContent = `${count} events · avg severity ${severity.toFixed(1)}`;
-        detail.style.color = "#93a6b5";
+        detail.style.color = "#66737a";
         element.append(title, detail);
 
         new Popup({ closeButton: true, offset: 12 })
@@ -180,19 +213,7 @@ export function RiskMap({
       });
 
       applyData();
-
-      const bounds = new LngLatBounds();
-      let hasBounds = false;
-      for (const cell of dataRef.current.riskCells) {
-        const point = riskFeatureCollection([cell]).features[0];
-        if (point?.geometry.type === "Point") {
-          bounds.extend(point.geometry.coordinates as [number, number]);
-          hasBounds = true;
-        }
-      }
-      if (hasBounds) {
-        map.fitBounds(bounds, { padding: 52, maxZoom: 13, duration: 0 });
-      }
+      fitData();
     });
 
     return () => {
@@ -200,7 +221,7 @@ export function RiskMap({
       mapRef.current = null;
       map.remove();
     };
-  }, [applyData]);
+  }, [applyData, fitData]);
 
   if (mapError) {
     return (

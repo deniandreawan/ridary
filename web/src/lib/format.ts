@@ -53,10 +53,10 @@ export function scoreBand(score: number): "A" | "B" | "C" | "D" {
 }
 
 export function scoreColor(score: number): string {
-  if (score >= 90) return "#5be3c0";
-  if (score >= 75) return "#ffb84d";
-  if (score >= 60) return "#ff9f5a";
-  return "#ff6b6b";
+  if (score >= 90) return "#00796b";
+  if (score >= 75) return "#0e7490";
+  if (score >= 60) return "#b26a00";
+  return "#d92d20";
 }
 
 export function inferenceLabel(source: InferenceSource): string {

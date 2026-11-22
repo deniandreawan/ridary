@@ -1,0 +1,270 @@
+import XCTest
+
+final class HomeFlowUITests: XCTestCase {
+    private var app: XCUIApplication!
+
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+
+        app = XCUIApplication()
+        addUIInterruptionMonitor(withDescription: "Location permission") { alert in
+            let allow = alert.buttons["Allow While Using App"]
+            if allow.exists {
+                allow.tap()
+                return true
+            }
+            return false
+        }
+        app.launch()
+    }
+
+    func testAskRidaryAndProfileFlows() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40), "Ask Ridary entry bar should be visible on Home")
+
+        let askPage = app.staticTexts["Ask about your rides"]
+        ask.tap()
+        if !askPage.waitForExistence(timeout: 5) {
+            ask.tap()
+        }
+
+        XCTAssertTrue(
+            askPage.waitForExistence(timeout: 10),
+            "Ask Ridary page should open"
+        )
+        attachScreenshot(named: "ask-ridary")
+
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        let profile = app.buttons["Open profile"].firstMatch
+        XCTAssertTrue(profile.waitForExistence(timeout: 10), "Profile menu should be available from Home")
+        profile.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close profile"].waitForExistence(timeout: 10),
+            "Profile sheet should open"
+        )
+        attachScreenshot(named: "profile-menu")
+
+        let statistics = app.staticTexts["Statistics"].firstMatch
+        XCTAssertTrue(statistics.waitForExistence(timeout: 5), "Statistics entry should be visible")
+        statistics.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Your riding, in numbers"].waitForExistence(timeout: 10),
+            "Statistics screen should open from Profile"
+        )
+        attachScreenshot(named: "statistics")
+    }
+
+    func testStartFlowOpensAndCancelsCountdown() throws {
+        let start = app.buttons["Start a ride"].firstMatch
+        XCTAssertTrue(start.waitForExistence(timeout: 40), "Start button should be visible on Home")
+        start.tap()
+
+        let status = app.staticTexts["ride-status"]
+        XCTAssertTrue(status.waitForExistence(timeout: 10), "Start page should open")
+        XCTAssertTrue(app.staticTexts["ride-timer"].exists, "Ready timer should be visible")
+        attachScreenshot(named: "start-page")
+
+        let startRide = app.buttons["Start ride"].firstMatch
+        XCTAssertTrue(startRide.waitForExistence(timeout: 5), "Start ride should be available")
+        startRide.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["GET READY"].waitForExistence(timeout: 10),
+            "Countdown should start"
+        )
+        attachScreenshot(named: "countdown")
+
+        app.buttons["Cancel"].firstMatch.tap()
+        XCTAssertTrue(
+            app.staticTexts["ride-status"].waitForExistence(timeout: 5),
+            "Cancel should return to the start page"
+        )
+
+        app.buttons["Close ride start"].firstMatch.tap()
+        XCTAssertTrue(start.waitForExistence(timeout: 5), "Close should return to Home")
+    }
+
+
+    func testActiveRidePauseAndResume() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let startRide = app.buttons["Start a ride"]
+        XCTAssertTrue(startRide.waitForExistence(timeout: 40))
+
+        let begin = app.buttons["Start ride"]
+        for _ in 0..<3 {
+            startRide.tap()
+            if begin.waitForExistence(timeout: 4) {
+                break
+            }
+        }
+        XCTAssertTrue(begin.exists)
+        begin.tap()
+
+        let pause = app.buttons["Pause ride"]
+        XCTAssertTrue(pause.waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 3)
+        attachScreenshot(named: "active-ride")
+
+        pause.tap()
+
+        let resume = app.buttons["Resume ride"]
+        XCTAssertTrue(resume.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["Finish ride"].exists)
+        attachScreenshot(named: "paused-ride")
+
+        resume.tap()
+        XCTAssertTrue(pause.waitForExistence(timeout: 3))
+
+        let minimize = app.buttons["Minimize ride"]
+        XCTAssertTrue(minimize.exists)
+        minimize.tap()
+
+        let live = app.buttons["Open live ride"]
+        XCTAssertTrue(live.waitForExistence(timeout: 4))
+        attachScreenshot(named: "live-home")
+        live.tap()
+
+        let pauseAgain = app.buttons["Pause ride"]
+        XCTAssertTrue(pauseAgain.waitForExistence(timeout: 3))
+        pauseAgain.tap()
+
+        let finish = app.buttons["Finish ride"]
+        XCTAssertTrue(finish.waitForExistence(timeout: 3))
+        finish.tap()
+
+        XCTAssertTrue(startRide.waitForExistence(timeout: 12))
+    }
+
+
+    func testModeSheetSelectsActivity() throws {
+        let start = app.buttons["Start a ride"]
+        XCTAssertTrue(start.waitForExistence(timeout: 40))
+        start.tap()
+
+        let status = app.staticTexts["ride-status"]
+        if !status.waitForExistence(timeout: 5) {
+            start.tap()
+        }
+        XCTAssertTrue(status.waitForExistence(timeout: 10))
+
+        let mode = app.buttons["mode-control"]
+        XCTAssertTrue(mode.waitForExistence(timeout: 10))
+        mode.tap()
+
+        let bicycle = app.buttons["Bicycle"]
+        XCTAssertTrue(bicycle.waitForExistence(timeout: 5), "Activity sheet should open from the header")
+        attachScreenshot(named: "activity-sheet")
+
+        bicycle.tap()
+
+        XCTAssertTrue(mode.waitForExistence(timeout: 3))
+        XCTAssertTrue(mode.label.contains("Bicycle"), "Header should show the selected activity")
+
+        app.buttons["Close ride start"].tap()
+        XCTAssertTrue(start.waitForExistence(timeout: 5))
+    }
+
+
+    func testHomeSheetExpandsAndKeepsSearchVisible() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40))
+
+        let mediumY = ask.frame.minY
+        attachScreenshot(named: "home-sheet-medium-initial")
+
+        // 1. Drag down on content from medium -> peek
+        let contentMid = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.74))
+        let bottomTarget = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.92))
+        contentMid.press(forDuration: 0.08, thenDragTo: bottomTarget)
+        Thread.sleep(forTimeInterval: 0.8)
+
+        let peekY = ask.frame.minY
+        XCTAssertGreaterThan(peekY, mediumY + 100, "Dragging down on content should collapse medium to peek")
+        attachScreenshot(named: "home-sheet-peek")
+
+        // 2. Drag up from peek -> medium (must stop at medium, not jump to full)
+        let peekOrigin = ask.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        let midTarget = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55))
+        peekOrigin.press(forDuration: 0.08, thenDragTo: midTarget)
+        Thread.sleep(forTimeInterval: 0.8)
+
+        let steppedMediumY = ask.frame.minY
+        XCTAssertLessThan(abs(steppedMediumY - mediumY), 40, "Dragging up from peek should stop at medium, not jump to full")
+        attachScreenshot(named: "home-sheet-medium-from-peek")
+
+        // 3. Drag up on content from medium -> full
+        let destination = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+        contentMid.press(forDuration: 0.08, thenDragTo: destination)
+        Thread.sleep(forTimeInterval: 0.8)
+
+        let fullY = ask.frame.minY
+        XCTAssertGreaterThan(fullY, 50, "Search bar should stay below the status bar")
+        XCTAssertLessThan(fullY, 160, "Sheet should expand to full below the status bar")
+        attachScreenshot(named: "home-sheet-expanded")
+
+        // 4. Scroll rides list in full detent
+        app.swipeUp()
+        Thread.sleep(forTimeInterval: 0.6)
+        XCTAssertTrue(ask.exists)
+        attachScreenshot(named: "home-sheet-scrolled")
+
+        // 5. Drag down from header in full -> medium
+        let fullHeaderOrigin = ask.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        let pullDownTarget = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65))
+        fullHeaderOrigin.press(forDuration: 0.08, thenDragTo: pullDownTarget)
+        Thread.sleep(forTimeInterval: 0.8)
+
+        let collapsedMediumY = ask.frame.minY
+        XCTAssertLessThan(abs(collapsedMediumY - mediumY), 40, "Dragging down from full should return to medium")
+    }
+
+    func testFullSheetScrollsContentBeforeCollapsing() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40))
+
+        let mediumY = ask.frame.minY
+        let contentMid = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.74))
+        let destination = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+        contentMid.press(forDuration: 0.08, thenDragTo: destination)
+        Thread.sleep(forTimeInterval: 0.8)
+
+        let fullY = ask.frame.minY
+        XCTAssertLessThan(fullY, 160, "Sheet should expand to full below the status bar")
+
+        app.swipeUp()
+        Thread.sleep(forTimeInterval: 0.8)
+        attachScreenshot(named: "home-sheet-full-scrolled-down")
+
+        app.swipeDown()
+        Thread.sleep(forTimeInterval: 0.8)
+
+        XCTAssertLessThan(
+            abs(ask.frame.minY - fullY),
+            40,
+            "Scrolling the content back up should not collapse the full sheet"
+        )
+        attachScreenshot(named: "home-sheet-full-scrolled-back-up")
+
+        let contentLower = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.72))
+        contentLower.press(forDuration: 0.08, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.84)))
+        Thread.sleep(forTimeInterval: 0.8)
+
+        XCTAssertLessThan(
+            abs(ask.frame.minY - mediumY),
+            40,
+            "Dragging down at the top of the content should collapse full to medium"
+        )
+    }
+
+    private func attachScreenshot(named name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+}

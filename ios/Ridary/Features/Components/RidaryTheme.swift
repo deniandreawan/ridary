@@ -1,26 +1,50 @@
 import SwiftUI
 
 enum RidaryTheme {
-    static let background = Color(red: 0.035, green: 0.050, blue: 0.070)
-    static let backgroundLifted = Color(red: 0.055, green: 0.075, blue: 0.100)
-    static let card = Color(red: 0.075, green: 0.100, blue: 0.130)
-    static let cardElevated = Color(red: 0.095, green: 0.125, blue: 0.160)
-    static let border = Color.white.opacity(0.10)
-    static let accent = Color(red: 1.00, green: 0.72, blue: 0.30)
-    static let teal = Color(red: 0.35, green: 0.85, blue: 0.75)
-    static let danger = Color(red: 1.00, green: 0.38, blue: 0.38)
-    static let warning = Color(red: 1.00, green: 0.62, blue: 0.25)
-    static let textPrimary = Color.white
-    static let textSecondary = Color.white.opacity(0.68)
-    static let textTertiary = Color.white.opacity(0.45)
+    static let canvas = Color(hex: 0xFAFAFA)
+    static let background = canvas
+    static let backgroundLifted = Color(hex: 0xF5F5F5)
+    static let surface = Color(hex: 0xFFFFFF)
+    static let card = surface
+    static let cardElevated = Color(hex: 0xF5F5F5)
+    static let border = Color(hex: 0xE5E5E5)
+    static let accent = Color(hex: 0x0084D1)
+    static let sky = Color(hex: 0x00A6F4)
+    static let skyDeep = Color(hex: 0x0084D1)
+    static let skySoft = Color(hex: 0xDFF2FE)
+    static let safety = Color(hex: 0xFB2C36)
+    static let danger = Color(hex: 0xE7000B)
+    static let warning = Color(hex: 0xE17100)
+    static let textPrimary = Color(hex: 0x171717)
+    static let textSecondary = Color(hex: 0x737373)
+    static let textTertiary = Color(hex: 0xA1A1A1)
+    static let onAccent = Color(hex: 0xFFFFFF)
+    static let onSky = Color(hex: 0x171717)
+    static let accentSoft = skySoft
+    static let shadow = Color(hex: 0x171717).opacity(0.08)
+    static let route = skyDeep
     static let heroGradient = LinearGradient(
-        colors: [
-            Color(red: 0.10, green: 0.14, blue: 0.18),
-            Color(red: 0.05, green: 0.07, blue: 0.09)
-        ],
+        colors: [Color(hex: 0x00A6F4), Color(hex: 0x0084D1)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+}
+
+enum RidaryLayout {
+    static let sheetBottomInset: CGFloat = 34
+}
+
+enum RidaryType {
+    static let hero = Font.system(size: 38, weight: .heavy, design: .default)
+    static let display = Font.system(size: 30, weight: .bold, design: .default)
+    static let title = Font.system(size: 22, weight: .bold, design: .default)
+    static let section = Font.system(size: 18, weight: .bold, design: .default)
+    static let body = Font.system(size: 15, weight: .regular, design: .default)
+    static let bodyStrong = Font.system(size: 15, weight: .semibold, design: .default)
+    static let caption = Font.system(size: 12, weight: .medium, design: .default)
+    static let micro = Font.system(size: 10, weight: .semibold, design: .default)
+    static let mono = Font.system(size: 11, weight: .medium, design: .monospaced)
+    static let numeral = Font.system(size: 28, weight: .heavy, design: .rounded)
 }
 
 extension View {
@@ -28,11 +52,12 @@ extension View {
         self
             .padding(padding)
             .background(RidaryTheme.card)
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .stroke(RidaryTheme.border, lineWidth: 1)
             )
+            .shadow(color: RidaryTheme.shadow, radius: 18, x: 0, y: 9)
     }
 
     func ridaryScreenBackground() -> some View {
@@ -47,13 +72,13 @@ struct RidarySectionHeader: View {
     var subtitle: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 5) {
             Text(title)
-                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .font(RidaryType.section)
                 .foregroundStyle(RidaryTheme.textPrimary)
             if let subtitle {
                 Text(subtitle)
-                    .font(.footnote)
+                    .font(RidaryType.caption)
                     .foregroundStyle(RidaryTheme.textSecondary)
             }
         }
@@ -67,18 +92,31 @@ struct RidaryEmptyState: View {
     let message: String
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 28, weight: .semibold))
+                .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(RidaryTheme.accent)
+                .frame(width: 52, height: 52)
+                .background(RidaryTheme.accentSoft)
+                .clipShape(Circle())
             Text(title)
-                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .font(RidaryType.bodyStrong)
+                .foregroundStyle(RidaryTheme.textPrimary)
             Text(message)
-                .font(.footnote)
+                .font(RidaryType.caption)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(RidaryTheme.textSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
+        .padding(.vertical, 26)
+    }
+}
+
+extension Color {
+    init(hex: UInt32) {
+        let red = Double((hex >> 16) & 0xFF) / 255
+        let green = Double((hex >> 8) & 0xFF) / 255
+        let blue = Double(hex & 0xFF) / 255
+        self.init(red: red, green: green, blue: blue)
     }
 }

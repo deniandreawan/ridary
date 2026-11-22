@@ -13,46 +13,87 @@ struct HistoryView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                Picker("History", selection: $segment) {
-                    ForEach(Segment.allCases) { segment in
-                        Text(segment.rawValue).tag(segment)
-                    }
-                }
-                .pickerStyle(.segmented)
-
+            LazyVStack(alignment: .leading, spacing: 18) {
+                header
+                segmentedControl
                 if segment == .rides {
                     ridesSection
                 } else {
                     incidentsSection
                 }
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
+            .padding(.bottom, 32)
         }
         .background(RidaryTheme.background.ignoresSafeArea())
-        .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationTitle("Rides")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
+        .toolbarBackground(RidaryTheme.background, for: .navigationBar)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Ride log")
+                .font(RidaryType.display)
+                .tracking(-0.8)
+                .foregroundStyle(RidaryTheme.textPrimary)
+            Text("Every session, kept close and easy to find.")
+                .font(RidaryType.caption)
+                .foregroundStyle(RidaryTheme.textSecondary)
+        }
+    }
+
+    private var segmentedControl: some View {
+        HStack(spacing: 4) {
+            ForEach(Segment.allCases) { item in
+                Button {
+                    withAnimation(.easeOut(duration: 0.18)) {
+                        segment = item
+                    }
+                } label: {
+                    Text(item.rawValue)
+                        .font(.system(size: 13, weight: .bold, design: .default))
+                        .foregroundStyle(
+                            segment == item
+                                ? RidaryTheme.textPrimary
+                                : RidaryTheme.textTertiary
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            segment == item
+                                ? RidaryTheme.card
+                                : Color.clear
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(4)
+        .background(RidaryTheme.backgroundLifted)
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
     }
 
     @ViewBuilder
     private var ridesSection: some View {
         if app.rides.isEmpty {
             RidaryEmptyState(
-                icon: "clock.arrow.circlepath",
-                title: "No rides yet",
-                message: "Your private ride history will appear here after your first session."
+                icon: "point.topleft.down.to.point.bottomright.curvepath",
+                title: "Your log is ready",
+                message: "Start a ride from Home. The phone stays in your pocket and the route stays on this device."
             )
             .ridaryCard()
         } else {
-            VStack(spacing: 10) {
-                ForEach(app.rides) { ride in
-                    NavigationLink {
-                        RideSummaryView(ride: ride)
-                    } label: {
-                        RideListRow(ride: ride)
-                    }
-                    .buttonStyle(.plain)
+            ForEach(app.rides) { ride in
+                NavigationLink {
+                    RideSummaryView(ride: ride)
+                } label: {
+                    RideCard(ride: ride)
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -63,19 +104,17 @@ struct HistoryView: View {
             RidaryEmptyState(
                 icon: "lock.shield",
                 title: "No locked incidents",
-                message: "Use “Lock last 30 seconds” during a ride to preserve evidence privately."
+                message: "Use “Lock last 30 seconds” during a ride to preserve a private evidence window."
             )
             .ridaryCard()
         } else {
-            VStack(spacing: 10) {
-                ForEach(app.incidents) { incident in
-                    NavigationLink {
-                        IncidentView(incident: incident)
-                    } label: {
-                        IncidentListRow(incident: incident)
-                    }
-                    .buttonStyle(.plain)
+            ForEach(app.incidents) { incident in
+                NavigationLink {
+                    IncidentView(incident: incident)
+                } label: {
+                    IncidentListRow(incident: incident)
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -91,39 +130,34 @@ private struct IncidentListRow: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: incident.eventType.icon)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(tint)
-                .frame(width: 38, height: 38)
+                .frame(width: 42, height: 42)
                 .background(tint.opacity(0.12))
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(incident.eventType.title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(RidaryType.bodyStrong)
+                    .foregroundStyle(RidaryTheme.textPrimary)
                 Text(RidaryFormatters.rideDate.string(from: incident.lockedAt))
-                    .font(.caption)
+                    .font(RidaryType.caption)
                     .foregroundStyle(RidaryTheme.textSecondary)
                 Text("Hash \(incident.hash.prefix(12))…")
-                    .font(.caption2.monospaced())
+                    .font(RidaryType.mono)
                     .foregroundStyle(RidaryTheme.textTertiary)
             }
 
             Spacer()
 
             Text(incident.status.title)
-                .font(.caption2.weight(.semibold))
+                .font(RidaryType.micro)
                 .foregroundStyle(tint)
                 .padding(.horizontal, 9)
                 .padding(.vertical, 5)
                 .background(tint.opacity(0.12))
                 .clipShape(Capsule())
         }
-        .padding(14)
-        .background(RidaryTheme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(RidaryTheme.border, lineWidth: 1)
-        )
+        .ridaryCard(padding: 14)
     }
 }

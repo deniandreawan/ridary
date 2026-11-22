@@ -5,8 +5,8 @@ struct SourceBadge: View {
 
     private var tint: Color {
         switch source {
-        case .onDevice: return RidaryTheme.teal
-        case .inCloud: return RidaryTheme.accent
+        case .onDevice: return RidaryTheme.skyDeep
+        case .inCloud: return RidaryTheme.sky
         case .fallback: return RidaryTheme.warning
         case .deterministic: return RidaryTheme.textSecondary
         }

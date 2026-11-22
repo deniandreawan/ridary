@@ -73,10 +73,10 @@ export function riskFeatureCollection(
 }
 
 export function severityColor(averageSeverity: number): string {
-  if (averageSeverity >= 4) return "#ff6b6b";
-  if (averageSeverity >= 3) return "#ff9f5a";
-  if (averageSeverity >= 2) return "#ffb84d";
-  return "#5be3c0";
+  if (averageSeverity >= 4) return "#d92d20";
+  if (averageSeverity >= 3) return "#e64a19";
+  if (averageSeverity >= 2) return "#b26a00";
+  return "#00796b";
 }
 
 export function topRiskCell(cells: RiskCell[]): RiskCell | null {

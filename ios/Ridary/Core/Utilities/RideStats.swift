@@ -14,9 +14,10 @@ enum RideStatsCalculator {
         samples: [SensorSample],
         startedAt: Date,
         endedAt: Date,
-        mode: RideMode
+        mode: RideMode,
+        pausedDurationS: TimeInterval = 0
     ) -> RideStats {
-        let durationS = max(0, endedAt.timeIntervalSince(startedAt))
+        let durationS = max(0, endedAt.timeIntervalSince(startedAt) - pausedDurationS)
         let locationSamples = samples.filter(\.hasLocation)
 
         var distanceM = 0.0

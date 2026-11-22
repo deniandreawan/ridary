@@ -10,7 +10,7 @@ struct ScoreRing: View {
     }
 
     private var tint: Color {
-        if score >= 90 { return RidaryTheme.teal }
+        if score >= 90 { return RidaryTheme.sky }
         if score >= 75 { return RidaryTheme.accent }
         if score >= 60 { return RidaryTheme.warning }
         return RidaryTheme.danger

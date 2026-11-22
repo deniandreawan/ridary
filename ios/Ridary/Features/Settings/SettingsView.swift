@@ -27,6 +27,7 @@ struct SettingsView: View {
         .background(RidaryTheme.background.ignoresSafeArea())
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar(.visible, for: .navigationBar)
         .confirmationDialog(
             "Sign out of Ridary?",
             isPresented: $showSignOut,
@@ -77,7 +78,7 @@ struct SettingsView: View {
                         .foregroundStyle(RidaryTheme.textSecondary)
                 }
             }
-            .tint(RidaryTheme.teal)
+            .tint(RidaryTheme.skyDeep)
 
             Toggle(isOn: $settings.shareRoute) {
                 VStack(alignment: .leading, spacing: 3) {
@@ -104,7 +105,7 @@ struct SettingsView: View {
                 Image(systemName: app.onDeviceAvailability.isAvailable ? "iphone.gen3" : "cloud")
                     .foregroundStyle(
                         app.onDeviceAvailability.isAvailable
-                            ? RidaryTheme.teal
+                            ? RidaryTheme.skyDeep
                             : RidaryTheme.accent
                     )
                 VStack(alignment: .leading, spacing: 3) {

@@ -160,7 +160,7 @@ struct IncidentView: View {
             } label: {
                 if isDrafting {
                     ProgressView()
-                        .tint(.black)
+                        .tint(RidaryTheme.onSky)
                 } else {
                     Label("Draft statement", systemImage: "text.quote")
                 }

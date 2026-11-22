@@ -50,6 +50,20 @@ final class RideStatsTests: XCTestCase {
         XCTAssertEqual(stats.geohash, "s00000")
     }
 
+
+    func testPausedDurationIsExcluded() {
+        let start = Date(timeIntervalSince1970: 0)
+        let stats = RideStatsCalculator.compute(
+            samples: [],
+            startedAt: start,
+            endedAt: start.addingTimeInterval(120),
+            mode: .car,
+            pausedDurationS: 30
+        )
+
+        XCTAssertEqual(stats.durationS, 90, accuracy: 0.01)
+    }
+
     func testEmptySamples() {
         let start = Date(timeIntervalSince1970: 0)
         let stats = RideStatsCalculator.compute(

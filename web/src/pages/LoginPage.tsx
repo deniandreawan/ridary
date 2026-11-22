@@ -8,6 +8,7 @@ import {
 import { type FormEvent, useState } from "react";
 import { ErrorBanner } from "../components/Banners";
 import { Logo } from "../components/Logo";
+import { RouteArt } from "../components/RouteArt";
 import { useApp } from "../context/AppContext";
 import { isFirebaseConfigured } from "../firebase";
 
@@ -44,7 +45,27 @@ export default function LoginPage() {
             choose to share.
           </p>
 
-          <div className="mt-10 space-y-4">
+          <div className="mt-10 overflow-hidden rounded-[1.5rem] border border-line bg-cyan-soft/25">
+            <RouteArt
+              route={[
+                [-6.2088, 106.8456],
+                [-6.2146, 106.8502],
+                [-6.2201, 106.8529],
+                [-6.225, 106.847],
+                [-6.219, 106.84]
+              ]}
+              className="h-44 w-full"
+            />
+            <div className="flex items-center justify-between gap-3 bg-card/80 px-4 py-3">
+              <span className="text-xs font-semibold text-paper">A ride, kept private</span>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-teal">
+                <span className="h-1.5 w-1.5 rounded-full bg-teal" />
+                On device
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-4">
             <Feature
               icon={<Smartphone size={16} />}
               title="Private at the edge"
@@ -131,7 +152,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={authBusy}
-              className="focus-ring flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-ink transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="focus-ring flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {authBusy ? (
                 "Working…"
@@ -155,7 +176,7 @@ export default function LoginPage() {
               type="button"
               disabled={authBusy}
               onClick={() => void signInAnonymously()}
-              className="focus-ring w-full rounded-xl border border-line bg-card-soft px-4 py-3 text-xs font-semibold text-paper transition hover:border-white/20 disabled:opacity-60"
+              className="focus-ring w-full rounded-xl border border-line bg-card-soft px-4 py-3 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-60"
             >
               Continue as guest
             </button>

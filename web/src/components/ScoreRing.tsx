@@ -15,7 +15,7 @@ export function ScoreRing({
       style={{
         width: size,
         height: size,
-        background: `conic-gradient(${color} ${clamped * 3.6}deg, rgba(255,255,255,0.08) 0deg)`
+        background: `conic-gradient(${color} ${clamped * 3.6}deg, rgba(11,17,20,0.08) 0deg)`
       }}
       aria-label={`Safety score ${clamped} out of 100`}
       role="img"

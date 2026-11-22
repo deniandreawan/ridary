@@ -28,7 +28,7 @@ export function EventCard({
     event.severity >= 4
       ? "text-danger border-danger/25 bg-danger/8"
       : event.severity >= 3
-        ? "text-accent border-accent/25 bg-accent/8"
+        ? "text-warning border-warning/25 bg-warning/8"
         : "text-teal border-teal/25 bg-teal/8";
   const atSeconds =
     rideStartMs !== undefined

@@ -51,6 +51,7 @@ private struct LocationSnapshot: Sendable {
 @MainActor
 final class RideCaptureService: NSObject, ObservableObject {
     @Published private(set) var isRecording = false
+    @Published private(set) var isPaused = false
     @Published private(set) var startedAt: Date?
     @Published private(set) var elapsedS: TimeInterval = 0
     @Published private(set) var distanceM: Double = 0
@@ -61,6 +62,8 @@ final class RideCaptureService: NSObject, ObservableObject {
     @Published private(set) var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published private(set) var errorMessage: String?
     @Published private(set) var isMotionActive = false
+    @Published private(set) var liveRoute: [[Double]] = []
+    @Published private(set) var speedHistory: [Double] = []
 
     private let store: LocalRideStore
     private let locationManager = CLLocationManager()
@@ -74,6 +77,8 @@ final class RideCaptureService: NSObject, ObservableObject {
     private var mode: RideMode = .motorcycle
     private var lastLocation: LocationSnapshot?
     private var lastMotion: MotionSnapshot?
+    private var pausedAt: Date?
+    private var pausedDurationS: TimeInterval = 0
     private var authorizationContinuation: CheckedContinuation<CLAuthorizationStatus, Never>?
 
     init(store: LocalRideStore) {
@@ -89,6 +94,14 @@ final class RideCaptureService: NSObject, ObservableObject {
 
     var currentRideID: UUID { rideID }
     var currentMode: RideMode { mode }
+
+    func prepareForRecording() async -> Bool {
+        guard CLLocationManager.locationServicesEnabled() else {
+            return false
+        }
+        let status = await ensureAuthorization()
+        return status == .authorizedWhenInUse || status == .authorizedAlways
+    }
 
     func start(mode: RideMode, thresholds: EventThresholds) async throws {
         guard !isRecording else {
@@ -121,6 +134,11 @@ final class RideCaptureService: NSObject, ObservableObject {
         self.startedAt = Date()
         self.elapsedS = 0
         self.isRecording = true
+        self.isPaused = false
+        self.pausedAt = nil
+        self.pausedDurationS = 0
+        self.liveRoute = []
+        self.speedHistory = []
 
         locationManager.activityType = activityType(for: mode)
         locationManager.allowsBackgroundLocationUpdates = true
@@ -142,6 +160,42 @@ final class RideCaptureService: NSObject, ObservableObject {
         }
     }
 
+    func pause() {
+        guard isRecording, !isPaused else { return }
+        isPaused = true
+        pausedAt = Date()
+        refreshElapsed()
+        timer?.invalidate()
+        timer = nil
+        locationManager.stopUpdatingLocation()
+        locationManager.allowsBackgroundLocationUpdates = false
+        motionManager.stopDeviceMotionUpdates()
+        isMotionActive = false
+    }
+
+    func resume() {
+        guard isRecording, isPaused else { return }
+        if let pausedAt {
+            pausedDurationS += Date().timeIntervalSince(pausedAt)
+        }
+        self.pausedAt = nil
+        isPaused = false
+
+        lastLocation = nil
+        lastMotion = nil
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.startUpdatingLocation()
+        startMotion()
+
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.refreshElapsed()
+            }
+        }
+        refreshElapsed()
+    }
+
     func stop() async throws -> Ride {
         guard isRecording else {
             throw CaptureError.notRecording
@@ -160,11 +214,18 @@ final class RideCaptureService: NSObject, ObservableObject {
             throw CaptureError.noData
         }
 
+        let currentPause = pausedAt.map { endedAt.timeIntervalSince($0) } ?? 0
+        let totalPausedS = pausedDurationS + currentPause
+        isPaused = false
+        pausedAt = nil
+        pausedDurationS = 0
+
         let stats = RideStatsCalculator.compute(
             samples: samples,
             startedAt: startedAt,
             endedAt: endedAt,
-            mode: mode
+            mode: mode,
+            pausedDurationS: totalPausedS
         )
         let score = RideScoring.rideScore(events: events)
         let ride = Ride(
@@ -189,6 +250,7 @@ final class RideCaptureService: NSObject, ObservableObject {
 
         samples = []
         events = []
+        liveRoute = []
         await store.clearActiveSession()
         return ride
     }
@@ -225,7 +287,14 @@ final class RideCaptureService: NSObject, ObservableObject {
 
     func refreshElapsed() {
         guard let startedAt else { return }
-        elapsedS = max(0, Date().timeIntervalSince(startedAt))
+        let reference = pausedAt ?? Date()
+        elapsedS = max(0, reference.timeIntervalSince(startedAt) - pausedDurationS)
+
+        guard isRecording, !isPaused else { return }
+        speedHistory.append(currentSpeedKph)
+        if speedHistory.count > 60 {
+            speedHistory.removeFirst(speedHistory.count - 60)
+        }
     }
 
     private func ensureAuthorization() async -> CLAuthorizationStatus {
@@ -272,8 +341,8 @@ final class RideCaptureService: NSObject, ObservableObject {
     }
 
     private func handleMotion(_ snapshot: MotionSnapshot?, error: String?) {
-        if let error {
-            errorMessage = error
+        if snapshot == nil, error != nil {
+            errorMessage = CaptureError.motionUnavailable.localizedDescription
         }
         if let snapshot {
             lastMotion = snapshot
@@ -284,6 +353,7 @@ final class RideCaptureService: NSObject, ObservableObject {
     private func handleLocations(_ snapshots: [LocationSnapshot]) {
         guard let latest = snapshots.last else { return }
 
+        var route = liveRoute
         for snapshot in snapshots {
             if let previous = lastLocation {
                 distanceM += GeoMath.distanceMeters(
@@ -294,7 +364,12 @@ final class RideCaptureService: NSObject, ObservableObject {
                 )
             }
             lastLocation = snapshot
+            route.append([snapshot.latitude, snapshot.longitude])
         }
+        if route.count > 128 {
+            route.removeFirst(route.count - 128)
+        }
+        liveRoute = route
 
         if latest.speedMps != nil {
             currentSpeedKph = max(0, (latest.speedMps ?? 0) * 3.6)
@@ -414,9 +489,17 @@ extension RideCaptureService: CLLocationManagerDelegate {
         _ manager: CLLocationManager,
         didFailWithError error: Error
     ) {
-        let message = error.localizedDescription
-        Task { @MainActor in
-            self.errorMessage = message
+        guard let clError = error as? CLError else { return }
+
+        switch clError.code {
+        case .locationUnknown:
+            return
+        case .denied:
+            Task { @MainActor in
+                self.errorMessage = CaptureError.locationDenied.localizedDescription
+            }
+        default:
+            return
         }
     }
 }

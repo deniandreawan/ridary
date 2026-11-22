@@ -5,14 +5,15 @@ import {
   Route as RouteIcon,
   TimerReset
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { EmptyState, SectionHeader } from "../components/Banners";
 import { EventCard } from "../components/EventCard";
 import { RiskMap } from "../components/RiskMap";
+import { RouteArt } from "../components/RouteArt";
 import { ScoreRing } from "../components/ScoreRing";
 import { SourceBadge } from "../components/SourceBadge";
-import { StatCard } from "../components/StatCard";
 import { useApp } from "../context/AppContext";
 import { generateRideSnapshot, type SnapshotResult } from "../lib/ai";
 import {
@@ -151,21 +152,29 @@ export default function RidesPage() {
                 className={`focus-ring mb-1 w-full rounded-xl border px-3 py-3 text-left transition ${
                   active
                     ? "border-accent/30 bg-accent/8"
-                    : "border-transparent hover:border-line hover:bg-white/5"
+                    : "border-transparent hover:border-line hover:bg-ink/5"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-paper">
-                    {formatDateTime(ride.startedAtMs)}
-                  </span>
-                  <span className="font-mono text-[10px] text-muted">
-                    {ride.score}
-                  </span>
-                </div>
-                <div className="mt-1 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                  <span>{ride.mode}</span>
-                  <span>·</span>
-                  <span>{formatDistance(ride.distanceM)}</span>
+                <div className="flex items-center gap-3">
+                  <RouteArt
+                    route={ride.routePreview}
+                    className="h-11 w-14 shrink-0 rounded-lg border border-line"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-xs font-semibold text-paper">
+                        {formatDateTime(ride.startedAtMs)}
+                      </span>
+                      <span className="font-mono text-[10px] text-muted">
+                        {ride.score}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+                      <span>{ride.mode}</span>
+                      <span>·</span>
+                      <span>{formatDistance(ride.distanceM)}</span>
+                    </div>
+                  </div>
                 </div>
               </button>
             );
@@ -173,29 +182,14 @@ export default function RidesPage() {
         </aside>
 
         <div className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              label="Distance"
-              value={formatDistance(selected.distanceM)}
-              icon={RouteIcon}
-            />
-            <StatCard
-              label="Duration"
-              value={formatDuration(selected.durationS)}
-              icon={TimerReset}
-            />
-            <StatCard
-              label="Avg speed"
-              value={formatSpeed(selected.avgSpeedKph)}
-              icon={Gauge}
-            />
-            <StatCard
-              label="Max speed"
-              value={formatSpeed(selected.maxSpeedKph)}
-              icon={Gauge}
-              tone="text-accent"
-            />
-          </div>
+          <section className="surface p-5">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <RideStat icon={<RouteIcon size={15} />} label="Distance" value={formatDistance(selected.distanceM)} />
+              <RideStat icon={<TimerReset size={15} />} label="Duration" value={formatDuration(selected.durationS)} />
+              <RideStat icon={<Gauge size={15} />} label="Avg speed" value={formatSpeed(selected.avgSpeedKph)} />
+              <RideStat icon={<Gauge size={15} />} label="Max speed" value={formatSpeed(selected.maxSpeedKph)} />
+            </div>
+          </section>
 
           <section className="surface p-4">
             <SectionHeader
@@ -225,7 +219,7 @@ export default function RidesPage() {
                 type="button"
                 onClick={() => void runReview()}
                 disabled={reviewBusy}
-                className="focus-ring inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-accent/90 disabled:opacity-60"
+                className="focus-ring inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
               >
                 {reviewBusy ? (
                   "Reviewing…"
@@ -338,6 +332,26 @@ export default function RidesPage() {
             </div>
           </section>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function RideStat({
+  icon,
+  label,
+  value
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-1.5 text-muted">{icon}</div>
+      <div className="mt-2 font-mono text-xl font-semibold text-paper">{value}</div>
+      <div className="mt-1 text-[9px] font-medium uppercase tracking-[0.1em] text-muted">
+        {label}
       </div>
     </div>
   );

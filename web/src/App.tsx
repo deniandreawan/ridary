@@ -31,9 +31,9 @@ import PrivacyPage from "./pages/PrivacyPage";
 import RidesPage from "./pages/RidesPage";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Overview", icon: Activity },
+  { to: "/", label: "Home", icon: Activity },
   { to: "/rides", label: "Rides", icon: Map },
-  { to: "/credential", label: "Credential", icon: ShieldCheck },
+  { to: "/credential", label: "Proof", icon: ShieldCheck },
   { to: "/privacy", label: "Privacy", icon: Cpu }
 ];
 
@@ -57,7 +57,7 @@ function DashboardLayout() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-line bg-ink/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center justify-between gap-4">
             <Logo />
@@ -93,7 +93,7 @@ function DashboardLayout() {
                   `focus-ring flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition ${
                     isActive
                       ? "bg-card-soft text-paper"
-                      : "text-muted hover:bg-white/5 hover:text-paper"
+                      : "text-muted hover:bg-ink/5 hover:text-paper"
                   }`
                 }
               >
@@ -166,7 +166,7 @@ function DashboardLayout() {
 function PublicShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
-      <header className="border-b border-line bg-ink/80 backdrop-blur-xl">
+      <header className="border-b border-line bg-canvas/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
           <Logo compact />
           <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-teal">

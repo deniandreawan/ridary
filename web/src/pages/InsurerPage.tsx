@@ -210,7 +210,7 @@ export default function InsurerPage() {
             type="button"
             onClick={() => void verify()}
             disabled={busy}
-            className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-accent/90 disabled:opacity-60"
+            className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
           >
             <ShieldCheck size={14} />
             {busy ? "Verifying…" : "Verify signature"}

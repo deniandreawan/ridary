@@ -26,8 +26,8 @@ describe("format", () => {
   });
 
   it("maps score colors", () => {
-    expect(scoreColor(95)).toBe("#5be3c0");
-    expect(scoreColor(20)).toBe("#ff6b6b");
+    expect(scoreColor(95)).toBe("#00796b");
+    expect(scoreColor(20)).toBe("#d92d20");
   });
 
   it("formats a credential period", () => {

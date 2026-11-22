@@ -4,8 +4,8 @@ import type { InferenceSource } from "../types";
 const STYLES: Record<InferenceSource, string> = {
   on_device: "border-teal/30 bg-teal/10 text-teal",
   in_cloud: "border-accent/30 bg-accent/10 text-accent",
-  fallback: "border-white/15 bg-white/5 text-muted",
-  deterministic: "border-white/15 bg-white/5 text-muted"
+  fallback: "border-line bg-ink/5 text-muted",
+  deterministic: "border-line bg-ink/5 text-muted"
 };
 
 export function SourceBadge({ source }: { source: InferenceSource }) {

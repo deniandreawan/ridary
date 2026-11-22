@@ -67,7 +67,7 @@ struct AuthView: View {
                     } label: {
                         if app.authBusy {
                             ProgressView()
-                                .tint(.black)
+                                .tint(RidaryTheme.onSky)
                         } else {
                             Text(isCreatingAccount ? "Create account" : "Sign in")
                         }

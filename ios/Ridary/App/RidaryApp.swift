@@ -1,8 +1,13 @@
 import SwiftUI
+import UIKit
 
 @main
 struct RidaryApp: App {
     @StateObject private var app = AppEnvironment()
+
+    init() {
+        UIScrollView.appearance().bounces = false
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -13,7 +18,7 @@ struct RidaryApp: App {
                 .task {
                     await app.bootstrap()
                 }
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(.light)
         }
     }
 }

@@ -10,7 +10,7 @@ struct RootView: View {
             } else if app.userID == nil {
                 AuthView()
             } else {
-                MainTabView()
+                MainView()
             }
         }
         .ridaryScreenBackground()

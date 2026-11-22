@@ -6,7 +6,7 @@ struct EventRow: View {
     private var tint: Color {
         if event.severity >= 4 { return RidaryTheme.danger }
         if event.severity >= 3 { return RidaryTheme.warning }
-        return RidaryTheme.teal
+        return RidaryTheme.skyDeep
     }
 
     var body: some View {
@@ -43,7 +43,7 @@ struct RiskMomentRow: View {
     private var tint: Color {
         if moment.severity >= 4 { return RidaryTheme.danger }
         if moment.severity >= 3 { return RidaryTheme.warning }
-        return RidaryTheme.teal
+        return RidaryTheme.skyDeep
     }
 
     var body: some View {

@@ -85,7 +85,7 @@ export default function CredentialPage() {
             type="button"
             onClick={() => void issue()}
             disabled={busyIssue || demoMode}
-            className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-white/20 disabled:opacity-50"
+            className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-50"
           >
             <ShieldCheck size={14} className="text-teal" />
             {busyIssue ? "Issuing…" : "Issue new credential"}
@@ -135,7 +135,7 @@ export default function CredentialPage() {
                 type="button"
                 onClick={() => void verify()}
                 disabled={busyVerify}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card-soft px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-white/20 disabled:opacity-60"
+                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card-soft px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-60"
               >
                 <ShieldCheck size={14} />
                 {busyVerify ? "Verifying…" : "Verify signature"}
@@ -144,7 +144,7 @@ export default function CredentialPage() {
                 type="button"
                 onClick={() => void shareCredential()}
                 disabled={busyShare}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-ink transition hover:bg-accent/90 disabled:opacity-60"
+                className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
               >
                 <Share2 size={14} />
                 {busyShare ? "Creating link…" : "Share with insurer"}
@@ -248,7 +248,7 @@ export default function CredentialPage() {
               type="button"
               onClick={() => void issue()}
               disabled={busyIssue || demoMode}
-              className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-semibold text-ink transition hover:bg-accent/90 disabled:opacity-50"
+              className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-50"
             >
               <ShieldCheck size={15} />
               {busyIssue ? "Issuing…" : "Issue credential"}
