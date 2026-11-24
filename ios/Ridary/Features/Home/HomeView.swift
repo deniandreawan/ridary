@@ -1,3 +1,4 @@
+import CoreLocation
 import SwiftUI
 import UIKit
 
@@ -14,6 +15,8 @@ struct HomeView: View {
     @State private var showAskRidary = false
     @State private var selectedRide: Ride?
     @State private var showRideSummary = false
+    @State private var swipedRideID: UUID?
+    @State private var ridePendingDeletion: Ride?
 
     var body: some View {
         GeometryReader { geometry in
@@ -50,13 +53,23 @@ struct HomeView: View {
             .background(alignment: .top) {
                 RideMapView(
                     route: [],
-                    height: containerHeight + geometry.safeAreaInsets.top + 90,
+                    height: mapHeight(containerHeight, topInset: geometry.safeAreaInsets.top),
                     interactive: true,
-                    focus: location.coordinate,
+                    focus: homeCoordinate,
                     focusRevision: recenterRevision,
-                    showsUserLocation: location.isAuthorized
+                    showsUserLocation: false,
+                    currentCoordinate: homeCoordinate,
+                    routeSegments: capture.isRecording ? capture.liveRouteSegments : [],
+                    followsLatest: capture.isRecording,
+                    followRevision: capture.liveRouteRevision
                 )
                 .ignoresSafeArea(edges: [.top, .horizontal])
+                .accessibilityIdentifier("home-map")
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        collapseSheetToPeek()
+                    }
+                )
             }
             .ignoresSafeArea(edges: .bottom)
         }
@@ -73,10 +86,28 @@ struct HomeView: View {
                 RideSummaryView(ride: selectedRide)
             }
         }
-        .sheet(item: $app.lastCompletedRide) { ride in
+        .fullScreenCover(item: $app.lastCompletedRide) { ride in
             NavigationStack {
-                RideSummaryView(ride: ride)
+                RideSummaryView(ride: ride, isModal: true)
             }
+        }
+        .alert(
+            "Delete this ride?",
+            isPresented: Binding(
+                get: { ridePendingDeletion != nil },
+                set: { if !$0 { ridePendingDeletion = nil } }
+            )
+        ) {
+            Button("Delete ride", role: .destructive) {
+                guard let ride = ridePendingDeletion else { return }
+                ridePendingDeletion = nil
+                Task { await app.deleteRide(ride) }
+            }
+            Button("Cancel", role: .cancel) {
+                ridePendingDeletion = nil
+            }
+        } message: {
+            Text(deleteConfirmationMessage)
         }
         .onAppear {
             location.start()
@@ -87,6 +118,38 @@ struct HomeView: View {
         }
         .onChange(of: location.revision) { _, _ in
             recenterRevision += 1
+        }
+        .onChange(of: sheetDetent) { _, _ in
+            swipedRideID = nil
+        }
+        .onChange(of: showRideFlow) { _, presented in
+            guard !presented, capture.isRecording else { return }
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.88)) {
+                sheetDetent = .peek
+            }
+        }
+    }
+
+    private var homeCoordinate: CLLocationCoordinate2D? {
+        if capture.isRecording, let live = capture.liveCoordinate {
+            return live
+        }
+        return location.coordinate
+    }
+
+    private func mapHeight(_ containerHeight: CGFloat, topInset: CGFloat) -> CGFloat {
+        let sheetHeight = RidarySheetMetrics.height(
+            for: sheetDetent,
+            container: containerHeight
+        )
+        let visible = containerHeight - sheetHeight
+        return max(140, visible + topInset + 24)
+    }
+
+    private func collapseSheetToPeek() {
+        guard sheetDetent != .peek else { return }
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.88)) {
+            sheetDetent = .peek
         }
     }
 
@@ -114,6 +177,7 @@ struct HomeView: View {
 
             if capture.isRecording {
                 Button {
+                    swipedRideID = nil
                     showRideFlow = true
                 } label: {
                     HStack(spacing: 7) {
@@ -129,6 +193,7 @@ struct HomeView: View {
                 .accessibilityLabel("Open live ride")
             } else {
                 Button {
+                    swipedRideID = nil
                     showRideFlow = true
                 } label: {
                     HStack(spacing: 7) {
@@ -150,10 +215,12 @@ struct HomeView: View {
     private var sheetHeader: some View {
         HStack(spacing: 10) {
             AskRidaryEntryBar {
+                swipedRideID = nil
                 showAskRidary = true
             }
 
             Button {
+                swipedRideID = nil
                 showProfile = true
             } label: {
                 Text(settings.profileInitials)
@@ -196,13 +263,28 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(Array(rides.enumerated()), id: \.element.id) { index, ride in
-                        HomeRideRow(ride: ride)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
+                        SwipeToDeleteRideRow(
+                            ride: ride,
+                            isOpen: swipedRideID == ride.id,
+                            onOpen: {
+                                swipedRideID = ride.id
+                            },
+                            onClose: {
+                                if swipedRideID == ride.id {
+                                    swipedRideID = nil
+                                }
+                            },
+                            onTap: {
+                                swipedRideID = nil
                                 selectedRide = ride
                                 showRideSummary = true
+                            },
+                            onDelete: {
+                                swipedRideID = nil
+                                ridePendingDeletion = ride
                             }
-                            .accessibilityAddTraits(.isButton)
+                        )
+                        .padding(.horizontal, -20)
 
                         if index < rides.count - 1 {
                             Divider().overlay(RidaryTheme.border)
@@ -212,6 +294,16 @@ struct HomeView: View {
             }
         }
         .padding(.top, 6)
+    }
+
+    private var deleteConfirmationMessage: String {
+        guard let ride = ridePendingDeletion else { return "" }
+        let incidentCount = app.incidents.filter { $0.rideID == ride.id }.count
+        if incidentCount == 0 {
+            return "This removes the ride from this iPhone. This can't be undone."
+        }
+        let records = incidentCount == 1 ? "incident record" : "incident records"
+        return "This also removes \(incidentCount) locked \(records) and evidence from this iPhone. This can't be undone."
     }
 
     private var emptyActivityState: some View {
@@ -238,6 +330,11 @@ struct HomeView: View {
     }
 
     private func recenterMap() {
+        if capture.isRecording {
+            recenterRevision += 1
+            return
+        }
+
         switch location.authorizationStatus {
         case .denied, .restricted:
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -247,6 +344,180 @@ struct HomeView: View {
             recenterRevision += 1
         @unknown default:
             location.requestCurrentLocation()
+        }
+    }
+}
+
+private struct HorizontalPanGesture: UIGestureRecognizerRepresentable {
+    let onChanged: (CGFloat) -> Void
+    let onEnded: (CGFloat, CGFloat) -> Void
+
+    func makeCoordinator(converter: CoordinateSpaceConverter) -> Coordinator {
+        Coordinator()
+    }
+
+    func makeUIGestureRecognizer(context: Context) -> UIPanGestureRecognizer {
+        let pan = UIPanGestureRecognizer()
+        pan.delegate = context.coordinator
+        pan.maximumNumberOfTouches = 1
+        pan.cancelsTouchesInView = false
+        pan.delaysTouchesBegan = false
+        pan.delaysTouchesEnded = false
+        return pan
+    }
+
+    func handleUIGestureRecognizerAction(
+        _ recognizer: UIPanGestureRecognizer,
+        context: Context
+    ) {
+        let translation = context.converter.translation(in: .global)?.x ?? 0
+        let velocity = context.converter.velocity(in: .global)?.x ?? 0
+
+        switch recognizer.state {
+        case .began, .changed:
+            onChanged(translation)
+        case .ended:
+            onEnded(translation, velocity)
+        case .cancelled, .failed:
+            onEnded(translation, 0)
+        default:
+            break
+        }
+    }
+
+    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            guard let pan = gestureRecognizer as? UIPanGestureRecognizer else {
+                return true
+            }
+            let translation = pan.translation(in: pan.view)
+            let velocity = pan.velocity(in: pan.view)
+            let horizontal = abs(velocity.x) + abs(translation.x) * 2
+            let vertical = abs(velocity.y) + abs(translation.y) * 2
+            return horizontal > vertical
+        }
+
+        func gestureRecognizer(
+            _ gestureRecognizer: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+        ) -> Bool {
+            true
+        }
+    }
+}
+
+private struct SwipeToDeleteRideRow: View {
+    let ride: Ride
+    let isOpen: Bool
+    let onOpen: () -> Void
+    let onClose: () -> Void
+    let onTap: () -> Void
+    let onDelete: () -> Void
+
+    @State private var dragOffset: CGFloat = 0
+
+    private let actionWidth: CGFloat = 92
+    private let spring = Animation.spring(response: 0.28, dampingFraction: 0.86)
+
+    private var offset: CGFloat {
+        let base = isOpen ? -actionWidth : 0
+        return min(0, max(-actionWidth, base + dragOffset))
+    }
+
+    var body: some View {
+        ZStack(alignment: .trailing) {
+            deleteAction
+
+            HomeRideRow(ride: ride)
+                .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(RidaryTheme.surface)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if isOpen {
+                        onClose()
+                    } else {
+                        onTap()
+                    }
+                }
+                .gesture(
+                    HorizontalPanGesture(
+                        onChanged: { translation in
+                            let base = isOpen ? -actionWidth : 0
+                            dragOffset = min(0, max(-actionWidth, base + translation))
+                        },
+                        onEnded: { translation, velocity in
+                            let predicted = translation + velocity * 0.15
+
+                            if isOpen {
+                                if translation > actionWidth * 0.25 || predicted > 60 {
+                                    close()
+                                } else {
+                                    open()
+                                }
+                            } else if translation < -actionWidth * 0.25 || predicted < -60 {
+                                open()
+                            } else {
+                                close()
+                            }
+                        }
+                    )
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(accessibilityDescription)
+                .accessibilityHint("Swipe left for actions")
+                .accessibilityAddTraits(.isButton)
+                .accessibilityIdentifier("ride-row")
+                .accessibilityAction(named: "Delete ride") {
+                    onDelete()
+                }
+                .offset(x: offset)
+        }
+        .clipped()
+        .animation(spring, value: isOpen)
+    }
+
+    private var accessibilityDescription: String {
+        let date = RidaryFormatters.rideDate.string(from: ride.startedAt)
+        let distance = RidaryFormatters.distance(meters: ride.distanceM)
+        return "\(date), \(ride.mode.title), \(distance), \(ride.durationText), score \(ride.score)"
+    }
+
+    private var deleteAction: some View {
+        Button(action: onDelete) {
+            VStack(spacing: 4) {
+                Image(systemName: "trash.fill")
+                    .font(.system(size: 14, weight: .bold))
+                Text("Delete")
+                    .font(.system(size: 12, weight: .semibold, design: .default))
+            }
+            .foregroundStyle(RidaryTheme.onAccent)
+            .frame(width: actionWidth)
+            .frame(maxHeight: .infinity)
+            .background(RidaryTheme.danger)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!isOpen)
+        .allowsHitTesting(isOpen)
+        .accessibilityHidden(!isOpen)
+        .accessibilityLabel("Delete ride")
+    }
+
+    private func open() {
+        if !isOpen {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
+        withAnimation(spring) {
+            dragOffset = 0
+            onOpen()
+        }
+    }
+
+    private func close() {
+        withAnimation(spring) {
+            dragOffset = 0
+            onClose()
         }
     }
 }

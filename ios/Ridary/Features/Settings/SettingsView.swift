@@ -3,8 +3,10 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var app: AppEnvironment
     @EnvironmentObject private var settings: AppSettings
+    @Environment(\.dismiss) private var dismiss
 
     @State private var showSignOut = false
+    @State private var scrollOffset: CGFloat = 0
 
     private var appVersion: String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -13,21 +15,65 @@ struct SettingsView: View {
         return "\(version) (\(build))"
     }
 
+    private var isTopBarSolid: Bool {
+        scrollOffset > 120
+    }
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                riderCard
-                privacyCard
-                aiCard
-                firebaseCard
-                aboutCard
+        ZStack(alignment: .top) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    heroCard
+
+                    VStack(spacing: 0) {
+                        controlsSection
+                            .padding(.horizontal, 24)
+                            .padding(.top, 26)
+                            .padding(.bottom, 22)
+
+                        if app.isFirebaseConfigured {
+                            sectionDivider
+
+                            signOutRow
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 18)
+                        }
+
+                        sectionDivider
+
+                        Text("Version \(appVersion)")
+                            .font(.system(size: 12, weight: .regular, design: .default))
+                            .foregroundStyle(RidaryTheme.textTertiary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 20)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(RidaryTheme.surface)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 26,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 26
+                        )
+                    )
+                    .padding(.top, -26)
+                }
+                .accessibilityIdentifier("settings-screen")
             }
-            .padding(20)
+            .scrollIndicators(.hidden)
+            .ignoresSafeArea(edges: .top)
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, newValue in
+                scrollOffset = newValue
+            }
+
+            topBar
         }
-        .background(RidaryTheme.background.ignoresSafeArea())
-        .navigationTitle("Settings")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar(.visible, for: .navigationBar)
+        .background(RidaryTheme.surface.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .confirmationDialog(
             "Sign out of Ridary?",
             isPresented: $showSignOut,
@@ -42,141 +88,230 @@ struct SettingsView: View {
         }
     }
 
-    private var riderCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            RidarySectionHeader(title: "Rider", subtitle: "Used for local labels and ride profiles.")
-            TextField("Your name", text: $settings.displayName)
-                .textInputAutocapitalization(.words)
-                .padding(14)
-                .background(RidaryTheme.backgroundLifted)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    private var topBar: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .accessibilityLabel("Close settings")
 
-            Picker("Default mode", selection: $settings.mode) {
-                ForEach(RideMode.allCases) { mode in
-                    Label(mode.title, systemImage: mode.icon).tag(mode)
+                Spacer()
+
+                if isTopBarSolid {
+                    Text("Settings")
+                        .font(.system(size: 13, weight: .medium, design: .default))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+                        .transition(.opacity)
+
+                    Spacer()
+
+                    Color.clear
+                        .frame(width: 42, height: 28)
                 }
             }
-            .pickerStyle(.menu)
-            .tint(RidaryTheme.accent)
+            .padding(.horizontal, 20)
+            .padding(.top, 6)
+            .padding(.bottom, 10)
+
+            if isTopBarSolid {
+                Rectangle()
+                    .fill(RidaryTheme.border.opacity(0.65))
+                    .frame(height: 1)
+            }
         }
-        .ridaryCard()
+        .background(
+            RidaryTheme.surface
+                .opacity(isTopBarSolid ? 1 : 0)
+                .ignoresSafeArea(edges: .top)
+        )
+        .animation(.easeOut(duration: 0.18), value: isTopBarSolid)
     }
 
-    private var privacyCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            RidarySectionHeader(
-                title: "Privacy",
-                subtitle: "Raw routes and sensor windows stay on this device."
+    private var heroCard: some View {
+        VStack(spacing: 14) {
+            Text(app.isLocalDemo ? "Local demo" : "Ridary account")
+                .font(.system(size: 12, weight: .medium, design: .default))
+                .foregroundStyle(RidaryTheme.skyDeep)
+
+            ZStack {
+                Circle()
+                    .fill(RidaryTheme.surface)
+                    .frame(width: 56, height: 56)
+                    .shadow(color: RidaryTheme.sky.opacity(0.14), radius: 12, x: 0, y: 4)
+
+                Text(settings.profileInitials)
+                    .font(.system(size: 22, weight: .semibold, design: .rounded))
+                    .foregroundStyle(RidaryTheme.sky)
+            }
+            .padding(.vertical, 2)
+
+            VStack(spacing: 4) {
+                Text(settings.displayName.isEmpty ? "Rider" : settings.displayName)
+                    .font(.system(size: 30, weight: .semibold, design: .default))
+                    .tracking(-0.6)
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Text(app.onDeviceAvailability.title)
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
+            }
+        }
+        .padding(.top, 88)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 36)
+        .frame(maxWidth: .infinity)
+        .background(
+            LinearGradient(
+                colors: [
+                    RidaryTheme.skySoft,
+                    RidaryTheme.skySoft.opacity(0.45)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
             )
-
-            Toggle(isOn: $settings.shareDerived) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Share anonymized safety points")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Sends event type, severity, confidence, and a coarse geohash. No route, no account identity.")
-                        .font(.caption)
-                        .foregroundStyle(RidaryTheme.textSecondary)
-                }
-            }
-            .tint(RidaryTheme.skyDeep)
-
-            Toggle(isOn: $settings.shareRoute) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Share a simplified route with the dashboard")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Only when the first toggle is on. The web dashboard can then draw your ride preview.")
-                        .font(.caption)
-                        .foregroundStyle(RidaryTheme.textSecondary)
-                }
-            }
-            .tint(RidaryTheme.accent)
-
-            Text("Evidence files, raw samples, and incident notes never leave this iPhone unless you export them.")
-                .font(.caption2)
-                .foregroundStyle(RidaryTheme.textTertiary)
-        }
-        .ridaryCard()
+        )
     }
 
-    private var aiCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            RidarySectionHeader(title: "Hybrid AI", subtitle: "Private at the edge, collective in the cloud.")
-            HStack(alignment: .top, spacing: 10) {
-                Image(systemName: app.onDeviceAvailability.isAvailable ? "iphone.gen3" : "cloud")
-                    .foregroundStyle(
-                        app.onDeviceAvailability.isAvailable
-                            ? RidaryTheme.skyDeep
-                            : RidaryTheme.accent
-                    )
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(app.onDeviceAvailability.title)
-                        .font(.subheadline.weight(.semibold))
-                    Text(app.onDeviceAvailability.detail)
-                        .font(.caption)
-                        .foregroundStyle(RidaryTheme.textSecondary)
-                }
+    private var controlsSection: some View {
+        VStack(spacing: 18) {
+            HStack(spacing: 14) {
+                Image(systemName: "person.fill")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(RidaryTheme.sky)
+                    .frame(width: 34, height: 34)
+                    .background(RidaryTheme.skySoft)
+                    .clipShape(Circle())
+
+                Text("Name")
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Spacer(minLength: 12)
+
+                TextField("Rider", text: $settings.displayName)
+                    .textInputAutocapitalization(.words)
+                    .font(.system(size: 15, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 180)
             }
-            Text("Cloud model: \(app.remoteConfig.cloudModelName)")
-                .font(.caption2.monospaced())
-                .foregroundStyle(RidaryTheme.textTertiary)
-            if let message = app.remoteConfig.errorMessage {
-                Text("Remote Config: \(message)")
-                    .font(.caption2)
-                    .foregroundStyle(RidaryTheme.warning)
+
+            Divider().overlay(RidaryTheme.border.opacity(0.65))
+
+            HStack(spacing: 14) {
+                Image(systemName: settings.mode.icon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(RidaryTheme.sky)
+                    .frame(width: 34, height: 34)
+                    .background(RidaryTheme.skySoft)
+                    .clipShape(Circle())
+
+                Text("Default mode")
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Spacer(minLength: 12)
+
+                Menu {
+                    ForEach(RideMode.allCases) { mode in
+                        Button {
+                            settings.mode = mode
+                        } label: {
+                            Label(mode.title, systemImage: mode.icon)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(settings.mode.title)
+                            .font(.system(size: 15, weight: .regular, design: .default))
+
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundStyle(RidaryTheme.textSecondary)
+                }
+                .accessibilityLabel("Default mode")
+            }
+
+            Divider().overlay(RidaryTheme.border.opacity(0.65))
+
+            HStack(spacing: 14) {
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(RidaryTheme.sky)
+                    .frame(width: 34, height: 34)
+                    .background(RidaryTheme.skySoft)
+                    .clipShape(Circle())
+
+                Text("Share safety points")
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Spacer(minLength: 12)
+
+                Toggle("Share safety points", isOn: $settings.shareDerived)
+                    .labelsHidden()
+                    .tint(RidaryTheme.sky)
+            }
+
+            Divider().overlay(RidaryTheme.border.opacity(0.65))
+
+            HStack(spacing: 14) {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(RidaryTheme.sky)
+                    .frame(width: 34, height: 34)
+                    .background(RidaryTheme.skySoft)
+                    .clipShape(Circle())
+
+                Text("Share route preview")
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Spacer(minLength: 12)
+
+                Toggle("Share route preview", isOn: $settings.shareRoute)
+                    .labelsHidden()
+                    .tint(RidaryTheme.sky)
             }
         }
-        .ridaryCard()
     }
 
-    private var firebaseCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            RidarySectionHeader(
-                title: "Firebase",
-                subtitle: app.isFirebaseConfigured ? "Cloud services are connected." : "Local demo mode."
-            )
-            Text(app.firebaseStatus.detail)
-                .font(.caption)
-                .foregroundStyle(RidaryTheme.textSecondary)
+    private var signOutRow: some View {
+        Button {
+            showSignOut = true
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(RidaryTheme.danger)
+                    .frame(width: 34, height: 34)
+                    .background(RidaryTheme.danger.opacity(0.1))
+                    .clipShape(Circle())
 
-            if app.isFirebaseConfigured {
-                if let userID = app.userID {
-                    Text("User \(userID.prefix(12))…")
-                        .font(.caption2.monospaced())
-                        .foregroundStyle(RidaryTheme.textTertiary)
-                }
-                Button("Sign out") {
-                    showSignOut = true
-                }
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(RidaryTheme.danger)
-            } else {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("To enable cloud features:")
-                        .font(.caption.weight(.semibold))
-                    Text("1. Create a Firebase project and add an iOS app with bundle id app.ridary.ios.")
-                    Text("2. Download GoogleService-Info.plist into ios/Config/.")
-                    Text("3. Run xcodegen generate in ios/ and rebuild.")
-                    Text("4. Enable AI Logic and App Check (debug token) in the Firebase console.")
-                }
-                .font(.caption)
-                .foregroundStyle(RidaryTheme.textSecondary)
+                Text("Sign out")
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.danger)
+
+                Spacer()
             }
+            .contentShape(Rectangle())
         }
-        .ridaryCard()
+        .buttonStyle(.plain)
     }
 
-    private var aboutCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            RidarySectionHeader(title: "About")
-            Text("Ridary \(appVersion)")
-                .font(.footnote)
-            Text("Apache-2.0 · personal ride record, not legal or medical advice.")
-                .font(.caption)
-                .foregroundStyle(RidaryTheme.textSecondary)
-            Text("On-device AI runs only while the app is in the foreground. Background capture records sensors only.")
-                .font(.caption2)
-                .foregroundStyle(RidaryTheme.textTertiary)
-        }
-        .ridaryCard()
+    private var sectionDivider: some View {
+        Rectangle()
+            .fill(RidaryTheme.border.opacity(0.65))
+            .frame(height: 1)
+            .padding(.horizontal, 24)
     }
 }

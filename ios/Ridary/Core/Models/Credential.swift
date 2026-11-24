@@ -26,15 +26,28 @@ struct Credential: Codable, Identifiable, Sendable {
     }
 
     var periodText: String {
-        let formatter = ISO8601DateFormatter()
-        guard let start = formatter.date(from: periodStart),
-              let end = formatter.date(from: periodEnd) else {
+        guard let start = CredentialDateParser.date(from: periodStart),
+              let end = CredentialDateParser.date(from: periodEnd) else {
             return periodStart
         }
         let display = DateFormatter()
         display.dateStyle = .medium
         display.timeStyle = .none
         return "\(display.string(from: start)) – \(display.string(from: end))"
+    }
+}
+
+enum CredentialDateParser {
+    private static let fractional: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let standard = ISO8601DateFormatter()
+
+    static func date(from raw: String) -> Date? {
+        fractional.date(from: raw) ?? standard.date(from: raw)
     }
 }
 

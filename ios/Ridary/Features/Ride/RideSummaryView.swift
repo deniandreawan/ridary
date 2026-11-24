@@ -1,223 +1,409 @@
+import CoreLocation
 import SwiftUI
 
 struct RideSummaryView: View {
-    let ride: Ride
     @Environment(\.dismiss) private var dismiss
 
+    let ride: Ride
+    var isModal = false
+
+    @State private var scrollOffset: CGFloat = 0
+
+    private var headlineText: String {
+        ride.snapshot?.headline ?? "Ride captured"
+    }
+
+    private var summaryText: String {
+        ride.snapshot?.summary ?? ride.summary
+    }
+
+    private var scoreBand: String {
+        switch ride.score {
+        case 90...100: return "A"
+        case 80..<90: return "B"
+        case 70..<80: return "C"
+        default: return "D"
+        }
+    }
+
     private var shareText: String {
-        "Ridary ride: \(RidaryFormatters.distance(meters: ride.distanceM)) in \(ride.durationText). Safety score \(ride.score)/100."
+        "Ridary ride: \(RidaryFormatters.distance(meters: ride.distanceM)) in \(ride.durationText). Safety score \(ride.score)/100 (\(scoreBand) Band)."
+    }
+
+    private var mapMarkers: [RideMapMarker] {
+        guard !ride.routePreview.isEmpty else { return [] }
+        return Array(ride.events.enumerated()).compactMap { index, event in
+            let coord = coordinate(for: event, index: index, total: ride.events.count)
+            guard let coord else { return nil }
+            return RideMapMarker(
+                id: event.id,
+                coordinate: coord,
+                number: index + 1,
+                color: eventColor(event)
+            )
+        }
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                mapHero
-                VStack(alignment: .leading, spacing: 18) {
-                    statsStrip
-                    insightCard
-                    if !ride.events.isEmpty {
-                        timelineCard
+        ZStack(alignment: .top) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    RideMapView(
+                        route: ride.routePreview,
+                        height: 348,
+                        interactive: true,
+                        markers: mapMarkers
+                    )
+
+                    VStack(spacing: 0) {
+                        editorialIntro
+                            .padding(.horizontal, 28)
+                            .padding(.top, 26)
+                            .padding(.bottom, 24)
+
+                        sectionDivider
+
+                        if let snapshot = ride.snapshot {
+                            takeawayRow(snapshot)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 20)
+
+                            sectionDivider
+                        }
+
+                        highlightStrip
+                            .padding(.horizontal, 24)
+
+                        sectionDivider
+
+                        timelineSection
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 24)
+
+                        sectionDivider
+
+                        Text("This is a personal record, not a legal or insurance determination.")
+                            .font(.system(size: 12, weight: .regular, design: .default))
+                            .foregroundStyle(RidaryTheme.textTertiary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 20)
                     }
-                    shareRow
-                    disclaimer
+                    .frame(maxWidth: .infinity)
+                    .background(RidaryTheme.surface)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 26,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 26
+                        )
+                    )
+                    .padding(.top, -26)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 32)
+                .accessibilityIdentifier("ride-recap-screen")
             }
+            .scrollIndicators(.hidden)
+            .ignoresSafeArea(edges: .top)
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { _, newValue in
+                scrollOffset = newValue
+            }
+            .safeAreaInset(edge: .bottom) {
+                actionBar
+            }
+
+            topBar
         }
-        .background(RidaryTheme.background.ignoresSafeArea())
+        .background(RidaryTheme.surface.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    private var mapHero: some View {
-        ZStack(alignment: .top) {
-            RideMapView(route: ride.routePreview, height: 330, interactive: true)
-
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(RidaryFormatters.rideDate.string(from: ride.startedAt))
-                            .font(.system(size: 13, weight: .bold, design: .default))
-                        Text("\(ride.mode.title) · \(ride.durationText)")
-                            .font(RidaryType.caption)
-                            .foregroundStyle(RidaryTheme.textSecondary)
-                    }
-                    .padding(.horizontal, 13)
-                    .padding(.vertical, 10)
-                    .background(RidaryTheme.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(RidaryTheme.border, lineWidth: 1)
-                    )
-                    .shadow(color: RidaryTheme.shadow, radius: 10, x: 0, y: 4)
-
-                    Spacer()
-
-                    Button("Done") {
-                        dismiss()
-                    }
-                    .font(.system(size: 13, weight: .bold, design: .default))
-                    .foregroundStyle(RidaryTheme.textPrimary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(RidaryTheme.surface)
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(RidaryTheme.border, lineWidth: 1))
-                    .shadow(color: RidaryTheme.shadow, radius: 10, x: 0, y: 4)
+    private var topBar: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: isModal ? "xmark" : "chevron.left")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+                        .frame(width: 28, height: 28)
                 }
-                .padding(16)
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .accessibilityLabel(isModal ? "Close ride summary" : "Back")
 
                 Spacer()
 
-                HStack(alignment: .bottom) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(ride.snapshot?.headline ?? "Ride captured")
-                            .font(.system(size: 26, weight: .heavy, design: .default))
-                            .tracking(-0.6)
-                            .foregroundStyle(.white)
-                            .lineLimit(2)
-                        Text("Private snapshot")
-                            .font(RidaryType.caption)
-                            .foregroundStyle(.white.opacity(0.78))
-                    }
-                    Spacer(minLength: 12)
-                    ScoreRing(score: ride.score, size: 78, lineWidth: 7)
-                        .padding(8)
-                        .background(.white)
-                        .clipShape(Circle())
+                if isTopBarSolid {
+                    Text("\(ride.mode.title) · \(shortDateText)")
+                        .font(.system(size: 13, weight: .medium, design: .default))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+                        .transition(.opacity)
+
+                    Spacer()
                 }
-                .padding(16)
-                .background(
-                    LinearGradient(
-                        colors: [.clear, .black.opacity(0.58)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+
+                ShareLink(item: shareText) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .accessibilityLabel("Share recap")
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 6)
+            .padding(.bottom, 10)
+
+            if isTopBarSolid {
+                Rectangle()
+                    .fill(RidaryTheme.border.opacity(0.65))
+                    .frame(height: 1)
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .background(
+            RidaryTheme.surface
+                .opacity(isTopBarSolid ? 1 : 0)
+                .ignoresSafeArea(edges: .top)
+        )
+        .animation(.easeOut(duration: 0.18), value: isTopBarSolid)
     }
 
-    private var statsStrip: some View {
-        HStack(spacing: 0) {
-            SummaryMetric(value: RidaryFormatters.distance(meters: ride.distanceM), label: "distance")
-            summaryDivider
-            SummaryMetric(value: ride.durationText, label: "time")
-            summaryDivider
-            SummaryMetric(value: "\(Int(ride.avgSpeedKph))", label: "avg km/h")
-            summaryDivider
-            SummaryMetric(value: "\(Int(ride.maxSpeedKph))", label: "max km/h")
-        }
-        .ridaryCard(padding: 16)
+    private var isTopBarSolid: Bool {
+        scrollOffset > 190
     }
 
-    private var summaryDivider: some View {
-        Rectangle()
-            .fill(RidaryTheme.border)
-            .frame(width: 1, height: 34)
-    }
-
-    private var insightCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                RidarySectionHeader(
-                    title: "What your phone noticed",
-                    subtitle: "A short explanation from the private snapshot."
-                )
-                SourceBadge(source: ride.inferenceSource)
-            }
-
-            Text(ride.snapshot?.summary ?? ride.summary)
-                .font(RidaryType.body)
-                .foregroundStyle(RidaryTheme.textSecondary)
+    private var editorialIntro: some View {
+        VStack(spacing: 10) {
+            Text(headlineText)
+                .font(.system(size: 23, weight: .semibold, design: .default))
+                .tracking(-0.35)
+                .foregroundStyle(RidaryTheme.textPrimary)
+                .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
-            if let snapshot = ride.snapshot {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(snapshot.coachingTip)
-                        .font(RidaryType.bodyStrong)
-                    Text(snapshot.scoreRationale)
-                        .font(RidaryType.caption)
-                        .foregroundStyle(RidaryTheme.textTertiary)
-                }
-                .padding(13)
-                .background(RidaryTheme.accentSoft)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            Text(summaryText)
+                .font(.system(size: 15, weight: .regular, design: .default))
+                .lineSpacing(3)
+                .foregroundStyle(RidaryTheme.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 5) {
+                Image(systemName: "shield.fill")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(RidaryTheme.sky)
+
+                Text("\(ride.score) Safety · \(scoreBand) Band")
+                    .font(.system(size: 13, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Text("· \(ride.inferenceSource.label)")
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
             }
+            .padding(.top, 4)
         }
-        .ridaryCard(padding: 18)
+        .frame(maxWidth: .infinity)
     }
 
-    private var timelineCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            RidarySectionHeader(
-                title: "Ride timeline",
-                subtitle: "The moments the detector flagged."
+    private func takeawayRow(_ snapshot: RideSnapshot) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            Image(systemName: "shield.lefthalf.filled")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(RidaryTheme.sky)
+                .frame(width: 40, height: 40)
+                .background(RidaryTheme.skySoft)
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(snapshot.coachingTip)
+                    .font(.system(size: 15, weight: .medium, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(snapshot.scoreRationale)
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private var highlightStrip: some View {
+        HStack(spacing: 0) {
+            CenteredMetric(
+                value: "\(ride.score)",
+                label: "Safety · \(scoreBand) Band",
+                valueColor: RidaryTheme.skyDeep
             )
 
-            ForEach(Array(ride.events.enumerated()), id: \.element.id) { index, event in
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(spacing: 0) {
-                        Circle()
-                            .fill(eventColor(event))
-                            .frame(width: 9, height: 9)
-                            .padding(.top, 5)
-                        if index < ride.events.count - 1 {
-                            Rectangle()
-                                .fill(RidaryTheme.border)
-                                .frame(width: 1)
-                                .frame(maxHeight: .infinity)
-                        }
-                    }
-                    .frame(width: 10)
+            metricDivider
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(event.type.title)
-                                .font(RidaryType.bodyStrong)
-                            Spacer()
-                            Text("+\(max(0, Int(event.occurredAt.timeIntervalSince(ride.startedAt))))s")
-                                .font(RidaryType.mono)
-                                .foregroundStyle(RidaryTheme.textTertiary)
-                        }
-                        Text(event.summary)
-                            .font(RidaryType.caption)
+            CenteredMetric(
+                value: RidaryFormatters.distance(meters: ride.distanceM),
+                label: "\(ride.durationText) duration"
+            )
+
+            metricDivider
+
+            CenteredMetric(
+                value: "\(Int(ride.avgSpeedKph)) km/h",
+                label: "Avg · \(Int(ride.maxSpeedKph)) max"
+            )
+        }
+        .padding(.vertical, 18)
+    }
+
+    private var metricDivider: some View {
+        Rectangle()
+            .fill(RidaryTheme.border.opacity(0.65))
+            .frame(width: 1, height: 28)
+    }
+
+    private var sectionDivider: some View {
+        Rectangle()
+            .fill(RidaryTheme.border.opacity(0.65))
+            .frame(height: 1)
+            .padding(.horizontal, 24)
+    }
+
+    private var timelineSection: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Ride timeline")
+                    .font(.system(size: 17, weight: .semibold, design: .default))
+                    .foregroundStyle(RidaryTheme.textPrimary)
+
+                Spacer()
+
+                Text(ride.events.isEmpty ? "Smooth ride" : "\(ride.events.count) moment\(ride.events.count == 1 ? "" : "s")")
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
+            }
+
+            VStack(alignment: .leading, spacing: 0) {
+                RideTimelineNodeRow(
+                    time: "0:00",
+                    title: "Ride started",
+                    subtitle: "\(ride.mode.title) session · \(RidaryFormatters.rideDate.string(from: ride.startedAt))",
+                    badgeText: nil,
+                    badgeIcon: ride.mode.icon,
+                    badgeFill: RidaryTheme.skySoft,
+                    badgeForeground: RidaryTheme.sky,
+                    severityText: nil,
+                    severityColor: RidaryTheme.sky,
+                    showsConnectorBelow: true
+                )
+
+                if ride.events.isEmpty {
+                    RideTimelineNodeRow(
+                        time: formatOffset(max(1, Int(ride.durationS) / 2)),
+                        title: "Steady pace maintained",
+                        subtitle: "No hard braking, sharp turns, or impact spikes detected.",
+                        badgeText: nil,
+                        badgeIcon: "checkmark",
+                        badgeFill: RidaryTheme.skySoft,
+                        badgeForeground: RidaryTheme.sky,
+                        severityText: nil,
+                        severityColor: RidaryTheme.sky,
+                        showsConnectorBelow: true
+                    )
+                } else {
+                    ForEach(Array(ride.events.enumerated()), id: \.element.id) { index, event in
+                        let color = eventColor(event)
+                        let offsetSec = max(0, Int(event.occurredAt.timeIntervalSince(ride.startedAt)))
+                        RideTimelineNodeRow(
+                            time: formatOffset(offsetSec),
+                            title: event.type.title,
+                            subtitle: event.summary,
+                            badgeText: "\(index + 1)",
+                            badgeIcon: nil,
+                            badgeFill: color.opacity(0.14),
+                            badgeForeground: color,
+                            severityText: "Severity \(event.severity)",
+                            severityColor: color,
+                            showsConnectorBelow: true
+                        )
+                    }
+                }
+
+                RideTimelineNodeRow(
+                    time: ride.durationText,
+                    title: "Ride completed",
+                    subtitle: "\(RidaryFormatters.distance(meters: ride.distanceM)) recorded · Safety score \(ride.score)/100",
+                    badgeText: nil,
+                    badgeIcon: "flag.checkered",
+                    badgeFill: RidaryTheme.backgroundLifted,
+                    badgeForeground: RidaryTheme.textSecondary,
+                    severityText: nil,
+                    severityColor: RidaryTheme.textSecondary,
+                    showsConnectorBelow: false
+                )
+            }
+        }
+    }
+
+    private var actionBar: some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(RidaryTheme.border.opacity(0.65))
+                .frame(height: 1)
+
+            HStack(alignment: .center, spacing: 14) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("\(ride.score)")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(RidaryTheme.textPrimary)
+
+                        Text("/ 100 · \(scoreBand) Band")
+                            .font(.system(size: 13, weight: .regular, design: .default))
                             .foregroundStyle(RidaryTheme.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(.bottom, index == ride.events.count - 1 ? 0 : 6)
+
+                    Text("\(RidaryFormatters.distance(meters: ride.distanceM)) · \(ride.durationText)")
+                        .font(.system(size: 12, weight: .regular, design: .default))
+                        .foregroundStyle(RidaryTheme.textTertiary)
                 }
+
+                Spacer()
+
+                ShareLink(item: shareText) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("Share recap")
+                            .font(.system(size: 14, weight: .semibold, design: .default))
+                    }
+                    .foregroundStyle(RidaryTheme.onAccent)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .tint(RidaryTheme.sky)
             }
+            .padding(.horizontal, 24)
+            .padding(.top, 11)
+            .padding(.bottom, 8)
         }
-        .ridaryCard(padding: 18)
+        .background(RidaryTheme.surface.ignoresSafeArea(edges: .bottom))
     }
 
-    private var shareRow: some View {
-        HStack(spacing: 10) {
-            ShareLink(item: shareText) {
-                Label("Share recap", systemImage: "square.and.arrow.up")
-            }
-            .buttonStyle(RidaryPrimaryButtonStyle())
-
-            if !ride.events.isEmpty {
-                NavigationLink {
-                    HistoryView()
-                } label: {
-                    Label("All moments", systemImage: "clock.arrow.circlepath")
-                }
-                .buttonStyle(RidarySecondaryButtonStyle())
-            }
-        }
-    }
-
-    private var disclaimer: some View {
-        Text("This is a personal record, not a legal or insurance determination.")
-            .font(RidaryType.micro)
-            .foregroundStyle(RidaryTheme.textTertiary)
-            .frame(maxWidth: .infinity, alignment: .center)
+    private var shortDateText: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMM"
+        return formatter.string(from: ride.startedAt)
     }
 
     private func eventColor(_ event: RideEvent) -> Color {
@@ -225,26 +411,126 @@ struct RideSummaryView: View {
         if event.severity >= 3 { return RidaryTheme.warning }
         return RidaryTheme.skyDeep
     }
+
+    private func coordinate(for event: RideEvent, index: Int, total: Int) -> CLLocationCoordinate2D? {
+        let coords = ride.routePreview.compactMap { pair -> CLLocationCoordinate2D? in
+            guard pair.count == 2 else { return nil }
+            return CLLocationCoordinate2D(latitude: pair[0], longitude: pair[1])
+        }
+        guard !coords.isEmpty else { return nil }
+        if coords.count == 1 { return coords[0] }
+
+        let offsetSec = max(0, event.occurredAt.timeIntervalSince(ride.startedAt))
+        let progress: Double
+        if ride.durationS > 0, offsetSec > 0 {
+            progress = min(0.92, max(0.08, offsetSec / ride.durationS))
+        } else {
+            progress = Double(index + 1) / Double(total + 1)
+        }
+        let targetIndex = min(coords.count - 1, max(0, Int(round(progress * Double(coords.count - 1)))))
+        return coords[targetIndex]
+    }
+
+    private func formatOffset(_ seconds: Int) -> String {
+        let mins = seconds / 60
+        let secs = seconds % 60
+        return String(format: "+%d:%02d", mins, secs)
+    }
 }
 
-private struct SummaryMetric: View {
-    let value: String
-    let label: String
+private struct RideTimelineNodeRow: View {
+    let time: String
+    let title: String
+    let subtitle: String
+    let badgeText: String?
+    let badgeIcon: String?
+    let badgeFill: Color
+    let badgeForeground: Color
+    let severityText: String?
+    let severityColor: Color
+    let showsConnectorBelow: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(value)
-                .font(.system(size: 17, weight: .heavy, design: .rounded))
-                .foregroundStyle(RidaryTheme.textPrimary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(label)
-                .font(RidaryType.micro)
-                .foregroundStyle(RidaryTheme.textTertiary)
-                .textCase(.uppercase)
-                .tracking(0.6)
+        HStack(alignment: .top, spacing: 14) {
+            VStack(spacing: 0) {
+                ZStack {
+                    Circle()
+                        .fill(badgeFill)
+                        .frame(width: 34, height: 34)
+
+                    if let badgeText {
+                        Text(badgeText)
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(badgeForeground)
+                    } else if let badgeIcon {
+                        Image(systemName: badgeIcon)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(badgeForeground)
+                    }
+                }
+
+                if showsConnectorBelow {
+                    Rectangle()
+                        .fill(RidaryTheme.border.opacity(0.65))
+                        .frame(width: 1.5)
+                        .frame(maxHeight: .infinity)
+                        .padding(.vertical, 4)
+                }
+            }
+            .frame(width: 34)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center, spacing: 8) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .medium, design: .default))
+                        .foregroundStyle(RidaryTheme.textPrimary)
+
+                    if let severityText {
+                        Text(severityText)
+                            .font(.system(size: 11, weight: .medium, design: .default))
+                            .foregroundStyle(severityColor)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(severityColor.opacity(0.11))
+                            .clipShape(Capsule())
+                    }
+
+                    Spacer(minLength: 6)
+
+                    Text(time)
+                        .font(.system(size: 12, weight: .regular, design: .monospaced))
+                        .foregroundStyle(RidaryTheme.textTertiary)
+                }
+
+                Text(subtitle)
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(RidaryTheme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.bottom, showsConnectorBelow ? 18 : 2)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading, 10)
+    }
+}
+
+private struct CenteredMetric: View {
+    let value: String
+    let label: String
+    var valueColor: Color = RidaryTheme.textPrimary
+
+    var body: some View {
+        VStack(spacing: 3) {
+            Text(value)
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .foregroundStyle(valueColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+
+            Text(label)
+                .font(.system(size: 12, weight: .regular, design: .default))
+                .foregroundStyle(RidaryTheme.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
     }
 }

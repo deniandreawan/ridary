@@ -70,7 +70,17 @@ actor LocalRideStore {
 
     func deleteRide(id: UUID) throws {
         let url = ridesURL.appendingPathComponent("ride-\(id.uuidString).json")
-        try? fileManager.removeItem(at: url)
+        try removeIfExists(at: url)
+    }
+
+    func deleteIncident(id: UUID) throws {
+        let url = incidentsURL.appendingPathComponent("incident-\(id.uuidString).json")
+        try removeIfExists(at: url)
+    }
+
+    func deleteEvidence(incidentID: UUID) throws {
+        let url = evidenceURL.appendingPathComponent("evidence-\(incidentID.uuidString).json")
+        try removeIfExists(at: url)
     }
 
     func saveIncident(_ incident: Incident) throws {
@@ -127,6 +137,11 @@ actor LocalRideStore {
 
     func clearActiveSession() {
         try? fileManager.removeItem(at: activeSessionURL)
+    }
+
+    private func removeIfExists(at url: URL) throws {
+        guard fileManager.fileExists(atPath: url.path) else { return }
+        try fileManager.removeItem(at: url)
     }
 
     private func ensureDirectories() throws {

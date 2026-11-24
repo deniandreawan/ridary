@@ -157,6 +157,29 @@ final class AppEnvironment: ObservableObject {
         }
     }
 
+    func deleteRide(_ ride: Ride) async {
+        isBusy = true
+        errorMessage = nil
+        defer { isBusy = false }
+
+        let linkedIncidents = incidents.filter { $0.rideID == ride.id }
+
+        do {
+            for incident in linkedIncidents {
+                try await store.deleteEvidence(incidentID: incident.id)
+                try await store.deleteIncident(id: incident.id)
+            }
+            try await store.deleteRide(id: ride.id)
+            rides.removeAll { $0.id == ride.id }
+            incidents.removeAll { $0.rideID == ride.id }
+            if lastCompletedRide?.id == ride.id {
+                lastCompletedRide = nil
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func createIncident() async -> Incident? {
         guard let event = capture.lockLastWindow() else {
             errorMessage = "No ride samples are available to lock yet."

@@ -51,10 +51,67 @@ final class HomeFlowUITests: XCTestCase {
         statistics.tap()
 
         XCTAssertTrue(
-            app.staticTexts["Your riding, in numbers"].waitForExistence(timeout: 10),
+            app.buttons["Close statistics"].waitForExistence(timeout: 10),
             "Statistics screen should open from Profile"
         )
         attachScreenshot(named: "statistics")
+
+        app.buttons["Close statistics"].tap()
+        XCTAssertTrue(
+            app.buttons["Close profile"].waitForExistence(timeout: 10),
+            "Profile sheet should return after closing Statistics"
+        )
+
+        let incidents = app.staticTexts["Incidents"].firstMatch
+        XCTAssertTrue(incidents.waitForExistence(timeout: 5), "Incidents entry should be visible")
+        incidents.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close incidents"].waitForExistence(timeout: 10),
+            "Incidents screen should open from Profile"
+        )
+        attachScreenshot(named: "incidents")
+
+        app.buttons["Close incidents"].tap()
+        XCTAssertTrue(
+            app.buttons["Close profile"].waitForExistence(timeout: 10),
+            "Profile sheet should return after closing Incidents"
+        )
+
+        let settings = app.staticTexts["Settings"].firstMatch
+        XCTAssertTrue(settings.waitForExistence(timeout: 5), "Settings entry should be visible")
+        settings.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close settings"].waitForExistence(timeout: 10),
+            "Settings screen should open from Profile"
+        )
+        attachScreenshot(named: "settings")
+
+        app.buttons["Close settings"].tap()
+        XCTAssertTrue(
+            app.buttons["Close profile"].waitForExistence(timeout: 10),
+            "Profile sheet should return after closing Settings"
+        )
+    }
+
+    func testMapTapCollapsesSheetToPeek() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40))
+
+        let mediumY = ask.frame.minY
+        attachScreenshot(named: "home-map-medium")
+
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.22)).tap()
+        Thread.sleep(forTimeInterval: 0.9)
+
+        let peekY = ask.frame.minY
+        XCTAssertGreaterThan(
+            peekY,
+            mediumY + 80,
+            "Tapping the map should collapse the sheet to peek"
+        )
+        attachScreenshot(named: "home-map-peek")
     }
 
     func testStartFlowOpensAndCancelsCountdown() throws {
@@ -126,6 +183,21 @@ final class HomeFlowUITests: XCTestCase {
 
         let live = app.buttons["Open live ride"]
         XCTAssertTrue(live.waitForExistence(timeout: 4))
+        XCTAssertFalse(
+            app.staticTexts["ride-timer"].waitForExistence(timeout: 1.5),
+            "Minimizing should leave the rider on Home"
+        )
+        XCTAssertTrue(
+            app.descendants(matching: .any)["home-map"].exists,
+            "Home map should be visible with the live ride"
+        )
+        let homeAsk = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(homeAsk.waitForExistence(timeout: 4))
+        XCTAssertGreaterThan(
+            homeAsk.frame.minY,
+            app.frame.height * 0.6,
+            "Minimizing should collapse the sheet so the live map is visible"
+        )
         attachScreenshot(named: "live-home")
         live.tap()
 
@@ -259,6 +331,75 @@ final class HomeFlowUITests: XCTestCase {
             40,
             "Dragging down at the top of the content should collapse full to medium"
         )
+    }
+
+    func testRideSummaryOpensFullScreen() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40))
+
+        let row = app.buttons.matching(identifier: "ride-row").firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Ride row should be visible")
+        row.tap()
+
+        let recap = app.descendants(matching: .any)
+            .matching(identifier: "ride-recap-screen")
+            .firstMatch
+        XCTAssertTrue(
+            recap.waitForExistence(timeout: 5),
+            "Ride recap should open full screen"
+        )
+        attachScreenshot(named: "ride-summary-detail")
+
+        app.swipeUp()
+        Thread.sleep(forTimeInterval: 0.8)
+        attachScreenshot(named: "ride-summary-detail-scrolled")
+    }
+
+    func testCredentialOpensFullScreen() throws {
+        let profile = app.buttons["Open profile"].firstMatch
+        XCTAssertTrue(profile.waitForExistence(timeout: 40))
+        profile.tap()
+
+        let proof = app.buttons["Ridary Proof"].firstMatch
+        XCTAssertTrue(proof.waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 0.5)
+        proof.tap()
+
+        let proofTitle = app.staticTexts["Proof, not surveillance"].firstMatch
+        let emptyTitle = app.staticTexts["Build your proof"].firstMatch
+        XCTAssertTrue(
+            proofTitle.waitForExistence(timeout: 5) || emptyTitle.exists,
+            "Credential detail should open full screen"
+        )
+        attachScreenshot(named: "credential-detail")
+    }
+
+    func testRideSwipeRevealsDelete() throws {
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40))
+
+        let row = app.descendants(matching: .any)
+            .matching(identifier: "ride-row")
+            .firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Ride row should be visible")
+
+        let swipeStart = row.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.5))
+        let swipeEnd = row.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.5))
+        swipeStart.press(forDuration: 0.1, thenDragTo: swipeEnd)
+        Thread.sleep(forTimeInterval: 0.5)
+
+        let delete = app.buttons["Delete ride"].firstMatch
+        XCTAssertTrue(delete.waitForExistence(timeout: 3), "Swipe should reveal Delete")
+        attachScreenshot(named: "ride-swipe-delete")
+
+        delete.tap()
+        let confirmation = app.alerts["Delete this ride?"]
+        XCTAssertTrue(
+            confirmation.waitForExistence(timeout: 3),
+            "Delete should ask for confirmation"
+        )
+        attachScreenshot(named: "ride-delete-confirm")
+        confirmation.buttons["Cancel"].tap()
     }
 
     private func attachScreenshot(named name: String) {

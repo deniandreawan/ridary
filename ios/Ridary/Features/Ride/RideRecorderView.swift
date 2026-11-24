@@ -55,9 +55,9 @@ struct RideRecorderView: View {
         .sheet(isPresented: $showModePicker) {
             RideModeSheet(selection: $selectedMode)
         }
-        .sheet(item: $incident) { created in
+        .fullScreenCover(item: $incident) { created in
             NavigationStack {
-                IncidentView(incident: created)
+                IncidentView(incident: created, isModal: true)
             }
         }
     }
@@ -136,31 +136,17 @@ struct RideRecorderView: View {
                 dismiss()
             } label: {
                 Image(systemName: capture.isRecording ? "chevron.down" : "xmark")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(heroForeground)
-                    .frame(width: 38, height: 38)
-                    .background(
-                        heroIsDark
-                            ? Color.white.opacity(0.14)
-                            : RidaryTheme.surface
-                    )
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle().stroke(
-                            heroIsDark ? Color.white.opacity(0.28) : RidaryTheme.border,
-                            lineWidth: 1
-                        )
-                    )
+                    .frame(width: 28, height: 28)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glass(.clear))
+            .buttonBorderShape(.circle)
             .disabled(phase == .finishing)
             .accessibilityLabel(capture.isRecording ? "Minimize ride" : "Close ride start")
 
             HStack(spacing: 7) {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 7, height: 7)
-                    .overlay(Circle().stroke(Color.white.opacity(0.42), lineWidth: 1))
+                RideStatusDot(color: statusColor, isPulsing: statusPulses)
 
                 Text(statusTitle)
                     .font(.system(size: 14, weight: .semibold, design: .default))
@@ -173,6 +159,7 @@ struct RideRecorderView: View {
             modeControl
         }
         .frame(height: 54)
+        .colorScheme(.light)
     }
 
     private var modeControl: some View {
@@ -183,7 +170,7 @@ struct RideRecorderView: View {
             HStack(spacing: 6) {
                 Image(systemName: activeMode.icon)
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(heroIsDark ? Color.white : RidaryTheme.accent)
+                    .foregroundStyle(heroForeground)
 
                 Text(activeMode.title)
                     .font(.system(size: 12, weight: .semibold, design: .default))
@@ -195,19 +182,11 @@ struct RideRecorderView: View {
                         .foregroundStyle(heroForeground.opacity(0.7))
                 }
             }
-            .padding(.horizontal, 11)
-            .frame(height: 32)
-            .background(heroIsDark ? Color.white.opacity(0.14) : RidaryTheme.surface)
-            .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .stroke(
-                        heroIsDark ? Color.white.opacity(0.28) : RidaryTheme.border,
-                        lineWidth: 1
-                    )
-            )
+            .lineLimit(1)
+            .padding(.horizontal, 8)
+            .frame(height: 28)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.glass(.clear))
         .disabled(!canChangeMode)
         .accessibilityIdentifier("mode-control")
         .accessibilityLabel(canChangeMode ? "Change activity, \(activeMode.title)" : activeMode.title)
@@ -348,9 +327,14 @@ struct RideRecorderView: View {
                         .frame(width: 100, height: 100)
 
                     Circle()
-                        .fill(RidaryTheme.sky)
+                        .fill(.clear)
                         .frame(width: 80, height: 80)
-                        .shadow(color: RidaryTheme.sky.opacity(0.24), radius: 12, x: 0, y: 6)
+                        .glassEffect(
+                            .regular.tint(RidaryTheme.sky),
+                            in: Circle()
+                        )
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
 
                     if primaryBusy {
                         ProgressView()
@@ -529,6 +513,10 @@ struct RideRecorderView: View {
             return "Starting"
         }
         return "Ready"
+    }
+
+    private var statusPulses: Bool {
+        capture.isRecording || capture.isPaused
     }
 
     private var statusColor: Color {
@@ -904,6 +892,49 @@ private struct RideSpeedTrace: View {
     }
 }
 
+
+private struct RideStatusDot: View {
+    let color: Color
+    let isPulsing: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        TimelineView(
+            .animation(
+                minimumInterval: 1.0 / 30.0,
+                paused: !isPulsing || reduceMotion
+            )
+        ) { context in
+            let phase = pulsePhase(at: context.date)
+
+            ZStack {
+                if isPulsing {
+                    Circle()
+                        .fill(color.opacity(0.30))
+                        .frame(width: 16, height: 16)
+                        .scaleEffect(0.8 + phase * 0.55)
+                        .opacity(0.9 * (1 - phase))
+                }
+
+                Circle()
+                    .fill(color)
+                    .frame(width: 8, height: 8)
+                    .overlay(Circle().stroke(Color.white.opacity(0.55), lineWidth: 1))
+                    .scaleEffect(isPulsing ? 1 - phase * 0.1 : 1)
+            }
+            .frame(width: 16, height: 16)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private func pulsePhase(at date: Date) -> Double {
+        guard isPulsing, !reduceMotion else { return 0 }
+        let cycle = date.timeIntervalSinceReferenceDate
+            .truncatingRemainder(dividingBy: 0.9) / 0.9
+        return (sin(cycle * .pi * 2 - .pi / 2) + 1) / 2
+    }
+}
 
 private struct RideModeSheet: View {
     @Binding var selection: RideMode

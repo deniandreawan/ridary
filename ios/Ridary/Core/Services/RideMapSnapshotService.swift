@@ -82,7 +82,10 @@ final class RideMapSnapshotService {
         let options = MKMapSnapshotter.Options()
         options.mapRect = Self.mapRect(for: coordinates, size: size)
         options.size = size
-        options.traitCollection = UITraitCollection(displayScale: scale)
+        options.traitCollection = UITraitCollection { traits in
+            traits.displayScale = scale
+            traits.userInterfaceStyle = .light
+        }
 
         let configuration = MKStandardMapConfiguration(elevationStyle: .flat)
         options.preferredConfiguration = configuration
@@ -156,7 +159,7 @@ final class RideMapSnapshotService {
     private func cacheKey(for ride: Ride, size: CGSize, scale: CGFloat) -> String {
         let dimensions = "\(Int(size.width))x\(Int(size.height))@\(String(format: "%.2f", scale))"
         let fingerprint = Self.fingerprint(ride.routePreview)
-        return "v6-\(ride.id.uuidString)-\(dimensions)-\(String(fingerprint, radix: 16))"
+        return "v7-\(ride.id.uuidString)-\(dimensions)-\(String(fingerprint, radix: 16))"
     }
 
     private func loadFromDisk(key: String) -> UIImage? {

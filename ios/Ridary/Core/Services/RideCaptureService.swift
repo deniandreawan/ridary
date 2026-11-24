@@ -62,7 +62,9 @@ final class RideCaptureService: NSObject, ObservableObject {
     @Published private(set) var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published private(set) var errorMessage: String?
     @Published private(set) var isMotionActive = false
-    @Published private(set) var liveRoute: [[Double]] = []
+    @Published private(set) var liveRouteSegments: [[[Double]]] = []
+    @Published private(set) var liveRouteRevision = 0
+    @Published private(set) var liveCoordinate: CLLocationCoordinate2D?
     @Published private(set) var speedHistory: [Double] = []
 
     private let store: LocalRideStore
@@ -77,6 +79,7 @@ final class RideCaptureService: NSObject, ObservableObject {
     private var mode: RideMode = .motorcycle
     private var lastLocation: LocationSnapshot?
     private var lastMotion: MotionSnapshot?
+    private var liveTrail = LiveRouteTrail()
     private var pausedAt: Date?
     private var pausedDurationS: TimeInterval = 0
     private var authorizationContinuation: CheckedContinuation<CLAuthorizationStatus, Never>?
@@ -137,7 +140,10 @@ final class RideCaptureService: NSObject, ObservableObject {
         self.isPaused = false
         self.pausedAt = nil
         self.pausedDurationS = 0
-        self.liveRoute = []
+        self.liveTrail.reset()
+        self.liveRouteSegments = liveTrail.segments
+        self.liveRouteRevision = liveTrail.revision
+        self.liveCoordinate = nil
         self.speedHistory = []
 
         locationManager.activityType = activityType(for: mode)
@@ -183,6 +189,7 @@ final class RideCaptureService: NSObject, ObservableObject {
 
         lastLocation = nil
         lastMotion = nil
+        liveTrail.breakSegment()
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.startUpdatingLocation()
         startMotion()
@@ -250,7 +257,10 @@ final class RideCaptureService: NSObject, ObservableObject {
 
         samples = []
         events = []
-        liveRoute = []
+        liveTrail.reset()
+        liveRouteSegments = liveTrail.segments
+        liveRouteRevision = liveTrail.revision
+        liveCoordinate = nil
         await store.clearActiveSession()
         return ride
     }
@@ -353,7 +363,7 @@ final class RideCaptureService: NSObject, ObservableObject {
     private func handleLocations(_ snapshots: [LocationSnapshot]) {
         guard let latest = snapshots.last else { return }
 
-        var route = liveRoute
+        var trailChanged = false
         for snapshot in snapshots {
             if let previous = lastLocation {
                 distanceM += GeoMath.distanceMeters(
@@ -364,12 +374,21 @@ final class RideCaptureService: NSObject, ObservableObject {
                 )
             }
             lastLocation = snapshot
-            route.append([snapshot.latitude, snapshot.longitude])
+            if liveTrail.append(
+                latitude: snapshot.latitude,
+                longitude: snapshot.longitude
+            ) {
+                trailChanged = true
+            }
         }
-        if route.count > 128 {
-            route.removeFirst(route.count - 128)
+        if trailChanged {
+            liveRouteSegments = liveTrail.segments
+            liveRouteRevision = liveTrail.revision
         }
-        liveRoute = route
+        liveCoordinate = CLLocationCoordinate2D(
+            latitude: latest.latitude,
+            longitude: latest.longitude
+        )
 
         if latest.speedMps != nil {
             currentSpeedKph = max(0, (latest.speedMps ?? 0) * 3.6)

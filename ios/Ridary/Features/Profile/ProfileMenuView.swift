@@ -4,6 +4,10 @@ struct ProfileMenuView: View {
     @EnvironmentObject private var app: AppEnvironment
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    @State private var showCredential = false
+    @State private var showStatistics = false
+    @State private var showIncidents = false
+    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -11,32 +15,32 @@ struct ProfileMenuView: View {
                 profileHeader
 
                 Section {
-                    profileLink(
+                    profileAction(
                         icon: "chart.bar.fill",
                         title: "Statistics"
                     ) {
-                        StatisticsView()
+                        showStatistics = true
                     }
 
-                    profileLink(
-                        icon: "clock.arrow.circlepath",
-                        title: "Ride log"
+                    profileAction(
+                        icon: "lock.shield.fill",
+                        title: "Incidents"
                     ) {
-                        HistoryView()
+                        showIncidents = true
                     }
 
-                    profileLink(
+                    profileAction(
                         icon: "checkmark.seal.fill",
                         title: "Ridary Proof"
                     ) {
-                        CredentialView()
+                        showCredential = true
                     }
 
-                    profileLink(
+                    profileAction(
                         icon: "slider.horizontal.3",
                         title: "Settings"
                     ) {
-                        SettingsView()
+                        showSettings = true
                     }
                 } footer: {
                     privacyFooter
@@ -53,6 +57,26 @@ struct ProfileMenuView: View {
             }
         }
         .tint(RidaryTheme.accent)
+        .fullScreenCover(isPresented: $showCredential) {
+            NavigationStack {
+                CredentialView(isModal: true)
+            }
+        }
+        .fullScreenCover(isPresented: $showStatistics) {
+            NavigationStack {
+                StatisticsView()
+            }
+        }
+        .fullScreenCover(isPresented: $showIncidents) {
+            NavigationStack {
+                IncidentsView()
+            }
+        }
+        .fullScreenCover(isPresented: $showSettings) {
+            NavigationStack {
+                SettingsView()
+            }
+        }
         .presentationDetents([.fraction(0.68), .large])
         .presentationDragIndicator(.hidden)
     }
@@ -62,7 +86,7 @@ struct ProfileMenuView: View {
             dismiss()
         } label: {
             Image(systemName: "xmark")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(RidaryTheme.textPrimary)
                 .frame(width: 34, height: 34)
                 .background(RidaryTheme.backgroundLifted)
@@ -79,19 +103,20 @@ struct ProfileMenuView: View {
     private var profileHeader: some View {
         VStack(spacing: 7) {
             Text(settings.profileInitials)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(.system(size: 24, weight: .semibold, design: .rounded))
                 .foregroundStyle(RidaryTheme.accent)
                 .frame(width: 76, height: 76)
                 .background(RidaryTheme.skySoft)
                 .clipShape(Circle())
 
             Text(settings.displayName)
-                .font(.system(size: 24, weight: .bold, design: .default))
+                .font(.system(size: 23, weight: .semibold, design: .default))
+                .tracking(-0.35)
                 .foregroundStyle(RidaryTheme.textPrimary)
                 .multilineTextAlignment(.center)
 
             Text(app.isLocalDemo ? "Local demo" : "Ridary account")
-                .font(.system(size: 14, weight: .medium, design: .default))
+                .font(.system(size: 13, weight: .regular, design: .default))
                 .foregroundStyle(RidaryTheme.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -102,30 +127,40 @@ struct ProfileMenuView: View {
         .listRowInsets(EdgeInsets(top: 20, leading: 20, bottom: 8, trailing: 20))
     }
 
-    private func profileLink<Destination: View>(
+    private func profileAction(
         icon: String,
         title: String,
-        @ViewBuilder destination: @escaping () -> Destination
+        action: @escaping () -> Void
     ) -> some View {
-        NavigationLink {
-            destination()
-                .toolbar(.visible, for: .navigationBar)
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(RidaryTheme.accent)
-                    .frame(width: 32, height: 32)
-                    .background(RidaryTheme.skySoft)
-                    .clipShape(Circle())
-
-                Text(title)
-                    .font(.system(size: 16, weight: .semibold, design: .default))
-                    .foregroundStyle(RidaryTheme.textPrimary)
+        Button(action: action) {
+            HStack(spacing: 8) {
+                rowLabel(icon: icon, title: title)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(RidaryTheme.textTertiary)
             }
-            .padding(.vertical, 3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .listRowBackground(RidaryTheme.surface)
+    }
+
+    private func rowLabel(icon: String, title: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(RidaryTheme.accent)
+                .frame(width: 32, height: 32)
+                .background(RidaryTheme.skySoft)
+                .clipShape(Circle())
+
+            Text(title)
+                .font(.system(size: 15, weight: .medium, design: .default))
+                .foregroundStyle(RidaryTheme.textPrimary)
+        }
+        .padding(.vertical, 3)
     }
 
     private var privacyFooter: some View {
@@ -134,7 +169,7 @@ struct ProfileMenuView: View {
                 app.onDeviceAvailability.title,
                 systemImage: app.onDeviceAvailability.isAvailable ? "iphone.gen3" : "cloud"
             )
-            .font(.system(size: 11, weight: .semibold, design: .default))
+            .font(.system(size: 11, weight: .medium, design: .default))
             .foregroundStyle(RidaryTheme.textSecondary)
 
             Text("Routes and sensor windows stay on this iPhone. Only derived points sync.")
