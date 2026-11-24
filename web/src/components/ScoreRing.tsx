@@ -1,5 +1,3 @@
-import { scoreColor } from "../lib/format";
-
 export function ScoreRing({
   score,
   size = 96
@@ -7,28 +5,29 @@ export function ScoreRing({
   score: number;
   size?: number;
 }) {
-  const color = scoreColor(score);
   const clamped = Math.min(100, Math.max(0, score));
+  const color =
+    clamped >= 75 ? "#00a6f4" : clamped >= 60 ? "#e17100" : "#e7000b";
   return (
     <div
-      className="rounded-full p-[7px]"
+      className="rounded-full p-[6px] shadow-sm"
       style={{
         width: size,
         height: size,
-        background: `conic-gradient(${color} ${clamped * 3.6}deg, rgba(11,17,20,0.08) 0deg)`
+        background: `conic-gradient(${color} ${clamped * 3.6}deg, rgba(23,23,23,0.06) 0deg)`
       }}
       aria-label={`Safety score ${clamped} out of 100`}
       role="img"
     >
-      <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-card">
+      <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-white">
         <span
-          className="font-mono font-semibold leading-none"
-          style={{ color, fontSize: size * 0.27 }}
+          className="font-semibold leading-none tracking-tight text-paper"
+          style={{ fontSize: size * 0.28 }}
         >
           {clamped}
         </span>
-        <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-muted">
-          score
+        <span className="mt-1 text-[10px] font-medium text-muted">
+          safety
         </span>
       </div>
     </div>

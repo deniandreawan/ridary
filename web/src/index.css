@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-canvas: #f7f9f9;
-  --color-canvas-soft: #edf3f5;
-  --color-ink: #0b1114;
-  --color-ink-soft: #f0f5f6;
+  --color-canvas: #fafafa;
+  --color-canvas-soft: #f5f5f5;
+  --color-ink: #171717;
+  --color-ink-soft: #f5f5f5;
   --color-card: #ffffff;
-  --color-card-soft: #f2f6f7;
-  --color-line: #e1e8ea;
-  --color-paper: #0b1114;
-  --color-muted: #66737a;
-  --color-accent: #0e7490;
-  --color-accent-strong: #0b5e75;
-  --color-cyan: #34ccff;
-  --color-cyan-soft: #98e8fe;
-  --color-teal: #00796b;
-  --color-safety: #e64a19;
-  --color-danger: #d92d20;
-  --color-warning: #b26a00;
+  --color-card-soft: #f5f5f5;
+  --color-line: #e5e5e5;
+  --color-paper: #171717;
+  --color-muted: #737373;
+  --color-subtle: #a1a1a1;
+  --color-sky: #00a6f4;
+  --color-sky-deep: #0084d1;
+  --color-sky-soft: #dff2fe;
+  --color-accent: #0084d1;
+  --color-accent-strong: #006eb0;
+  --color-cyan: #00a6f4;
+  --color-cyan-soft: #dff2fe;
+  --color-teal: #0084d1;
+  --color-safety: #fb2c36;
+  --color-danger: #e7000b;
+  --color-warning: #e17100;
   --color-on-accent: #ffffff;
-  --font-sans: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
@@ -39,61 +43,139 @@ body {
   background: var(--color-canvas);
   color: var(--color-paper);
   font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
-body::before {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  content: "";
-  background:
-    radial-gradient(circle at 8% -8%, rgba(52, 204, 255, 0.12), transparent 32%),
-    radial-gradient(circle at 92% 4%, rgba(0, 150, 136, 0.08), transparent 28%);
-}
-
 ::selection {
-  background: var(--color-cyan-soft);
+  background: var(--color-sky-soft);
   color: var(--color-ink);
 }
 
 .surface {
-  border: 1px solid var(--color-line);
-  border-radius: 1.375rem;
+  border: 1px solid rgba(229, 229, 229, 0.85);
+  border-radius: 1.625rem;
   background: var(--color-card);
-  box-shadow: 0 18px 45px rgba(11, 17, 20, 0.06);
+  box-shadow: 0 10px 30px rgba(23, 23, 23, 0.035);
 }
 
 .surface-soft {
-  border: 1px solid var(--color-line);
-  border-radius: 1.125rem;
+  border-radius: 1.25rem;
   background: var(--color-card-soft);
+}
+
+.ios-hero-pastel {
+  background: linear-gradient(
+    180deg,
+    #dff2fe 0%,
+    rgba(223, 242, 254, 0.42) 72%,
+    #ffffff 100%
+  );
+}
+
+.ios-hero-badge {
+  display: flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: var(--color-sky);
+  box-shadow: 0 8px 20px rgba(0, 166, 244, 0.16);
+}
+
+.ios-icon-circle {
+  display: flex;
+  width: 2.125rem;
+  height: 2.125rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--color-sky-soft);
+  color: var(--color-sky);
+}
+
+.btn-glass-sky {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #1db4ff 0%, #00a6f4 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 6px 16px rgba(0, 166, 244, 0.22);
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+}
+
+.btn-glass-sky:hover:not(:disabled) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 8px 20px rgba(0, 166, 244, 0.28);
+}
+
+.btn-glass-sky:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  color: var(--color-paper);
+  font-weight: 500;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 2px 8px rgba(23, 23, 23, 0.04);
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.btn-glass:hover:not(:disabled) {
+  border-color: rgba(23, 23, 23, 0.14);
+  background: #ffffff;
+}
+
+.btn-glass:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .mono-label {
   font-family: var(--font-sans);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--color-sky-deep);
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-sky);
+  outline-offset: 2px;
 }
 
 .maplibregl-popup-content {
-  padding: 10px 12px;
+  padding: 10px 13px;
   color: var(--color-paper);
   font-family: var(--font-sans);
   font-size: 12px;
   border: 1px solid var(--color-line);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--color-card);
-  box-shadow: 0 18px 40px rgba(11, 17, 20, 0.14);
+  box-shadow: 0 12px 32px rgba(23, 23, 23, 0.1);
 }
 
 .maplibregl-popup-tip {
@@ -102,7 +184,7 @@ body::before {
 }
 
 .maplibregl-ctrl-attrib {
-  background: rgba(255, 255, 255, 0.82) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
 }
 
 .maplibregl-ctrl-attrib a {
@@ -111,7 +193,11 @@ body::before {
 
 .maplibregl-ctrl-group {
   border: 1px solid var(--color-line) !important;
-  background: var(--color-card) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(23, 23, 23, 0.06) !important;
 }
 
 .maplibregl-ctrl-group button span {
@@ -125,12 +211,12 @@ body::before {
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(11, 17, 20, 0.16);
+  background: rgba(23, 23, 23, 0.14);
 }
 
 .map-shell {
   overflow: hidden;
   border: 1px solid var(--color-line);
-  border-radius: 1.375rem;
-  background: var(--color-cyan-soft);
+  border-radius: 1.5rem;
+  background: var(--color-sky-soft);
 }

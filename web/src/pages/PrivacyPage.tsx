@@ -7,191 +7,182 @@ import {
   Smartphone,
   Trash2
 } from "lucide-react";
-import { SectionHeader } from "../components/Banners";
+import type { ReactNode } from "react";
 
 export default function PrivacyPage() {
   return (
-    <div className="space-y-5">
-      <header>
-        <div className="mono-label">Privacy / Data model</div>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
-          Your data has a home: your phone.
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
-          Ridary is built as a local-first record. The useful details stay on
-          the device; only the smallest aggregate leaves it, and only when you
-          choose.
-        </p>
-      </header>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <PrivacyCard
-          icon={<Smartphone size={18} />}
-          title="Stays on your phone"
-          items={[
-            "Raw GPS route and speed samples",
-            "Accelerometer and gyroscope windows",
-            "Incident evidence files and statements",
-            "On-device AI snapshots and ride cards"
-          ]}
-          tone="text-teal"
-        />
-        <PrivacyCard
-          icon={<Cloud size={18} />}
-          title="Can sync with consent"
-          items={[
-            "Ride summary, score, and inference source",
-            "Event type, severity, confidence, and coarse geohash",
-            "Optional simplified route preview",
-            "Signed credential and insurer view"
-          ]}
-          tone="text-accent"
-        />
-      </div>
-
-      <section className="surface p-5">
-        <SectionHeader
-          eyebrow="Hybrid inference"
-          title="A deliberate split, not a fallback accident"
-        />
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <SplitCard
-            icon={<Cpu size={16} />}
-            title="On device"
-            text="Apple Foundation Models on iOS, Gemini Nano in Chrome. The model explains a ride, interprets sensor candidates, and drafts sensitive incident notes while offline."
-            tone="border-teal/20 bg-teal/6"
-          />
-          <SplitCard
-            icon={<Cloud size={16} />}
-            title="In the cloud"
-            text="Gemini handles cross-rider risk patterns, weekly feedback, and the signed credential narrative. It never needs the raw route to do that."
-            tone="border-accent/20 bg-accent/6"
-          />
-        </div>
-        <div className="mt-4 rounded-xl border border-line bg-ink-soft p-4">
-          <div className="flex items-start gap-3">
-            <Lock size={16} className="mt-0.5 text-teal" />
-            <p className="text-[11px] leading-relaxed text-muted">
-              Sensitive features use the on-device-only mode. If the local model
-              is unavailable, Ridary falls back to local rules instead of
-              silently sending the evidence to the cloud.
-            </p>
+    <div className="mx-auto max-w-3xl">
+      <article className="surface overflow-hidden">
+        <div className="ios-hero-pastel flex flex-col items-center px-6 pb-11 pt-9 text-center">
+          <div className="mono-label">Data model</div>
+          <div className="ios-hero-badge mt-3.5">
+            <Lock size={24} strokeWidth={1.9} />
+          </div>
+          <div className="mt-3.5 text-[30px] font-semibold tracking-[-0.03em] text-paper">
+            Private by default
+          </div>
+          <div className="mt-1 text-[13px] text-muted">
+            Local-first capture · Hybrid AI trust boundary
           </div>
         </div>
-      </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <section className="surface p-5">
-          <SectionHeader eyebrow="Control" title="What you can do" />
-          <ul className="mt-4 space-y-3">
-            <ControlRow
-              icon={<Database size={14} />}
-              text="Turn anonymized event sharing and route previews on or off independently."
-            />
-            <ControlRow
-              icon={<Trash2 size={14} />}
-              text="Delete local attendance, ride history, and evidence from the iOS app."
-            />
-            <ControlRow
-              icon={<ShieldAlert size={14} />}
-              text="Export an incident PDF from the phone; nothing is shared automatically."
-            />
-          </ul>
-        </section>
+        <div className="relative -mt-6 rounded-t-[1.625rem] bg-white pt-7 shadow-[0_-6px_20px_rgba(23,23,23,0.04)]">
+          <div className="mx-auto max-w-xl px-6 pb-6 text-center">
+            <h1 className="text-[23px] font-semibold tracking-[-0.025em] text-paper">
+              Your data has a home: your phone
+            </h1>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              Ridary is built as a local-first record. Raw routes and sensor
+              windows stay on your iPhone; only the smallest aggregate leaves
+              it, and only when you choose.
+            </p>
+          </div>
 
-        <section className="surface p-5">
-          <SectionHeader eyebrow="Limits" title="What Ridary is not" />
-          <ul className="mt-4 space-y-3 text-[11px] leading-relaxed text-muted">
-            <li>
-              <span className="font-semibold text-paper">Not court-grade.</span>{" "}
-              This is a personal record and a signed safety credential, not a
-              legal evidence certification.
-            </li>
-            <li>
-              <span className="font-semibold text-paper">Not an emergency service.</span>{" "}
-              Ridary does not call emergency services or promise that help is
-              coming.
-            </li>
-            <li>
-              <span className="font-semibold text-paper">Not a diagnosis.</span>{" "}
-              Event explanations are screening signals, not medical or
-              mechanical advice.
-            </li>
-            <li>
-              <span className="font-semibold text-paper">Not continuous AI.</span>{" "}
-              On-device inference runs only while the app is in the foreground;
-              background capture records sensors only.
-            </li>
-          </ul>
-        </section>
-      </div>
+          <div className="mx-6 h-px bg-line/75" />
+
+          <div className="grid grid-cols-3 divide-x divide-line/75 items-center px-6 py-5 text-center">
+            <CenteredPrivacyMetric
+              value="On iPhone"
+              label="Raw GPS & IMU"
+              accent
+            />
+            <CenteredPrivacyMetric
+              value="On-device"
+              label="Incident AI"
+            />
+            <CenteredPrivacyMetric
+              value="SHA-256"
+              label="Evidence lock"
+            />
+          </div>
+
+          <div className="mx-6 h-px bg-line/75" />
+
+          <div className="grid gap-6 px-6 py-6 sm:grid-cols-2">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="ios-icon-circle">
+                  <Smartphone size={15} />
+                </div>
+                <h2 className="text-[16px] font-semibold text-paper">
+                  Stays on your phone
+                </h2>
+              </div>
+              <ul className="mt-3.5 space-y-2.5 pl-12 text-[13px] text-muted">
+                <li>Raw GPS route and speed samples</li>
+                <li>Accelerometer and gyroscope windows</li>
+                <li>Incident evidence files and statements</li>
+                <li>On-device AI snapshots and ride cards</li>
+              </ul>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="ios-icon-circle">
+                  <Cloud size={15} />
+                </div>
+                <h2 className="text-[16px] font-semibold text-paper">
+                  Can sync with consent
+                </h2>
+              </div>
+              <ul className="mt-3.5 space-y-2.5 pl-12 text-[13px] text-muted">
+                <li>Ride summary, score, and inference source</li>
+                <li>Event type, severity, and coarse geohash</li>
+                <li>Optional simplified route preview</li>
+                <li>Signed credential and insurer view</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mx-6 h-px bg-line/75" />
+
+          <div className="space-y-4 px-6 py-6">
+            <h2 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+              Hybrid AI split
+            </h2>
+
+            <PrivacyRow
+              icon={<Cpu size={15} />}
+              title="On device (Apple Foundation Models · Chrome Nano)"
+              subtitle="Explains a ride, answers Ask Ridary, and drafts sensitive incident notes offline. If unavailable on sensitive records, Ridary uses local rules—never silent cloud upload."
+            />
+            <PrivacyRow
+              icon={<Cloud size={15} />}
+              title="In cloud (Gemini via Firebase AI Logic)"
+              subtitle="Analyzes anonymized community risk cells and cross-ride weekly patterns without needing raw routes."
+            />
+          </div>
+
+          <div className="mx-6 h-px bg-line/75" />
+
+          <div className="space-y-4 px-6 py-6">
+            <h2 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+              Your controls
+            </h2>
+
+            <PrivacyRow
+              icon={<Database size={15} />}
+              title="Independent sharing toggles"
+              subtitle="Turn anonymized safety points and simplified route previews on or off separately in Settings."
+            />
+            <PrivacyRow
+              icon={<Trash2 size={15} />}
+              title="Swipe to delete"
+              subtitle="Delete any ride and its linked incident evidence directly from your iPhone."
+            />
+            <PrivacyRow
+              icon={<ShieldAlert size={15} />}
+              title="Personal record, not emergency or legal dispatch"
+              subtitle="Ridary does not call emergency services, decide fault, or certify court-grade evidence."
+            />
+          </div>
+        </div>
+      </article>
     </div>
   );
 }
 
-function PrivacyCard({
-  icon,
-  title,
-  items,
-  tone
+function CenteredPrivacyMetric({
+  value,
+  label,
+  accent = false
 }: {
-  icon: React.ReactNode;
-  title: string;
-  items: string[];
-  tone: string;
+  value: string;
+  label: string;
+  accent?: boolean;
 }) {
   return (
-    <section className="surface p-5">
-      <div className={`inline-flex ${tone}`}>{icon}</div>
-      <h2 className="mt-3 text-sm font-semibold text-paper">{title}</h2>
-      <ul className="mt-3 space-y-2">
-        {items.map((item) => (
-          <li
-            key={item}
-            className="flex gap-2 text-[11px] leading-relaxed text-muted"
-          >
-            <span className={`mt-1.5 h-1 w-1 shrink-0 rounded-full bg-current ${tone}`} />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function SplitCard({
-  icon,
-  title,
-  text,
-  tone
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-  tone: string;
-}) {
-  return (
-    <div className={`rounded-xl border p-4 ${tone}`}>
-      <div className="flex items-center gap-2 text-xs font-semibold text-paper">
-        {icon}
-        {title}
+    <div>
+      <div
+        className={`text-[17px] font-semibold tracking-tight ${
+          accent ? "text-sky-deep" : "text-paper"
+        }`}
+      >
+        {value}
       </div>
-      <p className="mt-2 text-[11px] leading-relaxed text-muted">{text}</p>
+      <div className="mt-0.5 text-[12px] text-muted">{label}</div>
     </div>
   );
 }
 
-function ControlRow({
+function PrivacyRow({
   icon,
-  text
+  title,
+  subtitle
 }: {
-  icon: React.ReactNode;
-  text: string;
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
 }) {
   return (
-    <li className="flex gap-3 text-[11px] leading-relaxed text-muted">
-      <span className="mt-0.5 text-accent">{icon}</span>
-      {text}
-    </li>
+    <div className="flex items-start gap-3.5">
+      <div className="ios-icon-circle mt-0.5">{icon}</div>
+      <div>
+        <div className="text-[15px] font-medium text-paper">{title}</div>
+        <div className="mt-0.5 text-[13px] leading-relaxed text-muted">
+          {subtitle}
+        </div>
+      </div>
+    </div>
   );
 }

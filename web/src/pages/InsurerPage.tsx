@@ -1,15 +1,16 @@
 import { doc, getDoc } from "firebase/firestore";
 import {
-  AlertTriangle,
+  CalendarClock,
   CheckCircle2,
+  KeyRound,
   Lock,
   ShieldCheck,
   XCircle
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ErrorBanner, LoadingScreen, SectionHeader } from "../components/Banners";
-import { ScoreRing } from "../components/ScoreRing";
+import { ErrorBanner, LoadingScreen } from "../components/Banners";
 import { useApp } from "../context/AppContext";
 import { demoCredential } from "../data/demo";
 import { db } from "../firebase";
@@ -149,146 +150,221 @@ export default function InsurerPage() {
     return (
       <div className="space-y-4">
         <ErrorBanner message={error ?? "This insurer view is unavailable."} />
-        <div className="surface p-6 text-xs leading-relaxed text-muted">
-          Ask the rider to create a fresh insurer link from the Ridary
-          credential page.
+        <div className="surface p-6 text-[13px] leading-relaxed text-muted">
+          Ask the rider to create a fresh insurer link from the Ridary Proof
+          screen.
         </div>
       </div>
     );
   }
 
+  const band = scoreBand(view.score);
+
   return (
-    <div className="space-y-5">
-      <header>
-        <div className="mono-label">Ridary Proof / Insurer view</div>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
-          A safety credential, not a route.
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-          This page was shared by a Ridary rider. It contains a signed score
-          and aggregate ride history. It deliberately excludes the rider&apos;s
-          identity and location history.
-        </p>
-      </header>
+    <div className="mx-auto max-w-2xl">
+      <article className="surface overflow-hidden">
+        <div className="ios-hero-pastel flex flex-col items-center px-6 pb-11 pt-9 text-center">
+          <div className="mono-label">
+            Valid until {formatISODate(view.expiresAt)}
+          </div>
+          <div className="ios-hero-badge mt-3.5">
+            <ShieldCheck size={26} strokeWidth={1.9} />
+          </div>
+          <div className="mt-3.5 text-[34px] font-semibold tracking-[-0.03em] text-paper">
+            {band} Band
+          </div>
+          <div className="mt-1 text-[13px] capitalize text-muted">
+            {formatPeriod(view.periodStart, view.periodEnd)} · {view.mode}
+          </div>
+        </div>
 
-      <section className="surface p-6">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-          <ScoreRing score={view.score} size={132} />
-          <div className="min-w-0 flex-1">
-            <div className="mono-label">Ridary Proof</div>
-            <div className="mt-1 text-3xl font-semibold tracking-tight">
-              {scoreBand(view.score)} band
-            </div>
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/8 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-teal">
-              <ShieldCheck size={11} />
-              Signed by {view.issuer}
-            </div>
-            <p className="mt-3 text-xs leading-relaxed text-muted">
-              {formatPeriod(view.periodStart, view.periodEnd)} · {view.mode}
+        <div className="relative -mt-6 rounded-t-[1.625rem] bg-white pt-7 shadow-[0_-6px_20px_rgba(23,23,23,0.04)]">
+          <div className="mx-auto max-w-lg px-6 pb-6 text-center">
+            <h1 className="text-[23px] font-semibold tracking-[-0.025em] text-paper">
+              A safety credential, not a route
+            </h1>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              Shared by a Ridary rider. Contains a signed safety band and
+              aggregate ride count while excluding identity and location
+              history.
             </p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <Meta label="Rides" value={String(view.rideCount)} />
-          <Meta label="Moments" value={String(view.eventCount)} />
-          <Meta label="Issued" value={formatISODate(view.issuedAt)} />
-          <Meta label="Expires" value={formatISODate(view.expiresAt)} />
-        </div>
-
-        <div className="mt-5 space-y-2 border-t border-line pt-4 font-mono text-[10px] text-muted">
-          <div className="flex items-center gap-2">
-            <Lock size={11} className="text-accent" />
-            key {view.publicKeyId}
-          </div>
-          <div className="break-all">hash {view.payloadHash}</div>
-          <div className="break-all">signature {view.signature}</div>
-        </div>
-
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={() => void verify()}
-            disabled={busy}
-            className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
-          >
-            <ShieldCheck size={14} />
-            {busy ? "Verifying…" : "Verify signature"}
-          </button>
-          <span className="text-[10px] leading-relaxed text-muted">
-            Verification recomputes the payload hash and checks the Ed25519
-            signature.
-          </span>
-        </div>
-
-        {verification && (
-          <div
-            className={`mt-4 flex items-start gap-3 rounded-xl border p-4 ${
-              verification.valid
-                ? "border-teal/25 bg-teal/6"
-                : "border-danger/25 bg-danger/6"
-            }`}
-          >
-            {verification.valid ? (
-              <CheckCircle2 size={18} className="mt-0.5 text-teal" />
-            ) : (
-              <XCircle size={18} className="mt-0.5 text-danger" />
-            )}
-            <div>
-              <div className="text-xs font-semibold text-paper">
-                {verification.valid
-                  ? "Signature and hash match"
-                  : "Verification did not pass"}
-              </div>
-              <div className="mt-1 text-[11px] leading-relaxed text-muted">
-                {verification.reason ??
-                  "The credential was signed by the Ridary issuer key."}
-              </div>
+            <div className="mt-3.5 inline-flex items-center gap-1.5 text-[13px]">
+              <CheckCircle2 size={14} className="text-sky" />
+              <span className="font-medium text-paper">
+                Signed by {view.issuer}
+              </span>
+              <span className="text-muted">· Ed25519 signature</span>
             </div>
           </div>
-        )}
-      </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <section className="surface p-5">
-          <SectionHeader eyebrow="Not included" title="What this view cannot see" />
-          <ul className="mt-4 space-y-2 text-[11px] leading-relaxed text-muted">
-            <li>· The rider&apos;s raw GPS route or sensor windows</li>
-            <li>· The rider&apos;s name, email, or contact details</li>
-            <li>· Incident evidence files or statements</li>
-            <li>· Any live location or device identifier</li>
-          </ul>
-        </section>
+          <div className="mx-6 h-px bg-line/75" />
 
-        <section className="surface p-5">
-          <SectionHeader eyebrow="Signature" title="What the proof means" />
-          <div className="mt-4 flex items-start gap-3">
-            <AlertTriangle size={16} className="mt-0.5 text-accent" />
-            <p className="text-[11px] leading-relaxed text-muted">
-              The signature proves that the credential fields were issued by
-              Ridary and have not been altered. It is a personal safety
-              credential, not a legal determination of fault, coverage, or
-              insurability.
-            </p>
+          <div className="grid grid-cols-3 divide-x divide-line/75 items-center px-6 py-5 text-center">
+            <CenteredInsurerMetric
+              value={`${band} Band`}
+              label="Safety tier"
+              accent
+            />
+            <CenteredInsurerMetric
+              value={String(view.score)}
+              label="Out of 100"
+            />
+            <CenteredInsurerMetric
+              value={`${view.rideCount} rides`}
+              label={`${view.eventCount} moments`}
+            />
           </div>
-        </section>
-      </div>
 
-      <p className="text-center text-[10px] leading-relaxed text-muted">
-        Ridary Proof is a personal safety credential. It is not legal advice, a
-        court record, or an insurance guarantee.
-      </p>
+          <div className="mx-6 h-px bg-line/75" />
+
+          <div className="space-y-4 px-6 py-6">
+            <h2 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+              Credential details
+            </h2>
+
+            <InsurerRow
+              icon={<ShieldCheck size={15} />}
+              title={`Issued by ${view.issuer} on ${formatISODate(view.issuedAt)}`}
+              subtitle="Recomputes the canonical payload hash and verifies the Ed25519 signature."
+            />
+            <InsurerRow
+              icon={<Lock size={15} />}
+              title="Excluded by design"
+              subtitle="No raw GPS routes, sensor windows, rider name, email, or incident statements."
+            />
+            <InsurerRow
+              icon={<CalendarClock size={15} />}
+              title={`Expires ${formatISODate(view.expiresAt)}`}
+              subtitle={`Covers ${view.mode} rides from ${formatPeriod(
+                view.periodStart,
+                view.periodEnd
+              )}.`}
+            />
+            <InsurerRow
+              icon={<KeyRound size={15} />}
+              title={`Key ${view.publicKeyId}`}
+              subtitle={view.payloadHash}
+              mono
+            />
+          </div>
+
+          {verification && (
+            <>
+              <div className="mx-6 h-px bg-line/75" />
+              <div className="flex items-start gap-3.5 px-6 py-5">
+                <div
+                  className={`flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full ${
+                    verification.valid
+                      ? "bg-sky-soft text-sky"
+                      : "bg-danger/12 text-danger"
+                  }`}
+                >
+                  {verification.valid ? (
+                    <CheckCircle2 size={16} />
+                  ) : (
+                    <XCircle size={16} />
+                  )}
+                </div>
+                <div>
+                  <div className="text-[15px] font-medium text-paper">
+                    {verification.valid
+                      ? "Signature and hash match"
+                      : "Verification did not pass"}
+                  </div>
+                  <div className="mt-0.5 text-[13px] text-muted">
+                    {verification.reason ??
+                      "The credential was signed by the Ridary issuer key."}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="mx-6 h-px bg-line/75" />
+
+          <p className="px-6 py-4 text-center text-[12px] text-subtle">
+            Ridary Proof is a personal safety credential, not legal advice, a
+            court record, or an insurance guarantee.
+          </p>
+
+          <div className="border-t border-line/75 px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-[16px] font-semibold text-paper">
+                  {band} Band{" "}
+                  <span className="text-[13px] font-normal text-muted">
+                    · {view.score} / 100
+                  </span>
+                </div>
+                <div className="text-[12px] text-subtle">
+                  Key {view.publicKeyId}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => void verify()}
+                disabled={busy}
+                className="btn-glass-sky focus-ring px-5 py-2.5 text-[13px] disabled:opacity-60"
+              >
+                <ShieldCheck size={15} />
+                {busy ? "Verifying…" : "Verify signature"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
     </div>
   );
 }
 
-function Meta({ label, value }: { label: string; value: string }) {
+function CenteredInsurerMetric({
+  value,
+  label,
+  accent = false
+}: {
+  value: string;
+  label: string;
+  accent?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-line bg-ink-soft px-3 py-2">
-      <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
-        {label}
+    <div>
+      <div
+        className={`text-[17px] font-semibold tracking-tight ${
+          accent ? "text-sky-deep" : "text-paper"
+        }`}
+      >
+        {value}
       </div>
-      <div className="mt-1 text-xs font-semibold text-paper">{value}</div>
+      <div className="mt-0.5 text-[12px] text-muted">{label}</div>
+    </div>
+  );
+}
+
+function InsurerRow({
+  icon,
+  title,
+  subtitle,
+  mono = false
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex items-start gap-3.5">
+      <div className="ios-icon-circle mt-0.5">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <div className="text-[15px] font-medium text-paper">{title}</div>
+        <div
+          className={`mt-0.5 text-[13px] text-muted ${
+            mono ? "truncate font-mono text-[12px]" : "leading-relaxed"
+          }`}
+        >
+          {subtitle}
+        </div>
+      </div>
     </div>
   );
 }

@@ -181,20 +181,26 @@ function demoData(): {
   };
 }
 
+function isUrlDemoRequested(): boolean {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).get("demo") === "1";
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
+  const initialDemo = !isFirebaseConfigured || isUrlDemoRequested();
   const [user, setUser] = useState<User | null>(null);
-  const [demoMode, setDemoMode] = useState(!isFirebaseConfigured);
-  const [loading, setLoading] = useState(isFirebaseConfigured);
+  const [demoMode, setDemoMode] = useState(initialDemo);
+  const [loading, setLoading] = useState(!initialDemo && isFirebaseConfigured);
   const [authBusy, setAuthBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rides, setRides] = useState<Ride[]>(() =>
-    isFirebaseConfigured ? [] : [...demoRides]
+    initialDemo ? [...demoRides] : []
   );
   const [riskCells, setRiskCells] = useState<RiskCell[]>(() =>
-    isFirebaseConfigured ? [] : [...demoRiskCells]
+    initialDemo ? [...demoRiskCells] : []
   );
   const [credentials, setCredentials] = useState<Credential[]>(() =>
-    isFirebaseConfigured ? [] : [demoCredential]
+    initialDemo ? [demoCredential] : []
   );
 
   const loadData = useCallback(async (uid: string) => {
@@ -281,6 +287,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (nextUser) {
         setDemoMode(false);
         void loadData(nextUser.uid);
+      } else if (isUrlDemoRequested()) {
+        const sample = demoData();
+        setDemoMode(true);
+        setRides(sample.rides);
+        setRiskCells(sample.riskCells);
+        setCredentials(sample.credentials);
+        setLoading(false);
       } else {
         setRides([]);
         setRiskCells([]);

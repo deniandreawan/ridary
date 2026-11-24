@@ -21,7 +21,7 @@ function normalize(route: number[][]): Point[] {
   const maxY = Math.max(...ys);
   const width = Math.max(maxX - minX, 0.00001);
   const height = Math.max(maxY - minY, 0.00001);
-  const padding = 22;
+  const padding = 24;
   const scale = Math.min(
     (320 - padding * 2) / width,
     (160 - padding * 2) / height
@@ -81,49 +81,49 @@ export function RouteArt({
       aria-label={hasRoute ? "Route preview" : "Route illustration"}
       preserveAspectRatio="xMidYMid slice"
     >
-      <rect width="320" height="160" fill="#eaf6fa" />
+      <rect width="320" height="160" fill="#f0f9ff" />
       <path
         d="M -10 36 C 48 20 92 42 150 28 C 214 12 258 38 330 18"
         fill="none"
-        stroke="#d8e9ee"
+        stroke="#dff2fe"
         strokeWidth="2"
       />
       <path
         d="M -10 132 C 58 112 98 138 164 120 C 228 102 272 126 330 108"
         fill="none"
-        stroke="#d8e9ee"
+        stroke="#dff2fe"
         strokeWidth="2"
       />
       <path
         d="M 72 -12 C 56 44 96 66 82 118 C 76 140 88 154 104 172"
         fill="none"
-        stroke="#d8e9ee"
+        stroke="#dff2fe"
         strokeWidth="2"
       />
       <path
         d="M 236 -12 C 218 38 252 72 228 112 C 220 128 228 148 244 172"
         fill="none"
-        stroke="#d8e9ee"
+        stroke="#dff2fe"
         strokeWidth="2"
       />
       <path
         d={path}
         fill="none"
-        stroke="rgba(255,255,255,0.95)"
-        strokeWidth="10"
+        stroke="rgba(255,255,255,0.96)"
+        strokeWidth="9"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d={path}
         fill="none"
-        stroke="#0e7490"
-        strokeWidth="5"
+        stroke="#00a6f4"
+        strokeWidth="4.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx={start[0]} cy={start[1]} r="5" fill="#34ccff" stroke="#ffffff" strokeWidth="2" />
-      <circle cx={end[0]} cy={end[1]} r="6" fill="#e64a19" stroke="#ffffff" strokeWidth="2" />
+      <circle cx={start[0]} cy={start[1]} r="4.5" fill="#00a6f4" stroke="#ffffff" strokeWidth="2" />
+      <circle cx={end[0]} cy={end[1]} r="5.5" fill="#0084d1" stroke="#ffffff" strokeWidth="2" />
     </svg>
   );
 }

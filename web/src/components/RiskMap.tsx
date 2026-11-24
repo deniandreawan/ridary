@@ -10,8 +10,9 @@ import {
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { riskFeatureCollection } from "../lib/risk";
+import { riskFeatureCollection, riskPoints } from "../lib/risk";
 import type { Ride, RiskCell } from "../types";
+import { RouteArt } from "./RouteArt";
 
 const LIGHT_STYLE_URL = "https://tiles.openfreemap.org/styles/bright";
 
@@ -162,8 +163,8 @@ export function RiskMap({
         },
         paint: {
           "line-color": "#ffffff",
-          "line-width": 9,
-          "line-opacity": 0.94
+          "line-width": 8.5,
+          "line-opacity": 0.96
         }
       });
       map.addLayer({
@@ -175,9 +176,9 @@ export function RiskMap({
           "line-join": "round"
         },
         paint: {
-          "line-color": "#0e7490",
-          "line-width": 5,
-          "line-opacity": 0.96
+          "line-color": "#00a6f4",
+          "line-width": 4.5,
+          "line-opacity": 0.98
         }
       });
 
@@ -224,15 +225,35 @@ export function RiskMap({
   }, [applyData, fitData]);
 
   if (mapError) {
+    const points = riskPoints(riskCells).slice(0, 6);
     return (
       <div
-        className="flex items-center justify-center rounded-2xl border border-line bg-ink-soft px-6 text-center"
+        className="relative overflow-hidden rounded-2xl border border-line/75 bg-sky-soft/40"
         style={{ height }}
+        role="img"
+        aria-label="Road risk map preview"
       >
-        <div className="max-w-sm text-xs leading-relaxed text-muted">
-          The map could not start in this browser. The ride and risk details
-          are still available in the page.
-        </div>
+        <RouteArt
+          route={ride?.routePreview ?? []}
+          className="h-full w-full"
+        />
+        {points.map((point, index) => {
+          const left = 18 + ((index * 17 + 11) % 64);
+          const top = 22 + ((index * 23 + 7) % 56);
+          return (
+            <div
+              key={point.cell.id}
+              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white px-2 py-0.5 font-mono text-[10px] font-semibold text-white shadow-sm"
+              style={{
+                left: `${left}%`,
+                top: `${top}%`,
+                backgroundColor: point.color
+              }}
+            >
+              {point.cell.geohash}
+            </div>
+          );
+        })}
       </div>
     );
   }

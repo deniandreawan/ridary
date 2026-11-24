@@ -1,18 +1,15 @@
 import {
-  Cloud,
+  CheckCircle2,
   Cpu,
-  Gauge,
-  Route as RouteIcon,
-  TimerReset
+  Flag,
+  ShieldCheck
 } from "lucide-react";
-import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EmptyState, SectionHeader } from "../components/Banners";
+import { EmptyState } from "../components/Banners";
 import { EventCard } from "../components/EventCard";
 import { RiskMap } from "../components/RiskMap";
 import { RouteArt } from "../components/RouteArt";
-import { ScoreRing } from "../components/ScoreRing";
 import { SourceBadge } from "../components/SourceBadge";
 import { useApp } from "../context/AppContext";
 import { generateRideSnapshot, type SnapshotResult } from "../lib/ai";
@@ -72,9 +69,9 @@ export default function RidesPage() {
     if (demoMode) {
       updateReview(ride.id, {
         review: localRideReview(ride),
-        source: "deterministic"
+        source: "deterministic",
+        busy: false
       });
-      updateReview(ride.id, { busy: false });
       return;
     }
 
@@ -107,10 +104,10 @@ export default function RidesPage() {
 
   if (!selected) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         <header>
           <div className="mono-label">Rides</div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
+          <h1 className="mt-1.5 text-3xl font-semibold tracking-[-0.03em]">
             Your ride history
           </h1>
         </header>
@@ -122,237 +119,283 @@ export default function RidesPage() {
     );
   }
 
+  const band = scoreBand(selected.score);
+  const headline = review?.headline ?? "Ride captured";
+  const summaryText = review?.summary ?? selected.summary;
+
   return (
     <div className="space-y-5">
-      <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="mono-label">Rides / Detail</div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
-            {formatDateTime(selected.startedAtMs)}
+          <div className="mono-label">Rides</div>
+          <h1 className="mt-1 text-3xl font-semibold tracking-[-0.03em] text-paper">
+            Ride summaries
           </h1>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-            {selected.mode} · {selected.events.length} flagged moments
-          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <SourceBadge source={selected.inferenceSource} />
-          <ScoreRing score={selected.score} size={62} />
+        <div className="text-[13px] text-muted">
+          {rides.length} {rides.length === 1 ? "session" : "sessions"} synced
         </div>
       </header>
 
-      <div className="grid gap-4 lg:grid-cols-[290px_1fr]">
-        <aside className="surface max-h-[680px] overflow-y-auto p-2 scrollbar-thin">
-          {rides.map((ride) => {
-            const active = ride.id === selected.id;
-            return (
-              <button
-                key={ride.id}
-                type="button"
-                onClick={() => setSearchParams({ ride: ride.id })}
-                className={`focus-ring mb-1 w-full rounded-xl border px-3 py-3 text-left transition ${
-                  active
-                    ? "border-accent/30 bg-accent/8"
-                    : "border-transparent hover:border-line hover:bg-ink/5"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <RouteArt
-                    route={ride.routePreview}
-                    className="h-11 w-14 shrink-0 rounded-lg border border-line"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="truncate text-xs font-semibold text-paper">
-                        {formatDateTime(ride.startedAtMs)}
-                      </span>
-                      <span className="font-mono text-[10px] text-muted">
-                        {ride.score}
-                      </span>
+      <div className="grid gap-5 lg:grid-cols-[310px_1fr] lg:items-start">
+        <aside className="surface max-h-[720px] overflow-y-auto p-2.5 scrollbar-thin">
+          <div className="divide-y divide-line/65">
+            {rides.map((ride) => {
+              const active = ride.id === selected.id;
+              return (
+                <button
+                  key={ride.id}
+                  type="button"
+                  onClick={() => setSearchParams({ ride: ride.id })}
+                  className={`focus-ring w-full rounded-2xl px-3 py-3 text-left transition ${
+                    active
+                      ? "bg-sky-soft/65"
+                      : "hover:bg-canvas-soft"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <RouteArt
+                      route={ride.routePreview}
+                      className="h-12 w-16 shrink-0 rounded-xl border border-line/70"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="truncate text-[14px] font-medium text-paper">
+                          {formatDateTime(ride.startedAtMs)}
+                        </span>
+                        <span className="text-[15px] font-semibold text-sky-deep">
+                          {ride.score}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 text-[12px] capitalize text-muted">
+                        {ride.mode} · {formatDistance(ride.distanceM)} ·{" "}
+                        {formatDuration(ride.durationS)}
+                      </div>
                     </div>
-                    <div className="mt-1 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                      <span>{ride.mode}</span>
-                      <span>·</span>
-                      <span>{formatDistance(ride.distanceM)}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        <article className="surface overflow-hidden">
+          <div className="relative">
+            <RiskMap riskCells={[]} ride={selected} height={320} />
+          </div>
+
+          <div className="relative -mt-6 rounded-t-[1.625rem] bg-white pt-7 shadow-[0_-6px_20px_rgba(23,23,23,0.04)]">
+            <div className="mx-auto max-w-xl px-6 pb-6 text-center">
+              <h2 className="text-[23px] font-semibold tracking-[-0.025em] text-paper">
+                {headline}
+              </h2>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+                {summaryText}
+              </p>
+              <div className="mt-3.5 inline-flex flex-wrap items-center justify-center gap-2 text-[13px]">
+                <span className="inline-flex items-center gap-1.5 font-medium text-paper">
+                  <ShieldCheck size={14} className="text-sky" />
+                  {selected.score} Safety · {band} Band
+                </span>
+                <span className="text-muted">
+                  · {formatDateTime(selected.startedAtMs)}
+                </span>
+                <SourceBadge source={reviewSource ?? selected.inferenceSource} />
+              </div>
+            </div>
+
+            <div className="mx-6 h-px bg-line/75" />
+
+            {review && (
+              <>
+                <div className="flex items-center gap-3.5 px-6 py-5">
+                  <div className="ios-icon-circle h-10 w-10">
+                    <ShieldCheck size={18} strokeWidth={1.9} />
+                  </div>
+                  <div>
+                    <div className="text-[15px] font-medium text-paper">
+                      {review.coachingTip}
+                    </div>
+                    <div className="mt-0.5 text-[13px] text-muted">
+                      {review.scoreRationale}
                     </div>
                   </div>
                 </div>
-              </button>
-            );
-          })}
-        </aside>
+                <div className="mx-6 h-px bg-line/75" />
+              </>
+            )}
 
-        <div className="space-y-4">
-          <section className="surface p-5">
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <RideStat icon={<RouteIcon size={15} />} label="Distance" value={formatDistance(selected.distanceM)} />
-              <RideStat icon={<TimerReset size={15} />} label="Duration" value={formatDuration(selected.durationS)} />
-              <RideStat icon={<Gauge size={15} />} label="Avg speed" value={formatSpeed(selected.avgSpeedKph)} />
-              <RideStat icon={<Gauge size={15} />} label="Max speed" value={formatSpeed(selected.maxSpeedKph)} />
-            </div>
-          </section>
-
-          <section className="surface p-4">
-            <SectionHeader
-              eyebrow="Private route"
-              title="Where the ride happened"
-            />
-            <div className="mt-3">
-              <RiskMap
-                riskCells={[]}
-                ride={selected}
-                height={300}
+            <div className="grid grid-cols-3 divide-x divide-line/75 items-center px-6 py-5 text-center">
+              <CenteredMetric
+                value={String(selected.score)}
+                label={`Safety · ${band} Band`}
+                accent
+              />
+              <CenteredMetric
+                value={formatDistance(selected.distanceM)}
+                label={`${formatDuration(selected.durationS)} duration`}
+              />
+              <CenteredMetric
+                value={formatSpeed(selected.avgSpeedKph)}
+                label={`Avg · ${formatSpeed(selected.maxSpeedKph)} max`}
               />
             </div>
-            <p className="mt-3 text-[10px] leading-relaxed text-muted">
-              The route is shown only because this dashboard received an
-              explicit route preview. Raw GPS samples never leave the phone.
-            </p>
-          </section>
 
-          <section className="surface p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <SectionHeader
-                eyebrow="Hybrid AI review"
-                title="What the model noticed"
-              />
-              <button
-                type="button"
-                onClick={() => void runReview()}
-                disabled={reviewBusy}
-                className="focus-ring inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
-              >
-                {reviewBusy ? (
-                  "Reviewing…"
+            <div className="mx-6 h-px bg-line/75" />
+
+            <div className="px-6 py-6">
+              <div className="flex items-baseline justify-between gap-4">
+                <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+                  Ride timeline
+                </h3>
+                <span className="text-[13px] text-muted">
+                  {selected.events.length === 0
+                    ? "Smooth ride"
+                    : `${selected.events.length} ${
+                        selected.events.length === 1 ? "moment" : "moments"
+                      }`}
+                </span>
+              </div>
+
+              <div className="mt-4 divide-y divide-line/65">
+                <div className="flex items-start gap-3.5 py-3.5 first:pt-1">
+                  <div className="ios-icon-circle">
+                    <CheckCircle2 size={15} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[15px] font-medium text-paper">
+                        Ride started
+                      </span>
+                      <span className="font-mono text-[12px] text-subtle">
+                        0:00
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-[13px] capitalize text-muted">
+                      {selected.mode} session · {formatDateTime(selected.startedAtMs)}
+                    </div>
+                  </div>
+                </div>
+
+                {selected.events.length === 0 ? (
+                  <div className="flex items-start gap-3.5 py-3.5">
+                    <div className="ios-icon-circle">
+                      <ShieldCheck size={15} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[15px] font-medium text-paper">
+                        Steady pace maintained
+                      </div>
+                      <div className="mt-0.5 text-[13px] text-muted">
+                        No hard braking, sharp turns, or impact spikes detected.
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  <>
-                    <Cpu size={14} />
-                    {demoMode ? "Preview local review" : "Run on-device review"}
-                  </>
+                  selected.events.map((event, index) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      rideStartMs={selected.startedAtMs}
+                      index={index + 1}
+                    />
+                  ))
                 )}
-              </button>
-            </div>
 
-            <div className="mt-3 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
-              <Cpu size={11} className="text-teal" />
-              Chrome Nano first
-              <span className="text-muted/50">→</span>
-              <Cloud size={11} className="text-accent" />
-              Gemini fallback
+                <div className="flex items-start gap-3.5 py-3.5 last:pb-1">
+                  <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-canvas-soft text-muted">
+                    <Flag size={14} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[15px] font-medium text-paper">
+                        Ride completed
+                      </span>
+                      <span className="font-mono text-[12px] text-subtle">
+                        {formatDuration(selected.durationS)}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-[13px] text-muted">
+                      {formatDistance(selected.distanceM)} recorded · Safety score{" "}
+                      {selected.score}/100
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {reviewError && (
-              <p className="mt-3 rounded-xl border border-accent/25 bg-accent/8 px-3 py-2 text-[11px] leading-relaxed text-muted">
-                {reviewError}
-              </p>
-            )}
-
-            {review ? (
-              <div className="mt-4 space-y-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-semibold text-paper">
-                    {review.headline}
-                  </span>
-                  {reviewSource && <SourceBadge source={reviewSource} />}
-                </div>
-                <p className="text-xs leading-relaxed text-muted">
-                  {review.summary}
+              <div className="px-6 pb-4">
+                <p className="rounded-2xl bg-sky-soft/60 px-4 py-3 text-[12px] text-muted">
+                  {reviewError}
                 </p>
-                {review.riskMoments.length > 0 && (
-                  <div className="space-y-2">
-                    {review.riskMoments.map((moment) => (
-                      <div
-                        key={`${moment.type}-${moment.atSeconds}`}
-                        className="rounded-xl border border-line bg-ink-soft p-3"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-semibold text-paper">
-                            {moment.type}
-                          </span>
-                          <span className="font-mono text-[9px] text-muted">
-                            +{moment.atSeconds}s
-                          </span>
-                        </div>
-                        <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                          {moment.explanation}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="rounded-xl border border-teal/20 bg-teal/6 p-3">
-                  <div className="mono-label text-teal">Coaching tip</div>
-                  <p className="mt-1 text-xs leading-relaxed text-paper">
-                    {review.coachingTip}
-                  </p>
-                </div>
-                <p className="text-[10px] leading-relaxed text-muted">
-                  {review.scoreRationale}
-                </p>
-                {reviewRaw && (
-                  <p className="text-[10px] leading-relaxed text-muted">
-                    Raw model output: {reviewRaw}
-                  </p>
-                )}
               </div>
-            ) : (
-              <p className="mt-4 text-xs leading-relaxed text-muted">
-                Run a private review to turn the deterministic event
-                candidates into a short, useful explanation. In demo mode this
-                uses local rules; with Firebase it uses Chrome Nano when
-                available.
-              </p>
             )}
-          </section>
 
-          <section className="surface p-5">
-            <SectionHeader
-              eyebrow="Evidence"
-              title="Flagged moments"
-              action={
-                <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
-                  band {scoreBand(selected.score)}
-                </span>
-              }
-            />
-            <div className="mt-4 space-y-2">
-              {selected.events.length === 0 ? (
-                <EmptyState
-                  title="No flagged moments"
-                  message="A clean ride still creates a private summary and a safety score."
-                />
-              ) : (
-                selected.events.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    rideStartMs={selected.startedAtMs}
-                  />
-                ))
-              )}
+            {reviewRaw && (
+              <div className="px-6 pb-4">
+                <p className="text-[12px] text-muted">
+                  Raw model output: {reviewRaw}
+                </p>
+              </div>
+            )}
+
+            <div className="border-t border-line/75 px-6 py-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="text-[15px] font-semibold text-paper">
+                    {selected.score}{" "}
+                    <span className="text-[13px] font-normal text-muted">
+                      / 100 · {band} Band
+                    </span>
+                  </div>
+                  <div className="text-[12px] text-subtle">
+                    {formatDistance(selected.distanceM)} ·{" "}
+                    {formatDuration(selected.durationS)} · Chrome Nano first
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => void runReview()}
+                  disabled={reviewBusy}
+                  className="btn-glass-sky focus-ring px-4 py-2.5 text-[13px] disabled:opacity-60"
+                >
+                  <Cpu size={14} />
+                  {reviewBusy
+                    ? "Reviewing…"
+                    : demoMode
+                      ? "Preview local review"
+                      : "Run on-device review"}
+                </button>
+              </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </article>
       </div>
     </div>
   );
 }
 
-function RideStat({
-  icon,
+function CenteredMetric({
+  value,
   label,
-  value
+  accent = false
 }: {
-  icon: ReactNode;
-  label: string;
   value: string;
+  label: string;
+  accent?: boolean;
 }) {
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-muted">{icon}</div>
-      <div className="mt-2 font-mono text-xl font-semibold text-paper">{value}</div>
-      <div className="mt-1 text-[9px] font-medium uppercase tracking-[0.1em] text-muted">
-        {label}
+      <div
+        className={`text-[17px] font-semibold tracking-tight ${
+          accent ? "text-sky-deep" : "text-paper"
+        }`}
+      >
+        {value}
       </div>
+      <div className="mt-0.5 text-[12px] text-muted">{label}</div>
     </div>
   );
 }

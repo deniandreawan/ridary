@@ -1,15 +1,17 @@
 import {
+  CalendarClock,
   CheckCircle2,
   Copy,
   ExternalLink,
   KeyRound,
+  Lock,
   Share2,
   ShieldCheck,
   XCircle
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
-import { EmptyState, SectionHeader } from "../components/Banners";
-import { ScoreRing } from "../components/ScoreRing";
+import { EmptyState } from "../components/Banners";
 import { useApp } from "../context/AppContext";
 import { formatISODate, formatPeriod, scoreBand } from "../lib/format";
 import type {
@@ -67,229 +69,277 @@ export default function CredentialPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <div className="mono-label">Credential / Ridary Proof</div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
-            Proof without surveillance.
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-            A signed safety credential that shows the pattern, not your route.
-            Insurers can verify the signature without receiving raw location or
-            sensor data.
-          </p>
-        </div>
-        {latest && (
-          <button
-            type="button"
-            onClick={() => void issue()}
-            disabled={busyIssue || demoMode}
-            className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-50"
-          >
-            <ShieldCheck size={14} className="text-teal" />
-            {busyIssue ? "Issuing…" : "Issue new credential"}
-          </button>
-        )}
-      </header>
-
+    <div className="mx-auto max-w-3xl space-y-5">
       {latest ? (
-        <div className="grid gap-4 xl:grid-cols-[1.45fr_1fr]">
-          <section className="surface p-6">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              <ScoreRing score={latest.score} size={126} />
-              <div className="min-w-0">
-                <div className="mono-label">Ridary Proof</div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight">
-                  {latestBand} band
-                </div>
-                <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/8 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-teal">
-                  <CheckCircle2 size={11} />
-                  Signed by {latest.issuer}
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-muted">
-                  {formatPeriod(latest.periodStart, latest.periodEnd)}
-                </p>
-              </div>
+        <article className="surface overflow-hidden">
+          <div className="ios-hero-pastel flex flex-col items-center px-6 pb-11 pt-9 text-center">
+            <div className="mono-label">
+              Valid until {formatISODate(latest.expiresAt)}
             </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <Meta label="Rides" value={String(latest.rideCount)} />
-              <Meta label="Moments" value={String(latest.eventCount)} />
-              <Meta label="Issued" value={formatISODate(latest.issuedAt)} />
-              <Meta label="Expires" value={formatISODate(latest.expiresAt)} />
+            <div className="ios-hero-badge mt-3.5">
+              <ShieldCheck size={26} strokeWidth={1.9} />
             </div>
-
-            <div className="mt-5 space-y-2 border-t border-line pt-4 font-mono text-[10px] text-muted">
-              <div className="flex items-center gap-2">
-                <KeyRound size={11} className="text-accent" />
-                key {latest.publicKeyId}
-              </div>
-              <div className="break-all">
-                hash {latest.payloadHash}
-              </div>
+            <div className="mt-3.5 text-[34px] font-semibold tracking-[-0.03em] text-paper">
+              {latestBand} Band
             </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void verify()}
-                disabled={busyVerify}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card-soft px-4 py-2.5 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-60"
-              >
-                <ShieldCheck size={14} />
-                {busyVerify ? "Verifying…" : "Verify signature"}
-              </button>
-              <button
-                type="button"
-                onClick={() => void shareCredential()}
-                disabled={busyShare}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-60"
-              >
-                <Share2 size={14} />
-                {busyShare ? "Creating link…" : "Share with insurer"}
-              </button>
+            <div className="mt-1 text-[13px] text-muted">
+              {formatPeriod(latest.periodStart, latest.periodEnd)} ·{" "}
+              {latest.rideCount} rides
             </div>
+          </div>
 
-            {demoMode && (
-              <p className="mt-3 text-[10px] leading-relaxed text-muted">
-                This is a sample credential. Connect a Firebase project to
-                issue and verify a real server-signed credential.
+          <div className="relative -mt-6 rounded-t-[1.625rem] bg-white pt-7 shadow-[0_-6px_20px_rgba(23,23,23,0.04)]">
+            <div className="mx-auto max-w-xl px-6 pb-6 text-center">
+              <h1 className="text-[23px] font-semibold tracking-[-0.025em] text-paper">
+                Proof, not surveillance
+              </h1>
+              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+                A cryptographic summary of your recent rides. Share your safety
+                band with an insurer without exposing routes or raw GPS.
               </p>
-            )}
-          </section>
+              <div className="mt-3.5 inline-flex items-center gap-1.5 text-[13px]">
+                <CheckCircle2 size={14} className="text-sky" />
+                <span className="font-medium text-paper">
+                  Signed by {latest.issuer}
+                </span>
+                <span className="text-muted">· Ed25519 verified</span>
+              </div>
+            </div>
 
-          <div className="space-y-4">
+            <div className="mx-6 h-px bg-line/75" />
+
+            <div className="grid grid-cols-3 divide-x divide-line/75 items-center px-6 py-5 text-center">
+              <CenteredProofMetric
+                value={`${latestBand} Band`}
+                label="Safety tier"
+                accent
+              />
+              <CenteredProofMetric
+                value={String(latest.score)}
+                label="Out of 100"
+              />
+              <CenteredProofMetric
+                value={`${latest.rideCount} rides`}
+                label={`${latest.eventCount} moments`}
+              />
+            </div>
+
+            <div className="mx-6 h-px bg-line/75" />
+
+            <div className="space-y-4 px-6 py-6">
+              <h2 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+                What this credential proves
+              </h2>
+
+              <HighlightRow
+                icon={<ShieldCheck size={15} />}
+                title={`Signed by ${latest.issuer}`}
+                subtitle="Cryptographic Ed25519 signature verifying your safety band and ride count."
+              />
+              <HighlightRow
+                icon={<Lock size={15} />}
+                title="Zero raw GPS shared"
+                subtitle="Insurers see only your aggregate score and period—never routes or timestamps."
+              />
+              <HighlightRow
+                icon={<CalendarClock size={15} />}
+                title={`Valid until ${formatISODate(latest.expiresAt)}`}
+                subtitle={`Covers your ${latest.mode} sessions from ${formatPeriod(
+                  latest.periodStart,
+                  latest.periodEnd
+                )}.`}
+              />
+              <HighlightRow
+                icon={<KeyRound size={15} />}
+                title={`Key ${latest.publicKeyId}`}
+                subtitle={latest.payloadHash}
+                mono
+              />
+            </div>
+
             {verification && (
-              <section
-                className={`surface p-4 ${
-                  verification.valid ? "" : "border-danger/20"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  {verification.valid ? (
-                    <CheckCircle2 size={18} className="mt-0.5 text-teal" />
-                  ) : (
-                    <XCircle size={18} className="mt-0.5 text-danger" />
-                  )}
+              <>
+                <div className="mx-6 h-px bg-line/75" />
+                <div className="flex items-start gap-3.5 px-6 py-5">
+                  <div
+                    className={`flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full ${
+                      verification.valid
+                        ? "bg-sky-soft text-sky"
+                        : "bg-danger/12 text-danger"
+                    }`}
+                  >
+                    {verification.valid ? (
+                      <CheckCircle2 size={16} />
+                    ) : (
+                      <XCircle size={16} />
+                    )}
+                  </div>
                   <div>
-                    <div className="text-sm font-semibold text-paper">
+                    <div className="text-[15px] font-medium text-paper">
                       {verification.valid
-                        ? "Signature and hash match"
-                        : "Verification did not pass"}
+                        ? "Signature valid"
+                        : "Verification failed"}
                     </div>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                    <p className="mt-0.5 text-[13px] text-muted">
                       {verification.reason ??
-                        "The Ed25519 signature and payload hash are valid."}
+                        "The credential hash and Ed25519 signature match."}
                     </p>
                   </div>
                 </div>
-              </section>
+              </>
             )}
 
             {share && (
-              <section className="surface p-4">
-                <div className="mono-label">Insurer link</div>
-                <div className="mt-2 break-all rounded-xl border border-line bg-ink-soft p-3 font-mono text-[10px] text-paper">
-                  {share.url}
+              <>
+                <div className="mx-6 h-px bg-line/75" />
+                <div className="px-6 py-5">
+                  <div className="text-[15px] font-medium text-paper">
+                    Shareable insurer link
+                  </div>
+                  <div className="mt-2 break-all rounded-2xl bg-canvas-soft px-3.5 py-2.5 font-mono text-[12px] text-paper">
+                    {share.url}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void copy(share.url)}
+                      className="btn-glass focus-ring px-3.5 py-2 text-[13px]"
+                    >
+                      <Copy size={13} />
+                      {copied ? "Copied" : "Copy link"}
+                    </button>
+                    <a
+                      href={share.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-glass focus-ring px-3.5 py-2 text-[13px]"
+                    >
+                      <ExternalLink size={13} />
+                      Open insurer view
+                    </a>
+                  </div>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void copy(share.url)}
-                    className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card-soft px-3 py-2 text-xs font-semibold text-paper"
-                  >
-                    <Copy size={13} />
-                    {copied ? "Copied" : "Copy link"}
-                  </button>
-                  <a
-                    href={share.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="focus-ring inline-flex items-center gap-2 rounded-xl border border-line bg-card-soft px-3 py-2 text-xs font-semibold text-paper"
-                  >
-                    <ExternalLink size={13} />
-                    Open insurer view
-                  </a>
-                </div>
-              </section>
+              </>
             )}
 
-            <section className="surface p-5">
-              <SectionHeader eyebrow="How it works" title="Three steps" />
-              <ol className="mt-4 space-y-4">
-                <Step
-                  number="01"
-                  title="Ride privately"
-                  text="The phone records route and motion locally. On-device AI builds the snapshot."
-                />
-                <Step
-                  number="02"
-                  title="Issue a proof"
-                  text="The server checks eligible rides and signs a credential with Ed25519."
-                />
-                <Step
-                  number="03"
-                  title="Share the proof"
-                  text="The insurer gets a score and a signature, never the raw route."
-                />
-              </ol>
-            </section>
-          </div>
-        </div>
-      ) : (
-        <section className="surface p-6">
-          <EmptyState
-            title="No credential yet"
-            message="Record at least three rides in the last 30 days, then issue a signed Ridary Proof."
-          />
-          <div className="mt-4 flex justify-center">
-            <button
-              type="button"
-              onClick={() => void issue()}
-              disabled={busyIssue || demoMode}
-              className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-semibold text-on-accent transition hover:bg-accent/90 disabled:opacity-50"
-            >
-              <ShieldCheck size={15} />
-              {busyIssue ? "Issuing…" : "Issue credential"}
-            </button>
-          </div>
-          {demoMode && (
-            <p className="mt-3 text-center text-[10px] leading-relaxed text-muted">
-              Credential issuance needs a configured Firebase project and a
-              signed-in rider.
-            </p>
-          )}
-        </section>
-      )}
-
-      {credentials.length > 1 && (
-        <section className="surface p-5">
-          <SectionHeader eyebrow="Archive" title="Past credentials" />
-          <div className="mt-4 space-y-2">
-            {credentials.slice(1).map((credential) => (
-              <div
-                key={credential.credentialId}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-ink-soft px-4 py-3"
-              >
-                <div>
-                  <div className="text-xs font-semibold text-paper">
-                    {formatPeriod(credential.periodStart, credential.periodEnd)}
-                  </div>
-                  <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                    score {credential.score} · {credential.rideCount} rides
+            {credentials.length > 1 && (
+              <>
+                <div className="mx-6 h-px bg-line/75" />
+                <div className="px-6 py-6">
+                  <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-paper">
+                    Earlier proofs
+                  </h3>
+                  <div className="mt-3 divide-y divide-line/65">
+                    {credentials.slice(1).map((credential) => (
+                      <div
+                        key={credential.credentialId}
+                        className="flex items-center justify-between gap-3 py-3"
+                      >
+                        <div>
+                          <div className="text-[15px] font-medium text-paper">
+                            {formatPeriod(
+                              credential.periodStart,
+                              credential.periodEnd
+                            )}
+                          </div>
+                          <div className="mt-0.5 text-[13px] text-muted">
+                            Score {credential.score} · {credential.rideCount} rides
+                          </div>
+                        </div>
+                        <span className="text-[17px] font-semibold text-sky-deep">
+                          {scoreBand(credential.score)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="inline-flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-muted">
-                    band
-                  </span>
-                  <span className="font-semibold text-teal">
-                    {scoreBand(credential.score)}
-                  </span>
+              </>
+            )}
+
+            <div className="mx-6 h-px bg-line/75" />
+
+            <p className="px-6 py-4 text-center text-[12px] text-subtle">
+              Ridary Proof is a personal safety credential, not legal proof, a
+              court record, or an insurance guarantee.
+            </p>
+
+            <div className="border-t border-line/75 px-6 py-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="text-[16px] font-semibold text-paper">
+                    {latestBand} Band{" "}
+                    <span className="text-[13px] font-normal text-muted">
+                      · {latest.score} / 100
+                    </span>
+                  </div>
+                  <div className="text-[12px] text-subtle">
+                    Expires {formatISODate(latest.expiresAt)}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {!demoMode && (
+                    <button
+                      type="button"
+                      onClick={() => void issue()}
+                      disabled={busyIssue}
+                      className="btn-glass focus-ring px-4 py-2 text-[13px] disabled:opacity-50"
+                    >
+                      {busyIssue ? "Issuing…" : "Re-issue"}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => void verify()}
+                    disabled={busyVerify}
+                    className="btn-glass focus-ring px-4 py-2 text-[13px] disabled:opacity-60"
+                  >
+                    {busyVerify ? "Verifying…" : "Verify"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void shareCredential()}
+                    disabled={busyShare}
+                    className="btn-glass-sky focus-ring px-4 py-2 text-[13px] disabled:opacity-60"
+                  >
+                    <Share2 size={14} />
+                    {busyShare ? "Sharing…" : "Share"}
+                  </button>
                 </div>
               </div>
-            ))}
+            </div>
+          </div>
+        </article>
+      ) : (
+        <section className="surface overflow-hidden">
+          <div className="ios-hero-pastel flex flex-col items-center px-6 pb-11 pt-9 text-center">
+            <div className="mono-label">30-day window</div>
+            <div className="ios-hero-badge mt-3.5">
+              <ShieldCheck size={24} strokeWidth={1.9} />
+            </div>
+            <div className="mt-3.5 text-[28px] font-semibold tracking-[-0.025em] text-paper">
+              Build your proof
+            </div>
+            <div className="mt-1 text-[13px] text-muted">
+              Record at least 3 rides in the last 30 days
+            </div>
+          </div>
+          <div className="relative -mt-6 rounded-t-[1.625rem] bg-white p-6">
+            <EmptyState
+              title="No credential yet"
+              message="Record at least three rides in the last 30 days, then issue a signed Ridary Proof that an insurer can verify."
+            />
+            <div className="mt-5 flex justify-center">
+              <button
+                type="button"
+                onClick={() => void issue()}
+                disabled={busyIssue || demoMode}
+                className="btn-glass-sky focus-ring px-5 py-2.5 text-[14px] disabled:opacity-50"
+              >
+                <ShieldCheck size={15} />
+                {busyIssue ? "Issuing…" : "Issue proof"}
+              </button>
+            </div>
           </div>
         </section>
       )}
@@ -297,37 +347,53 @@ export default function CredentialPage() {
   );
 }
 
-function Meta({ label, value }: { label: string; value: string }) {
+function CenteredProofMetric({
+  value,
+  label,
+  accent = false
+}: {
+  value: string;
+  label: string;
+  accent?: boolean;
+}) {
   return (
-    <div className="rounded-xl border border-line bg-ink-soft px-3 py-2">
-      <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
-        {label}
+    <div>
+      <div
+        className={`text-[17px] font-semibold tracking-tight ${
+          accent ? "text-sky-deep" : "text-paper"
+        }`}
+      >
+        {value}
       </div>
-      <div className="mt-1 text-xs font-semibold text-paper">{value}</div>
+      <div className="mt-0.5 text-[12px] text-muted">{label}</div>
     </div>
   );
 }
 
-function Step({
-  number,
+function HighlightRow({
+  icon,
   title,
-  text
+  subtitle,
+  mono = false
 }: {
-  number: string;
+  icon: ReactNode;
   title: string;
-  text: string;
+  subtitle: string;
+  mono?: boolean;
 }) {
   return (
-    <li className="flex gap-3">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-accent/25 bg-accent/8 font-mono text-[9px] text-accent">
-        {number}
-      </div>
-      <div>
-        <div className="text-xs font-semibold text-paper">{title}</div>
-        <div className="mt-1 text-[11px] leading-relaxed text-muted">
-          {text}
+    <div className="flex items-start gap-3.5">
+      <div className="ios-icon-circle mt-0.5">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <div className="text-[15px] font-medium text-paper">{title}</div>
+        <div
+          className={`mt-0.5 text-[13px] text-muted ${
+            mono ? "truncate font-mono text-[12px]" : "leading-relaxed"
+          }`}
+        >
+          {subtitle}
         </div>
       </div>
-    </li>
+    </div>
   );
 }

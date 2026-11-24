@@ -29,23 +29,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="min-h-[100dvh] bg-canvas px-4 py-8 sm:px-6">
+      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-5xl items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
         <section className="max-w-xl">
           <Logo />
-          <div className="mono-label mt-12">Hybrid AI · Private by default</div>
-          <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-6xl">
-            Every ride,
-            <br />
-            on record.
+
+          <div className="mt-10 inline-flex items-center gap-1.5 rounded-full bg-sky-soft px-3 py-1 text-[12px] font-medium text-sky-deep">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky" />
+            Hybrid AI · Private by default
+          </div>
+
+          <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-paper sm:text-5xl">
+            Every ride, on record.
           </h1>
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted">
             Ridary turns a phone in your pocket into a private ride witness.
-            On-device AI explains what happened. The cloud only sees what you
+            On-device AI explains what happened; the cloud sees only what you
             choose to share.
           </p>
 
-          <div className="mt-10 overflow-hidden rounded-[1.5rem] border border-line bg-cyan-soft/25">
+          <div className="surface mt-7 overflow-hidden">
             <RouteArt
               route={[
                 [-6.2088, 106.8456],
@@ -56,147 +59,165 @@ export default function LoginPage() {
               ]}
               className="h-44 w-full"
             />
-            <div className="flex items-center justify-between gap-3 bg-card/80 px-4 py-3">
-              <span className="text-xs font-semibold text-paper">A ride, kept private</span>
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-teal">
-                <span className="h-1.5 w-1.5 rounded-full bg-teal" />
-                On device
+            <div className="flex items-center justify-between gap-3 border-t border-line/70 bg-white px-5 py-3.5">
+              <div>
+                <div className="text-[14px] font-medium text-paper">
+                  A steady ride with one hard brake
+                </div>
+                <div className="text-[12px] text-muted">
+                  Motorcycle · 8.2 km · 25m
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-soft px-2.5 py-1 text-[11px] font-medium text-sky-deep">
+                <span className="h-1.5 w-1.5 rounded-full bg-sky" />
+                96 · A Band
               </span>
             </div>
           </div>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-7 divide-y divide-line/70">
             <Feature
               icon={<Smartphone size={16} />}
               title="Private at the edge"
-              text="Route, motion, evidence, and incident notes stay on your phone."
+              text="Raw routes, sensor windows, and incident notes stay on your iPhone."
             />
             <Feature
               icon={<Cpu size={16} />}
-              title="Hybrid inference"
-              text="Apple Foundation Models or Chrome Nano first; Gemini fallback when needed."
+              title="On-device first"
+              text="Apple Foundation Models and Chrome Nano summarize rides locally."
             />
             <Feature
               icon={<Cloud size={16} />}
-              title="Collective in the cloud"
-              text="Anonymized event points build a road-risk map without exposing your route."
+              title="Proof, not surveillance"
+              text="Share a signed safety band with an insurer without exposing raw GPS."
             />
           </div>
         </section>
 
-        <section className="surface p-6 sm:p-8">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <div className="mono-label">Rider access</div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                {mode === "signin" ? "Welcome back" : "Create your account"}
-              </h2>
+        <section className="surface overflow-hidden">
+          <div className="ios-hero-pastel flex flex-col items-center px-6 pb-9 pt-8 text-center">
+            <div className="mono-label">Rider access</div>
+            <div className="ios-hero-badge mt-3">
+              <ShieldCheck size={24} strokeWidth={1.9} />
             </div>
-            <ShieldCheck className="text-teal" size={22} />
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-1 rounded-xl border border-line bg-ink-soft p-1">
-            <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className={`focus-ring rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                mode === "signin"
-                  ? "bg-card text-paper"
-                  : "text-muted hover:text-paper"
-              }`}
-            >
-              Sign in
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("signup")}
-              className={`focus-ring rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                mode === "signup"
-                  ? "bg-card text-paper"
-                  : "text-muted hover:text-paper"
-              }`}
-            >
-              Create account
-            </button>
-          </div>
-
-          <form onSubmit={(event) => void handleSubmit(event)} className="mt-5 space-y-4">
-            <label className="block">
-              <span className="mono-label">Email</span>
-              <input
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
-                className="focus-ring mt-2 w-full rounded-xl border border-line bg-ink-soft px-3.5 py-3 text-sm text-paper outline-none placeholder:text-muted/60"
-              />
-            </label>
-            <label className="block">
-              <span className="mono-label">Password</span>
-              <input
-                type="password"
-                autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                required
-                minLength={6}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="At least 6 characters"
-                className="focus-ring mt-2 w-full rounded-xl border border-line bg-ink-soft px-3.5 py-3 text-sm text-paper outline-none placeholder:text-muted/60"
-              />
-            </label>
-
-            {error && <ErrorBanner message={error} />}
-
-            <button
-              type="submit"
-              disabled={authBusy}
-              className="focus-ring flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-on-accent transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {authBusy ? (
-                "Working…"
-              ) : (
-                <>
-                  {mode === "signin" ? "Sign in" : "Create account"}
-                  <ArrowRight size={15} />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="my-5 flex items-center gap-3">
-            <div className="h-px flex-1 bg-line" />
-            <span className="mono-label">or</span>
-            <div className="h-px flex-1 bg-line" />
-          </div>
-
-          <div className="space-y-2">
-            <button
-              type="button"
-              disabled={authBusy}
-              onClick={() => void signInAnonymously()}
-              className="focus-ring w-full rounded-xl border border-line bg-card-soft px-4 py-3 text-xs font-semibold text-paper transition hover:border-ink/20 disabled:opacity-60"
-            >
-              Continue as guest
-            </button>
-            <button
-              type="button"
-              onClick={enterDemo}
-              className="focus-ring w-full rounded-xl border border-accent/25 bg-accent/8 px-4 py-3 text-xs font-semibold text-accent transition hover:bg-accent/12"
-            >
-              Explore the demo dashboard
-            </button>
-          </div>
-
-          {!isFirebaseConfigured && (
-            <p className="mt-5 text-[11px] leading-relaxed text-muted">
-              Firebase is not configured. The dashboard will run in demo mode
-              with sample data. Add your web app values to{" "}
-              <code className="font-mono text-paper">.env.local</code> to sign
-              in and use hybrid AI.
+            <h2 className="mt-3 text-[24px] font-semibold tracking-[-0.025em] text-paper">
+              {mode === "signin" ? "Welcome back" : "Create your account"}
+            </h2>
+            <p className="mt-1 text-[13px] text-muted">
+              Sign in with your iPhone account or explore sample data
             </p>
-          )}
+          </div>
+
+          <div className="-mt-5 rounded-t-[1.625rem] bg-white px-6 pb-7 pt-6 sm:px-8">
+            <div className="grid grid-cols-2 gap-1 rounded-full bg-canvas-soft p-1">
+              <button
+                type="button"
+                onClick={() => setMode("signin")}
+                className={`focus-ring rounded-full px-3 py-2 text-[13px] font-medium transition ${
+                  mode === "signin"
+                    ? "bg-white text-paper shadow-sm"
+                    : "text-muted hover:text-paper"
+                }`}
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("signup")}
+                className={`focus-ring rounded-full px-3 py-2 text-[13px] font-medium transition ${
+                  mode === "signup"
+                    ? "bg-white text-paper shadow-sm"
+                    : "text-muted hover:text-paper"
+                }`}
+              >
+                Create account
+              </button>
+            </div>
+
+            <form
+              onSubmit={(event) => void handleSubmit(event)}
+              className="mt-5 space-y-4"
+            >
+              <label className="block">
+                <span className="text-[13px] font-medium text-paper">Email</span>
+                <input
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  className="focus-ring mt-1.5 w-full rounded-2xl border border-line bg-canvas-soft px-3.5 py-3 text-[14px] text-paper outline-none transition focus:border-sky focus:bg-white placeholder:text-subtle"
+                />
+              </label>
+              <label className="block">
+                <span className="text-[13px] font-medium text-paper">
+                  Password
+                </span>
+                <input
+                  type="password"
+                  autoComplete={
+                    mode === "signin" ? "current-password" : "new-password"
+                  }
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="At least 6 characters"
+                  className="focus-ring mt-1.5 w-full rounded-2xl border border-line bg-canvas-soft px-3.5 py-3 text-[14px] text-paper outline-none transition focus:border-sky focus:bg-white placeholder:text-subtle"
+                />
+              </label>
+
+              {error && <ErrorBanner message={error} />}
+
+              <button
+                type="submit"
+                disabled={authBusy}
+                className="btn-glass-sky focus-ring w-full px-5 py-3 text-[14px] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {authBusy ? (
+                  "Working…"
+                ) : (
+                  <>
+                    {mode === "signin" ? "Sign in" : "Create account"}
+                    <ArrowRight size={15} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="my-5 flex items-center gap-3">
+              <div className="h-px flex-1 bg-line/80" />
+              <span className="text-[12px] text-subtle">or</span>
+              <div className="h-px flex-1 bg-line/80" />
+            </div>
+
+            <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={enterDemo}
+                className="btn-glass focus-ring w-full border-sky/25 bg-sky-soft/55 px-4 py-3 text-[13px] font-medium text-sky-deep hover:bg-sky-soft"
+              >
+                Explore the demo dashboard
+              </button>
+              <button
+                type="button"
+                disabled={authBusy}
+                onClick={() => void signInAnonymously()}
+                className="btn-glass focus-ring w-full px-4 py-3 text-[13px] text-paper disabled:opacity-60"
+              >
+                Continue as guest
+              </button>
+            </div>
+
+            {!isFirebaseConfigured && (
+              <p className="mt-4 text-center text-[12px] leading-relaxed text-muted">
+                Running in local demo mode. Add your web config to{" "}
+                <code className="font-mono text-paper">.env.local</code> for live
+                Firebase sync.
+              </p>
+            )}
+          </div>
         </section>
       </div>
     </div>
@@ -213,13 +234,11 @@ function Feature({
   text: string;
 }) {
   return (
-    <div className="flex gap-3">
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-card text-accent">
-        {icon}
-      </div>
+    <div className="flex items-start gap-3.5 py-3.5">
+      <div className="ios-icon-circle mt-0.5">{icon}</div>
       <div>
-        <div className="text-sm font-semibold text-paper">{title}</div>
-        <div className="mt-1 max-w-sm text-xs leading-relaxed text-muted">
+        <div className="text-[15px] font-medium text-paper">{title}</div>
+        <div className="mt-0.5 text-[13px] leading-relaxed text-muted">
           {text}
         </div>
       </div>

@@ -31,9 +31,9 @@ import PrivacyPage from "./pages/PrivacyPage";
 import RidesPage from "./pages/RidesPage";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Home", icon: Activity },
+  { to: "/", label: "Overview", icon: Activity },
   { to: "/rides", label: "Rides", icon: Map },
-  { to: "/credential", label: "Proof", icon: ShieldCheck },
+  { to: "/credential", label: "Ridary Proof", icon: ShieldCheck },
   { to: "/privacy", label: "Privacy", icon: Cpu }
 ];
 
@@ -54,46 +54,25 @@ function ProtectedRoute() {
 
 function DashboardLayout() {
   const { demoMode, user, signOut, error } = useApp();
+  const initial = (user?.email ?? "R").trim().charAt(0).toUpperCase() || "R";
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center justify-between gap-4">
-            <Logo />
-            <div className="flex items-center gap-2 lg:hidden">
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] ${
-                  demoMode
-                    ? "border-accent/30 bg-accent/10 text-accent"
-                    : "border-teal/30 bg-teal/10 text-teal"
-                }`}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                {demoMode ? "Demo" : "Live"}
-              </span>
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="focus-ring rounded-lg border border-line p-2 text-muted hover:text-paper"
-                aria-label="Sign out"
-              >
-                <LogOut size={14} />
-              </button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-canvas">
+      <header className="sticky top-0 z-30 border-b border-line/75 bg-white/88 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <Logo />
 
-          <nav className="flex gap-1 overflow-x-auto pb-1 scrollbar-thin lg:pb-0">
+          <nav className="hidden items-center gap-1 rounded-full border border-line/80 bg-canvas-soft p-1 md:flex">
             {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
                 end={to === "/"}
                 className={({ isActive }) =>
-                  `focus-ring flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition ${
+                  `focus-ring flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px] font-medium transition ${
                     isActive
-                      ? "bg-card-soft text-paper"
-                      : "text-muted hover:bg-ink/5 hover:text-paper"
+                      ? "bg-white text-paper shadow-[0_2px_8px_rgba(23,23,23,0.06)]"
+                      : "text-muted hover:text-paper"
                   }`
                 }
               >
@@ -103,59 +82,84 @@ function DashboardLayout() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="flex items-center gap-2.5">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium ${
                 demoMode
-                  ? "border-accent/30 bg-accent/10 text-accent"
-                  : "border-teal/30 bg-teal/10 text-teal"
+                  ? "bg-sky-soft text-sky-deep"
+                  : "bg-canvas-soft text-paper"
               }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-current" />
-              {demoMode ? "Demo data" : "Live data"}
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  demoMode ? "bg-sky" : "bg-sky-deep"
+                }`}
+              />
+              {demoMode ? "Sample data" : "Live sync"}
             </span>
-            <div className="text-right">
-              <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
-                Signed in
-              </div>
-              <div className="max-w-[160px] truncate text-xs text-paper">
-                {user?.email ?? "Local demo"}
-              </div>
+
+            <div
+              className="hidden h-8 w-8 items-center justify-center rounded-full bg-sky-soft text-[13px] font-semibold text-sky-deep sm:flex"
+              title={user?.email ?? "Local demo"}
+            >
+              {initial}
             </div>
+
             <button
               type="button"
               onClick={() => void signOut()}
-              className="focus-ring rounded-xl border border-line p-2 text-muted transition hover:text-paper"
+              className="btn-glass focus-ring h-8 w-8 p-0 text-muted hover:text-paper"
               aria-label="Sign out"
+              title="Sign out"
             >
               <LogOut size={14} />
             </button>
           </div>
         </div>
+
+        <nav className="flex gap-1 overflow-x-auto border-t border-line/60 px-4 py-2 scrollbar-thin md:hidden">
+          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === "/"}
+              className={({ isActive }) =>
+                `focus-ring flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition ${
+                  isActive
+                    ? "bg-sky-soft text-sky-deep"
+                    : "text-muted hover:text-paper"
+                }`
+              }
+            >
+              <Icon size={13} strokeWidth={1.9} />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
-        <div className="space-y-4">
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+        <div className="space-y-5">
           {demoMode && <DemoBanner />}
           {error && <ErrorBanner message={error} />}
           <Outlet />
         </div>
       </main>
 
-      <footer className="mx-auto max-w-7xl px-4 pb-10 pt-4 sm:px-6">
-        <div className="flex flex-col gap-3 border-t border-line pt-5 text-[10px] leading-relaxed text-muted sm:flex-row sm:items-center sm:justify-between">
+      <footer className="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6">
+        <div className="flex flex-col gap-3 border-t border-line/75 pt-5 text-[12px] text-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={12} className="text-teal" />
-            Private at the edge. Collective in the cloud.
+            <CheckCircle2 size={13} className="text-sky" />
+            <span>Private at the edge. Collective in the cloud.</span>
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-subtle">
             <span className="inline-flex items-center gap-1">
-              <Smartphone size={11} /> Apple Foundation Models / Chrome Nano
+              <Smartphone size={12} /> Apple Foundation Models · Chrome Nano
             </span>
             <span className="inline-flex items-center gap-1">
-              <Cloud size={11} /> Gemini fallback
+              <Cloud size={12} /> Gemini fallback
             </span>
-            <span>Apache-2.0 · not legal advice</span>
+            <span>Apache-2.0 · Personal record, not legal advice</span>
           </div>
         </div>
       </footer>
@@ -165,12 +169,12 @@ function DashboardLayout() {
 
 function PublicShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-line bg-canvas/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
+    <div className="min-h-screen bg-canvas">
+      <header className="border-b border-line/75 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3.5 sm:px-6">
           <Logo compact />
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-teal">
-            <span className="h-1.5 w-1.5 rounded-full bg-current" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-soft px-3 py-1 text-[12px] font-medium text-sky-deep">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky" />
             Insurer view
           </span>
         </div>
