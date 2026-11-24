@@ -53,7 +53,7 @@ struct HomeView: View {
             .background(alignment: .top) {
                 RideMapView(
                     route: [],
-                    height: mapHeight(containerHeight, topInset: geometry.safeAreaInsets.top),
+                    height: containerHeight + geometry.safeAreaInsets.top + 90,
                     interactive: true,
                     focus: homeCoordinate,
                     focusRevision: recenterRevision,
@@ -61,7 +61,8 @@ struct HomeView: View {
                     currentCoordinate: homeCoordinate,
                     routeSegments: capture.isRecording ? capture.liveRouteSegments : [],
                     followsLatest: capture.isRecording,
-                    followRevision: capture.liveRouteRevision
+                    followRevision: capture.liveRouteRevision,
+                    verticalCenterOffsetRatio: 0.16
                 )
                 .ignoresSafeArea(edges: [.top, .horizontal])
                 .accessibilityIdentifier("home-map")
@@ -135,15 +136,6 @@ struct HomeView: View {
             return live
         }
         return location.coordinate
-    }
-
-    private func mapHeight(_ containerHeight: CGFloat, topInset: CGFloat) -> CGFloat {
-        let sheetHeight = RidarySheetMetrics.height(
-            for: sheetDetent,
-            container: containerHeight
-        )
-        let visible = containerHeight - sheetHeight
-        return max(140, visible + topInset + 24)
     }
 
     private func collapseSheetToPeek() {
@@ -388,13 +380,13 @@ private struct HorizontalPanGesture: UIGestureRecognizerRepresentable {
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
         func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
             guard let pan = gestureRecognizer as? UIPanGestureRecognizer else {
-                return true
+                return false
             }
             let translation = pan.translation(in: pan.view)
             let velocity = pan.velocity(in: pan.view)
             let horizontal = abs(velocity.x) + abs(translation.x) * 2
             let vertical = abs(velocity.y) + abs(translation.y) * 2
-            return horizontal > vertical
+            return horizontal > vertical * 1.25
         }
 
         func gestureRecognizer(

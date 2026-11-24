@@ -20,6 +20,7 @@ struct RideMapView: View {
     var followsLatest = false
     var followRevision = 0
     var followLatitudeDelta: CLLocationDegrees = 0.005
+    var verticalCenterOffsetRatio: Double = 0
     var markers: [RideMapMarker] = []
     var onMarkerTap: ((UUID) -> Void)?
 
@@ -38,6 +39,7 @@ struct RideMapView: View {
         followsLatest: Bool = false,
         followRevision: Int = 0,
         followLatitudeDelta: CLLocationDegrees = 0.005,
+        verticalCenterOffsetRatio: Double = 0,
         markers: [RideMapMarker] = [],
         onMarkerTap: ((UUID) -> Void)? = nil
     ) {
@@ -52,13 +54,20 @@ struct RideMapView: View {
         self.followsLatest = followsLatest
         self.followRevision = followRevision
         self.followLatitudeDelta = followLatitudeDelta
+        self.verticalCenterOffsetRatio = verticalCenterOffsetRatio
         self.markers = markers
         self.onMarkerTap = onMarkerTap
 
         let coordinates = Self.coordinates(for: route)
             + routeSegments.flatMap(Self.coordinates(for:))
         _cameraPosition = State(
-            initialValue: .region(Self.region(for: coordinates, focus: focus))
+            initialValue: .region(
+                Self.region(
+                    for: coordinates,
+                    focus: focus,
+                    verticalCenterOffsetRatio: verticalCenterOffsetRatio
+                )
+            )
         )
     }
 
@@ -139,12 +148,10 @@ struct RideMapView: View {
             let delta = followsLatest ? followLatitudeDelta : 0.025
             withAnimation(.easeInOut(duration: 0.35)) {
                 cameraPosition = .region(
-                    MKCoordinateRegion(
+                    Self.focusedRegion(
                         center: focus,
-                        span: MKCoordinateSpan(
-                            latitudeDelta: delta,
-                            longitudeDelta: delta
-                        )
+                        span: delta,
+                        verticalCenterOffsetRatio: verticalCenterOffsetRatio
                     )
                 )
             }
@@ -197,15 +204,28 @@ struct RideMapView: View {
         lastFollowAt = now
         withAnimation(.easeInOut(duration: 0.6)) {
             cameraPosition = .region(
-                MKCoordinateRegion(
+                Self.focusedRegion(
                     center: latest,
-                    span: MKCoordinateSpan(
-                        latitudeDelta: followLatitudeDelta,
-                        longitudeDelta: followLatitudeDelta
-                    )
+                    span: followLatitudeDelta,
+                    verticalCenterOffsetRatio: verticalCenterOffsetRatio
                 )
             )
         }
+    }
+
+    private static func focusedRegion(
+        center: CLLocationCoordinate2D,
+        span: CLLocationDegrees,
+        verticalCenterOffsetRatio: Double
+    ) -> MKCoordinateRegion {
+        let shiftedCenter = CLLocationCoordinate2D(
+            latitude: center.latitude - span * verticalCenterOffsetRatio,
+            longitude: center.longitude
+        )
+        return MKCoordinateRegion(
+            center: shiftedCenter,
+            span: MKCoordinateSpan(latitudeDelta: span, longitudeDelta: span)
+        )
     }
 
     private static func coordinates(for route: [[Double]]) -> [CLLocationCoordinate2D] {
@@ -217,12 +237,14 @@ struct RideMapView: View {
 
     private static func region(
         for coordinates: [CLLocationCoordinate2D],
-        focus: CLLocationCoordinate2D?
+        focus: CLLocationCoordinate2D?,
+        verticalCenterOffsetRatio: Double = 0
     ) -> MKCoordinateRegion {
         if let focus {
-            return MKCoordinateRegion(
+            return focusedRegion(
                 center: focus,
-                span: MKCoordinateSpan(latitudeDelta: 0.025, longitudeDelta: 0.025)
+                span: 0.025,
+                verticalCenterOffsetRatio: verticalCenterOffsetRatio
             )
         }
 
