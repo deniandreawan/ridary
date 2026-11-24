@@ -35,6 +35,7 @@ final class AppEnvironment: ObservableObject {
     private let summaryService = RideSummaryService()
     private let incidentService = IncidentInterviewService()
     private let weeklyService = WeeklyFeedbackService()
+    private let askService = AskRidaryService()
     private var cancellables: Set<AnyCancellable> = []
     private var lastCloudModelName = "gemini-3.5-flash-lite"
     private var didBootstrap = false
@@ -259,8 +260,31 @@ final class AppEnvironment: ObservableObject {
         }
     }
 
-    func refreshWeeklyFeedback() async {
-        guard !weeklyBusy else { return }
+    func askRidary(
+        question: String,
+        history: [AskRidaryTurn]
+    ) async -> AskRidaryReply {
+        await askService.ask(
+            question: question,
+            history: history,
+            rides: rides,
+            incidents: incidents,
+            credentials: credentials,
+            weeklyFeedback: weeklyFeedback,
+            ai: askAI
+        )
+    }
+
+    private var askAI: AIService {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-uiTestAIStub") {
+            return StubAIService()
+        }
+        #endif
+        return aiService
+    }
+
+    func refreshWeeklyFeedback() async {        guard !weeklyBusy else { return }
         weeklyBusy = true
         defer { weeklyBusy = false }
 

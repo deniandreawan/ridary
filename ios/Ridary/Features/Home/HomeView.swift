@@ -78,7 +78,7 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $showRideFlow) {
             RideRecorderView(initialMode: settings.mode)
         }
-        .navigationDestination(isPresented: $showAskRidary) {
+        .fullScreenCover(isPresented: $showAskRidary) {
             AskRidaryView()
         }
         .navigationDestination(isPresented: $showRideSummary) {

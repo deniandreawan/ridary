@@ -25,6 +25,6 @@ struct AskRidaryEntryBar: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Ask Ridary")
-        .accessibilityHint("Opens the Ask Ridary chat preview")
+        .accessibilityHint("Opens Ask Ridary")
     }
 }

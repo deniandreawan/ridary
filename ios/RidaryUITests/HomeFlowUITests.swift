@@ -34,7 +34,8 @@ final class HomeFlowUITests: XCTestCase {
         )
         attachScreenshot(named: "ask-ridary")
 
-        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["Close Ask Ridary"].tap()
+        XCTAssertTrue(ask.waitForExistence(timeout: 10), "Closing Ask Ridary should return to Home")
 
         let profile = app.buttons["Open profile"].firstMatch
         XCTAssertTrue(profile.waitForExistence(timeout: 10), "Profile menu should be available from Home")
@@ -93,6 +94,35 @@ final class HomeFlowUITests: XCTestCase {
             app.buttons["Close profile"].waitForExistence(timeout: 10),
             "Profile sheet should return after closing Settings"
         )
+    }
+
+    func testAskRidarySendsQuestionWithStub() throws {
+        app.terminate()
+        app.launchArguments.append("-uiTestAIStub")
+        app.launch()
+
+        let ask = app.buttons["Ask Ridary"].firstMatch
+        XCTAssertTrue(ask.waitForExistence(timeout: 40), "Ask Ridary entry bar should be visible on Home")
+        ask.tap()
+
+        let field = app.textFields["Ask about your rides"].firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 10), "Ask Ridary composer should be ready")
+        field.tap()
+        field.typeText("Why was my last ride marked risky?")
+
+        let send = app.buttons["Send question"].firstMatch
+        XCTAssertTrue(send.waitForExistence(timeout: 5), "Send button should be available")
+        send.tap()
+
+        let answer = app.staticTexts
+            .containing(NSPredicate(format: "label CONTAINS %@", "Your last ride scored 96"))
+            .firstMatch
+        XCTAssertTrue(answer.waitForExistence(timeout: 10), "Ask Ridary should show the stub answer")
+        XCTAssertTrue(app.staticTexts["On device"].exists, "Answer should show the inference source")
+        attachScreenshot(named: "ask-ridary-answer")
+
+        app.buttons["Close Ask Ridary"].tap()
+        XCTAssertTrue(ask.waitForExistence(timeout: 10), "Closing Ask Ridary should return to Home")
     }
 
     func testMapTapCollapsesSheetToPeek() throws {
