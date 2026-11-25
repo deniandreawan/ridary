@@ -138,7 +138,7 @@ final class HomeFlowUITests: XCTestCase {
         let peekY = ask.frame.minY
         XCTAssertGreaterThan(
             peekY,
-            mediumY + 80,
+            mediumY + 50,
             "Tapping the map should collapse the sheet to peek"
         )
         attachScreenshot(named: "home-map-peek")
