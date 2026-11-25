@@ -33,7 +33,7 @@ function ModeIcon({ mode }: { mode: RideMode }) {
 export function RideRow({ ride }: { ride: Ride }) {
   return (
     <Link
-      to={`/rides?ride=${encodeURIComponent(ride.id)}`}
+      to={`/app/rides?ride=${encodeURIComponent(ride.id)}`}
       className="focus-ring group flex items-center gap-4 rounded-2xl border border-line bg-card/60 px-4 py-3 transition hover:border-ink/20 hover:bg-card"
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-card-soft text-accent">

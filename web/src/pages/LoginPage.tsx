@@ -6,6 +6,7 @@ import {
   Smartphone
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ErrorBanner } from "../components/Banners";
 import { Logo } from "../components/Logo";
 import { RouteArt } from "../components/RouteArt";
@@ -13,26 +14,47 @@ import { useApp } from "../context/AppContext";
 import { isFirebaseConfigured } from "../firebase";
 
 export default function LoginPage() {
-  const { signIn, signUp, signInAnonymously, enterDemo, authBusy, error } =
-    useApp();
+  const {
+    signIn,
+    signUp,
+    signInAnonymously,
+    enterDemo,
+    authBusy,
+    error,
+    user,
+    demoMode
+  } = useApp();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (mode === "signin") {
-      await signIn(email, password);
-    } else {
-      await signUp(email, password);
-    }
+    const ok =
+      mode === "signin"
+        ? await signIn(email, password)
+        : await signUp(email, password);
+    if (ok) navigate("/app");
+  }
+
+  if (user || demoMode) {
+    return <Navigate to="/app" replace />;
   }
 
   return (
     <div className="min-h-[100dvh] bg-canvas px-4 py-8 sm:px-6">
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-5xl items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
         <section className="max-w-xl">
-          <Logo />
+          <div className="flex items-center justify-between gap-4">
+            <Logo />
+            <Link
+              to="/"
+              className="focus-ring text-[13px] font-medium text-muted transition hover:text-paper"
+            >
+              Back to site
+            </Link>
+          </div>
 
           <div className="mt-10 inline-flex items-center gap-1.5 rounded-full bg-sky-soft px-3 py-1 text-[12px] font-medium text-sky-deep">
             <span className="h-1.5 w-1.5 rounded-full bg-sky" />
@@ -195,7 +217,10 @@ export default function LoginPage() {
             <div className="space-y-2.5">
               <button
                 type="button"
-                onClick={enterDemo}
+                onClick={() => {
+                  enterDemo();
+                  navigate("/app");
+                }}
                 className="btn-glass focus-ring w-full border-sky/25 bg-sky-soft/55 px-4 py-3 text-[13px] font-medium text-sky-deep hover:bg-sky-soft"
               >
                 Explore the demo dashboard
@@ -203,7 +228,10 @@ export default function LoginPage() {
               <button
                 type="button"
                 disabled={authBusy}
-                onClick={() => void signInAnonymously()}
+                onClick={async () => {
+                  const ok = await signInAnonymously();
+                  if (ok) navigate("/app");
+                }}
                 className="btn-glass focus-ring w-full px-4 py-3 text-[13px] text-paper disabled:opacity-60"
               >
                 Continue as guest

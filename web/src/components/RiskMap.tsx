@@ -14,9 +14,9 @@ import { riskFeatureCollection, riskPoints } from "../lib/risk";
 import type { Ride, RiskCell } from "../types";
 import { RouteArt } from "./RouteArt";
 
-const LIGHT_STYLE_URL = "https://tiles.openfreemap.org/styles/bright";
-
 setWorkerUrl(workerUrl);
+
+const LIGHT_STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
 
 const EMPTY_LINE: FeatureCollection<LineString> = {
   type: "FeatureCollection",
@@ -26,11 +26,17 @@ const EMPTY_LINE: FeatureCollection<LineString> = {
 export function RiskMap({
   riskCells,
   ride,
-  height = 420
+  height = 420,
+  heightClassName,
+  showRisk = true,
+  showRoute = true
 }: {
   riskCells: RiskCell[];
   ride?: Ride;
   height?: number;
+  heightClassName?: string;
+  showRisk?: boolean;
+  showRoute?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -38,6 +44,7 @@ export function RiskMap({
   const dataRef = useRef({ riskCells, ride });
   const lastRideRef = useRef<string | undefined>(undefined);
   const [mapError, setMapError] = useState(false);
+  const visibilityRef = useRef({ showRisk, showRoute });
 
   const fitData = useCallback(() => {
     const map = mapRef.current;
@@ -60,6 +67,22 @@ export function RiskMap({
 
     if (hasBounds) {
       map.fitBounds(bounds, { padding: 52, maxZoom: 13, duration: 0 });
+    }
+  }, []);
+
+  const applyVisibility = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    const visibility = visibilityRef.current;
+    for (const id of ["risk-glow", "risk-circles"]) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, "visibility", visibility.showRisk ? "visible" : "none");
+      }
+    }
+    for (const id of ["route-casing", "route-line"]) {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, "visibility", visibility.showRoute ? "visible" : "none");
+      }
     }
   }, []);
 
@@ -98,6 +121,11 @@ export function RiskMap({
     dataRef.current = { riskCells, ride };
     applyData();
   }, [applyData, ride, riskCells]);
+
+  useEffect(() => {
+    visibilityRef.current = { showRisk, showRoute };
+    applyVisibility();
+  }, [applyVisibility, showRisk, showRoute]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -214,6 +242,7 @@ export function RiskMap({
       });
 
       applyData();
+      applyVisibility();
       fitData();
     });
 
@@ -222,14 +251,14 @@ export function RiskMap({
       mapRef.current = null;
       map.remove();
     };
-  }, [applyData, fitData]);
+  }, [applyData, applyVisibility, fitData]);
 
   if (mapError) {
     const points = riskPoints(riskCells).slice(0, 6);
     return (
       <div
-        className="relative overflow-hidden rounded-2xl border border-line/75 bg-sky-soft/40"
-        style={{ height }}
+        className={`relative overflow-hidden rounded-2xl border border-line/75 bg-sky-soft/40 ${heightClassName ?? ""}`}
+        style={heightClassName ? undefined : { height }}
         role="img"
         aria-label="Road risk map preview"
       >
@@ -261,8 +290,8 @@ export function RiskMap({
   return (
     <div
       ref={containerRef}
-      className="overflow-hidden rounded-2xl border border-line bg-ink-soft"
-      style={{ height }}
+      className={`overflow-hidden rounded-2xl border border-line bg-ink-soft ${heightClassName ?? ""}`}
+      style={heightClassName ? undefined : { height }}
       role="application"
       aria-label="Community road risk map"
     />

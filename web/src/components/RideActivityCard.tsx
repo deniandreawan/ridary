@@ -33,7 +33,7 @@ export function RideActivityCard({
 }) {
   return (
     <Link
-      to={`/rides?ride=${encodeURIComponent(ride.id)}`}
+      to={`/app/rides?ride=${encodeURIComponent(ride.id)}`}
       className="focus-ring group surface block overflow-hidden transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(23,23,23,0.07)]"
     >
       <div className={`relative overflow-hidden bg-sky-soft/40 ${compact ? "h-28" : "h-36"}`}>
