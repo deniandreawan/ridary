@@ -1,0 +1,30 @@
+{
+  "name": "ridary-demo-video",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts RidaryDemo out/ridary-demo.mp4 --codec h264 --crf 16 --pixel-format yuv420p",
+    "still": "remotion still src/index.ts RidaryDemo out/frame.png",
+    "record:web": "node scripts/record-web.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.547",
+    "@remotion/transitions": "4.0.547",
+    "ffmpeg-static": "5.3.0",
+    "kokoro-js": "^1.2.1",
+    "lucide-react": "1.73.0",
+    "playwright": "1.65.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.547"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "6.0.3"
+  }
+}

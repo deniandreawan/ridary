@@ -49,3 +49,10 @@ ui-debug.log
 
 # OS
 Thumbs.db
+
+# Demo video build artifacts
+ios/.build/
+video/node_modules/
+video/out/
+video/.raw/
+video/public/audio/voiceover.wav

@@ -16,11 +16,12 @@ larger model is genuinely useful.
 ## Live demo
 
 - Web dashboard: <https://ridary-demo.web.app>
-- Demo-only account (seeded with sample rides and one signed credential):
-  `[REDACTED]` / `[REDACTED]`
-- You can also click **Explore the demo dashboard** without an account.
+- Open the dashboard and choose **Explore the demo dashboard** (no account
+  needed).
+- On iOS, choose **Explore local demo** from the sign-in screen.
+- The demo is seeded with sample rides and one signed credential.
 
-The demo account is for judging only. Do not put real ride data in it.
+Never put real ride data or production credentials in the public demo.
 
 ## Why this project
 

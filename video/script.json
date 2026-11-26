@@ -1,0 +1,285 @@
+{
+  "totalSeconds": 162,
+  "scenes": [
+    {
+      "id": "intro",
+      "start": 0,
+      "end": 12,
+      "narration": "Your ride knows where you were, how you moved, and what almost happened. Ridary keeps that private, then uses hybrid AI through Firebase AI Logic to turn it into proof.",
+      "captions": [
+        [
+          0.5,
+          4.2,
+          "Your ride knows where you were."
+        ],
+        [
+          4.2,
+          7.4,
+          "How you moved. What almost happened."
+        ],
+        [
+          7.4,
+          9.6,
+          "Ridary keeps it private."
+        ],
+        [
+          9.6,
+          11.8,
+          "Hybrid AI through Firebase AI Logic turns it into proof."
+        ]
+      ]
+    },
+    {
+      "id": "problem",
+      "start": 12,
+      "end": 28,
+      "narration": "Most safety apps upload the ride first. Ridary flips the trust boundary: hybrid AI starts on the phone. Raw GPS, motion, and incident windows stay on the iPhone. Only a derived summary can leave.",
+      "captions": [
+        [
+          12.5,
+          16.4,
+          "Most safety apps upload first."
+        ],
+        [
+          16.4,
+          20.1,
+          "Ridary flips it: hybrid AI starts on the phone."
+        ],
+        [
+          20.1,
+          24.2,
+          "Raw GPS and motion stay on the iPhone."
+        ],
+        [
+          24.2,
+          27.6,
+          "Only a derived summary can leave."
+        ]
+      ]
+    },
+    {
+      "id": "record",
+      "start": 28,
+      "end": 50,
+      "narration": "Start a ride, then put the phone away. No camera, no audio. GPS and motion are captured locally. The last 30 seconds can be locked on device, and nothing is uploaded. The evidence stays on this iPhone. This is sample ride data. The last thirty seconds are locked on this iPhone. Nothing leaves the device.",
+      "captions": [
+        [
+          28.5,
+          32.1,
+          "Start a ride. Put the phone away."
+        ],
+        [
+          32.1,
+          36.2,
+          "No camera. No audio."
+        ],
+        [
+          36.2,
+          40.4,
+          "GPS and motion are captured locally."
+        ],
+        [
+          40.4,
+          44.0,
+          "The last 30 seconds can be locked on device."
+        ],
+        [
+          44.0,
+          45.0,
+          "Nothing is uploaded."
+        ],
+        [
+          45.0,
+          47.5,
+          "The last thirty seconds are locked on this iPhone."
+        ],
+        [
+          47.5,
+          49.8,
+          "Nothing leaves the device."
+        ]
+      ]
+    },
+    {
+      "id": "ondevice",
+      "start": 50,
+      "end": 66,
+      "narration": "Back on screen, the recap is generated with Apple Foundation Models. The badge reads On device because the sensitive reasoning stays here. If the model is unavailable, local rules take over \u2014 not the cloud.",
+      "captions": [
+        [
+          50.5,
+          54.3,
+          "The recap is generated on this iPhone."
+        ],
+        [
+          54.3,
+          58.3,
+          "Apple Foundation Models, on device."
+        ],
+        [
+          58.3,
+          62.0,
+          "The source badge says On device."
+        ],
+        [
+          62.0,
+          65.5,
+          "Fallback is local rules \u2014 never a silent cloud upload."
+        ]
+      ]
+    },
+    {
+      "id": "ask",
+      "start": 66,
+      "end": 80,
+      "narration": "Ask Ridary uses the same boundary. It answers from a compact local context, and labels every answer: On device, In cloud, or Rules.",
+      "captions": [
+        [
+          66.5,
+          70.1,
+          "Ask Ridary uses the same boundary."
+        ],
+        [
+          70.1,
+          74.2,
+          "Answers come from a compact local context."
+        ],
+        [
+          74.2,
+          79.3,
+          "Every answer is labeled with its source."
+        ]
+      ]
+    },
+    {
+      "id": "cloud",
+      "start": 80,
+      "end": 104,
+      "narration": "The cloud gets a different job. Anonymized events become a community risk map. Riders compare their week, risk cells, and the moments that need attention. Patterns, not raw routes. Collective insight without surveillance.",
+      "captions": [
+        [
+          80.5,
+          84.5,
+          "The cloud gets a different job."
+        ],
+        [
+          84.5,
+          89.2,
+          "Anonymized events become a community risk map."
+        ],
+        [
+          89.2,
+          94.0,
+          "Riders compare their week, risk cells, and moments."
+        ],
+        [
+          94.0,
+          99.0,
+          "Patterns, not raw routes."
+        ],
+        [
+          99.0,
+          103.4,
+          "Collective insight without surveillance."
+        ]
+      ]
+    },
+    {
+      "id": "proof",
+      "start": 104,
+      "end": 118,
+      "narration": "Then a signed safety band. An insurer verifies the score, the period, and the Ed25519 signature. They see proof, not your route, your sensors, or your identity.",
+      "captions": [
+        [
+          104.5,
+          108.1,
+          "Then a signed safety band."
+        ],
+        [
+          108.1,
+          112.2,
+          "Verify the score, the period, and the signature."
+        ],
+        [
+          112.2,
+          117.4,
+          "Proof \u2014 not route, sensors, or identity."
+        ]
+      ]
+    },
+    {
+      "id": "trust",
+      "start": 118,
+      "end": 140,
+      "narration": "This is the hybrid split. Private reasoning at the edge. Collective insight in the cloud. Raw GPS and sensor windows never cross this line. Only a derived summary and a signature do. Firebase App Check protects every call, and the same data contracts are ready for Android next.",
+      "captions": [
+        [
+          118.5,
+          122.5,
+          "Private reasoning at the edge."
+        ],
+        [
+          122.5,
+          126.4,
+          "Collective insight in the cloud."
+        ],
+        [
+          126.4,
+          131.0,
+          "Raw GPS and sensor windows never cross this line."
+        ],
+        [
+          131.0,
+          135.1,
+          "Only a derived summary and a signature do."
+        ],
+        [
+          135.1,
+          139.4,
+          "Firebase App Check protects every call."
+        ]
+      ]
+    },
+    {
+      "id": "impact",
+      "start": 140,
+      "end": 153,
+      "narration": "Ridary gives riders a voice, cities a signal, and insurers a proof. No camera. No audio. No automatic dispatch. Just a private witness.",
+      "captions": [
+        [
+          140.5,
+          144.4,
+          "A voice for riders."
+        ],
+        [
+          144.4,
+          148.0,
+          "A signal for cities."
+        ],
+        [
+          148.0,
+          152.5,
+          "A proof for insurers. No camera. No automatic dispatch."
+        ]
+      ]
+    },
+    {
+      "id": "outro",
+      "start": 153,
+      "end": 162,
+      "narration": "Every ride. On record. Ridary. Private by design. Proof on demand.",
+      "captions": [
+        [
+          153.5,
+          156.9,
+          "Every ride. On record."
+        ],
+        [
+          156.9,
+          161.0,
+          "Ridary. Private by design. Proof on demand."
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+1
+00:00:00,500 --> 00:00:04,200
+Your ride knows where you were.
+
+2
+00:00:04,200 --> 00:00:07,400
+How you moved. What almost happened.
+
+3
+00:00:07,400 --> 00:00:09,600
+Ridary keeps it private.
+
+4
+00:00:09,600 --> 00:00:11,800
+Hybrid AI through Firebase AI Logic turns it into proof.
+
+5
+00:00:12,500 --> 00:00:16,400
+Most safety apps upload first.
+
+6
+00:00:16,400 --> 00:00:20,100
+Ridary flips it: hybrid AI starts on the phone.
+
+7
+00:00:20,100 --> 00:00:24,200
+Raw GPS and motion stay on the iPhone.
+
+8
+00:00:24,200 --> 00:00:27,600
+Only a derived summary can leave.
+
+9
+00:00:28,500 --> 00:00:32,100
+Start a ride. Put the phone away.
+
+10
+00:00:32,100 --> 00:00:36,200
+No camera. No audio.
+
+11
+00:00:36,200 --> 00:00:40,400
+GPS and motion are captured locally.
+
+12
+00:00:40,400 --> 00:00:44,000
+The last 30 seconds can be locked on device.
+
+13
+00:00:44,000 --> 00:00:45,000
+Nothing is uploaded.
+
+14
+00:00:45,000 --> 00:00:47,500
+The last thirty seconds are locked on this iPhone.
+
+15
+00:00:47,500 --> 00:00:49,800
+Nothing leaves the device.
+
+16
+00:00:50,500 --> 00:00:54,300
+The recap is generated on this iPhone.
+
+17
+00:00:54,300 --> 00:00:58,300
+Apple Foundation Models, on device.
+
+18
+00:00:58,300 --> 00:01:02,000
+The source badge says On device.
+
+19
+00:01:02,000 --> 00:01:05,500
+Fallback is local rules — never a silent cloud upload.
+
+20
+00:01:06,500 --> 00:01:10,100
+Ask Ridary uses the same boundary.
+
+21
+00:01:10,100 --> 00:01:14,200
+Answers come from a compact local context.
+
+22
+00:01:14,200 --> 00:01:19,300
+Every answer is labeled with its source.
+
+23
+00:01:20,500 --> 00:01:24,500
+The cloud gets a different job.
+
+24
+00:01:24,500 --> 00:01:29,200
+Anonymized events become a community risk map.
+
+25
+00:01:29,200 --> 00:01:34,000
+Riders compare their week, risk cells, and moments.
+
+26
+00:01:34,000 --> 00:01:39,000
+Patterns, not raw routes.
+
+27
+00:01:39,000 --> 00:01:43,400
+Collective insight without surveillance.
+
+28
+00:01:44,500 --> 00:01:48,100
+Then a signed safety band.
+
+29
+00:01:48,100 --> 00:01:52,200
+Verify the score, the period, and the signature.
+
+30
+00:01:52,200 --> 00:01:57,400
+Proof — not route, sensors, or identity.
+
+31
+00:01:58,500 --> 00:02:02,500
+Private reasoning at the edge.
+
+32
+00:02:02,500 --> 00:02:06,400
+Collective insight in the cloud.
+
+33
+00:02:06,400 --> 00:02:11,000
+Raw GPS and sensor windows never cross this line.
+
+34
+00:02:11,000 --> 00:02:15,100
+Only a derived summary and a signature do.
+
+35
+00:02:15,100 --> 00:02:19,400
+Firebase App Check protects every call.
+
+36
+00:02:20,500 --> 00:02:24,400
+A voice for riders.
+
+37
+00:02:24,400 --> 00:02:28,000
+A signal for cities.
+
+38
+00:02:28,000 --> 00:02:32,500
+A proof for insurers. No camera. No automatic dispatch.
+
+39
+00:02:33,500 --> 00:02:36,900
+Every ride. On record.
+
+40
+00:02:36,900 --> 00:02:41,000
+Ridary. Private by design. Proof on demand.

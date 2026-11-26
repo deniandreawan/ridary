@@ -96,6 +96,7 @@
 		DD5CDE79E25029A541362D4C /* SourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4590925BC78A48CEA9EAB2 /* SourceBadge.swift */; };
 		DE7FC39A69F357372D70749D /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCCD1BF0B33644103492ADD /* Prompts.swift */; };
 		DEF8FA13B6A3F7A5E9A7D19A /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A20B8D983DE3EC035C3A1 /* AppEnvironment.swift */; };
+		E2193C023FD522B78C849CC6 /* DemoCaptureUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44FE3405A695FC085771979 /* DemoCaptureUITests.swift */; };
 		E8C1988356C071900846A79D /* RideListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADD84D42FA5DFBF794799E5 /* RideListRow.swift */; };
 		E9FF663AC13F7F4B8A9EAFC6 /* LocalRideStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2070E3B4468C86E55C5649BC /* LocalRideStoreTests.swift */; };
 		EB5CD945FF4014AD786BB652 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E887E86332A595384B9B33EF /* MainView.swift */; };
@@ -214,6 +215,7 @@
 		EE8352E06FFA23ED99EB5A05 /* RideSummaryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideSummaryServiceTests.swift; sourceTree = "<group>"; };
 		EEE4920E592F421A8018E7DF /* RideStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideStatsTests.swift; sourceTree = "<group>"; };
 		F1116C9AEB3DA2B799375A64 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F44FE3405A695FC085771979 /* DemoCaptureUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCaptureUITests.swift; sourceTree = "<group>"; };
 		F6734A3032B16F728EA38BA4 /* WeeklyStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyStats.swift; sourceTree = "<group>"; };
 		F7BB93EEABF7B5B870D0C953 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F8237EAA0785C49F0DCF1DC5 /* GeoMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoMath.swift; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 		4CA14B43963BAA431E766AF8 /* RidaryUITests */ = {
 			isa = PBXGroup;
 			children = (
+				F44FE3405A695FC085771979 /* DemoCaptureUITests.swift */,
 				04BD10A019766DEDB56E7E64 /* HomeFlowUITests.swift */,
 			);
 			path = RidaryUITests;
@@ -688,6 +691,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2193C023FD522B78C849CC6 /* DemoCaptureUITests.swift in Sources */,
 				B5EBF1EB6590E750C489B147 /* HomeFlowUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
