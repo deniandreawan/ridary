@@ -6,7 +6,7 @@ Ridary is three clients over one privacy-preserving contract:
 [iPhone — field capture]
 CoreLocation + CoreMotion (background location session)
   → deterministic event candidates
-  → SwiftData/file-backed local store (protected)
+  → file-backed local JSON store (protected)
   → foreground only:
       Firebase AI Logic / Apple Foundation Models
         - event interpreter
@@ -19,9 +19,9 @@ CoreLocation + CoreMotion (background location session)
 Firestore: rides, events, incidents, riskCells, credentials, feedback
 Cloud Functions: aggregateRisk, issueCredential, verifyCredential,
                  createInsurerView, getWeeklyStats
-Cloud AI / Gemini: cross-rider risk, weekly feedback (credential narrative: roadmap)
+Client AI / Gemini: weekly feedback, community insight (credential narrative: roadmap)
         ▲
-[Web — React + MapLibre + Chrome Nano]
+[Web — React + MapLibre + Chrome Nano when available]
 Dashboard, community risk map, credential, insurer view
 ```
 
@@ -41,16 +41,18 @@ Dashboard, community risk map, credential, insurer view
 - **AI**: `FirebaseAIService` is the only production implementation of
   `AIService`. It wraps Firebase AI Logic `GenerativeModelSession` and exposes
   the model version so the UI can show `ON_DEVICE` vs `IN_CLOUD`.
-- **UI**: SwiftUI, Observation/Combine view models, a dark night-ride theme,
-  explicit privacy affordances, and source badges for every AI output.
+- **UI**: SwiftUI, Observation/Combine view models, a light privacy-focused
+  canvas with a dark active-ride surface, explicit privacy affordances, and
+  source badges for every AI output.
 
 ## Web
 
 - Vite + React + TypeScript.
 - Firebase Auth/Firestore/Functions/App Check/AI Logic.
-- MapLibre GL with CARTO dark raster tiles; risk cells are rendered as a
-  GeoJSON circle layer, route previews as a line layer.
-- Chrome Nano is used through `firebase/ai` with `InferenceMode.PREFER_ON_DEVICE`.
+- MapLibre GL with the OpenFreeMap Positron style; risk cells are rendered as
+  a GeoJSON circle layer, route previews as a line layer when enabled.
+- Chrome Nano is used through `firebase/ai` with `InferenceMode.PREFER_ON_DEVICE`
+  when the browser model is available; Gemini cloud is the fallback.
 - The dashboard has a local demo mode when Firebase env values are absent.
 
 ## Functions
@@ -94,8 +96,10 @@ enforced end-to-end.
 
 ## Testing
 
-- iOS: 24 XCTest cases for geohash, event detection, stats, scoring, evidence
-  hashing, JSON extraction, and local store round-trips.
+- iOS: 40 XCTest unit tests for geohash, event detection, stats, scoring,
+  evidence hashing, JSON extraction, local store round-trips, live trail, PDF,
+  Ask Ridary, and sheet metrics; 17 XCUITest flows cover Home, Ask, active ride,
+  timer/lock, summary, credential, and capture flows.
 - Web: 23 Vitest cases for geohash, formatting, risk aggregation, snapshot
   parsing, and local review fallback.
 - Functions: 33 Vitest cases for scoring, canonical JSON, Ed25519 signing,

@@ -201,5 +201,5 @@ firebase deploy --only hosting
 | On-device review says fallback | Check Apple Intelligence / Chrome Nano; the UI is reporting the truth |
 | Firestore “index required” | Deploy `firestore.indexes.json` or click the console link |
 | Functions fail to sign | `functions/.env` keys are missing or malformed |
-| Map is blank | MapLibre needs WebGL and network access for CARTO tiles; the risk list still works |
+| Map is blank | MapLibre needs WebGL and network access for OpenFreeMap Positron tiles; the risk list still works |
 | Emulator will not start | Install a JDK (Firestore emulator needs Java) |

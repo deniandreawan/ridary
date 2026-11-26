@@ -1,91 +1,129 @@
-# Three-minute demo script
+# Demo video
 
-Record in English, or include English subtitles. The first 30 seconds must explain
-the idea and the hybrid AI reason. Show real functionality, not a slide deck.
+Final cut: **2:42**. The contest allows up to 3 minutes; the first 3 minutes are
+evaluated if a video is longer. The first 30 seconds explain the idea, the
+rider, the problem, and the Firebase AI Logic hybrid reason.
+
+The rendered source lives in `video/`. The voiceover guide is
+[`video/scripts/voiceover.md`](../video/scripts/voiceover.md), the caption track
+is [`captions.srt`](../video/captions.srt), and the local export is
+`video/out/ridary-demo-1080p.mp4` (ignored by git).
 
 ## Pre-flight
 
-- Live web: <https://ridary-demo.web.app>
-- Use the web demo without login, or **Explore local demo** on iOS.
-  The demo is seeded with sample rides and one signed credential; never use
-  real data here. Do not commit demo credentials to this repository.
-- Firebase configured on iOS and web; App Check debug token registered.
-- Functions deployed on Blaze; AI Logic is using the Agent Platform Gemini API.
-- iPhone with iOS 26+ and Apple Intelligence enabled.
-- Desktop Chrome 139+ with the Nano flag enabled and the model downloaded.
-- At least three rides synced, or use the clearly labelled demo dashboard for
-  the aggregate screens.
-- Screen recording at 1080p; phone and laptop audio muted unless intentional.
-- Have a second take ready for the on-device fallback path; never hide it.
+- Web: <https://ridary-demo.web.app>; open the demo dashboard without login.
+- iOS: choose **Explore local demo** from the sign-in screen.
+- Use labelled sample rides only. Do not put real rider data or credentials in
+  the repository or the demo.
+- Show the source badge honestly: `On device`, `In cloud`, `Fallback`, or
+  `Rules`.
+- The current cut uses a local Kokoro `af_heart` voice and burned-in English
+  captions. No face is required.
+- The iOS simulator cannot provide realistic motion speed; the timer and live
+  map are clearly labelled as simulator/sample footage.
 
-## 0:00–0:20 — The problem and the promise
+## 0:00–0:12 — The idea
 
-**Visual:** iPhone home screen, Ridary logo, then the Home screen.
+**Visual:** Ridary mark, route line, “Every ride. On record.” and the private
+route card.
 
-**Narration:**
-“A rider’s most important data is also the most sensitive: where they were,
-how they moved, and what happened. Ridary records that privately on the phone.
-On-device AI explains it offline; the cloud only sees what the rider chooses to
-share.”
+**Narration:** “Your ride knows where you were, how you moved, and what almost
+happened. Ridary keeps that private, then uses hybrid AI through Firebase AI
+Logic to turn it into proof.”
 
-## 0:20–1:10 — A real ride
+## 0:12–0:28 — The trust boundary
 
-**Visual:** Start motorcycle ride, lock the phone, put it in a pocket, ride
-briefly, stop. Show the Active Ride screen with elapsed time and one flagged
-moment.
+**Visual:** “Your route is the most sensitive data you own.” Old upload-first
+model versus Ridary’s local reasoning.
 
-**Narration:**
-“The phone stays in the pocket. No camera, no screen. GPS and motion are
-captured locally. The deterministic detector flags a hard brake; it does not
-call emergency services and it does not upload anything.”
+**Narration:** “Most safety apps upload the ride first. Ridary flips the trust
+boundary: hybrid AI starts on the phone. Raw GPS, motion, and incident windows
+stay on the iPhone. Only a derived summary can leave.”
 
-Tap **Lock last 30 seconds** and open the incident sheet.
+## 0:28–0:50 — Private ride, timer, and lock
 
-## 1:10–1:50 — On-device AI, including the sensitive path
+**Visual:** iOS Home, live map, active timer, tap-to-lock, then the evidence
+sheet with the SHA-256 hash.
 
-**Visual:** End the ride, open the ride summary. Point at the `On device` badge.
-Then open the incident, answer two questions, and tap **Draft statement**.
+**Narration:** “Start a ride, then put the phone away. No camera, no audio. GPS
+and motion are captured locally. The last 30 seconds can be locked on device,
+and nothing is uploaded. The evidence stays on this iPhone. This is sample
+ride data. The last thirty seconds are locked on this iPhone. Nothing leaves
+the device.”
 
-**Narration:**
-“When the app opens, Apple Foundation Models run through Firebase AI Logic.
-The summary, risk explanation, and incident statement stay on this iPhone.
-The incident flow is pinned to on-device only. If the model is unavailable,
-Ridary uses local rules instead of silently sending evidence to the cloud.”
+## 0:50–1:06 — On-device reasoning
 
-Show the inference badge and the local SHA-256 hash. Do not claim court-grade
-evidence.
+**Visual:** Ride recap with the `On device` badge, score, risk moments, and
+source pills.
 
-## 1:50–2:30 — The cloud side: collective map and credential
+**Narration:** “Back on screen, the recap is generated with Apple Foundation
+Models. The badge reads On device because the sensitive reasoning stays here.
+If the model is unavailable, local rules take over — not the cloud.”
 
-**Visual:** Switch to the web dashboard. Show the community risk map, the latest
-ride, then the Credential page. Create an insurer view and open
-`/insurer/demo` (or the real token).
+## 1:06–1:20 — Ask Ridary
 
-**Narration:**
-“The cloud gets a different job. It aggregates anonymized event points into a
-community risk map, and it issues a signed Ridary Proof. The insurer sees a
-score, a period, and a signature — not the route, not the raw sensors, and not
-the rider’s identity.”
+**Visual:** Ask Ridary composer; the UI states “On-device first · cloud sees
+summaries only” and shows the source legend.
 
-If using live data, click **Verify signature** and show “Signature and hash
-match”. If using the demo credential, say it is a demo.
+**Narration:** “Ask Ridary uses the same boundary. It answers from a compact
+local context, and labels every answer: On device, In cloud, or Rules.”
 
-## 2:30–3:00 — The hybrid split and the impact
+## 1:20–1:44 — The cloud side
 
-**Visual:** Split screen: iOS `On device` badge, web `On device` / `In cloud`
-badges, and the code architecture (or the README diagram).
+**Visual:** Web dashboard on the community risk map, with the `Risk` layer and
+the sample-data banner.
 
-**Narration:**
-“This is hybrid inference as the product’s trust boundary: private at the edge,
-collective in the cloud. Riders own the record; cities and insurers get proofs
-instead of surveillance. The same data contracts are ready for Android next.”
+**Narration:** “The cloud gets a different job. Anonymized events become a
+community risk map. Riders compare their week, risk cells, and the moments that
+need attention. Patterns, not raw routes. Collective insight without
+surveillance.”
 
-End on the repo URL and the app name.
+## 1:44–1:58 — Proof, not surveillance
+
+**Visual:** Ridary Proof and the insurer view; verified credential fields.
+
+**Narration:** “Then a signed safety band. An insurer verifies the score, the
+period, and the Ed25519 signature. They see proof, not your route, your sensors,
+or your identity.”
+
+## 1:58–2:20 — The hybrid split
+
+**Visual:** Split diagram: private record on the iPhone, derived signal in the
+cloud, blocked raw route, App Check.
+
+**Narration:** “This is the hybrid split. Private reasoning at the edge.
+Collective insight in the cloud. Raw GPS and sensor windows never cross this
+line. Only a derived summary and a signature do. Firebase App Check protects
+every call, and the same data contracts are ready for Android next.”
+
+## 2:20–2:33 — The impact
+
+**Visual:** Riders / cities / insurers columns; no camera, no audio, no automatic
+dispatch.
+
+**Narration:** “Ridary gives riders a voice, cities a signal, and insurers a
+proof. No camera. No audio. No automatic dispatch. Just a private witness.”
+
+## 2:33–2:42 — Outro
+
+**Visual:** Ridary mark, “Every ride. On record.”, live URL.
+
+**Narration:** “Every ride. On record. Ridary. Private by design. Proof on
+demand.”
 
 ## Do not do
 
-- Do not show a camera feed; the product is explicitly camera-free.
-- Do not claim automatic crash detection or automatic emergency dispatch.
-- Do not claim the credential is legal proof or an insurance guarantee.
-- Do not present demo data as live data.
-- Do not hide a cloud fallback; the source badge is part of the story.
+- Do not show a camera feed; the product is camera-free.
+- Do not claim crash detection, automatic emergency dispatch, court-grade
+  evidence, or an insurance guarantee.
+- Do not present sample data as live rider data.
+- Do not expose demo credentials, raw routes, or rider identity.
+- Do not hide a fallback; the source badge is part of the story.
+
+## Upload checklist
+
+- Upload the final MP4 to YouTube as **public**.
+- Upload `video/out/ridary-demo-captions.srt` as English subtitles.
+- Use `video/out/thumbnail.png` as the custom thumbnail.
+- Add the public repository and live demo URLs to the description.
+- Verify the first 30 seconds, 2:42 duration, and audio after processing.

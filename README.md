@@ -8,10 +8,20 @@ the rider share only the smallest aggregate needed to build a community road-ris
 map or prove a safety score to an insurer.
 
 Built for **#BuildHybridAI 2026** with **Firebase AI Logic hybrid inference**:
-Apple Foundation Models on iOS, Gemini Nano in Chrome, and cloud Gemini when a
-larger model is genuinely useful.
+Apple Foundation Models on iOS, Gemini Nano in Chrome when available, and
+Gemini cloud fallback for the jobs that need it.
 
-![iOS home](docs/screenshots/ios-home.png)
+## Product tour
+
+| iOS · Home | iOS · Ride recap | iOS · Evidence lock | iOS · Ask Ridary |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/ios-home.png" alt="Ridary iOS Home with live map and ride log" width="210" /> | <img src="docs/screenshots/ios-ride-summary.png" alt="Ride recap with On device score badge" width="210" /> | <img src="docs/screenshots/ios-evidence-lock.png" alt="Locked sensor window and SHA-256 evidence hash" width="210" /> | <img src="docs/screenshots/ios-ask.png" alt="Ask Ridary grounded in local context" width="210" /> |
+
+| Web · Landing | Web · Risk dashboard | Web · Ridary Proof | Web · Insurer view |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/web-landing.png" alt="Ridary landing page" width="360" /> | <img src="docs/screenshots/web-dashboard.png" alt="Community risk map and ride dashboard" width="360" /> | <img src="docs/screenshots/web-proof.png" alt="Signed Ridary Proof credential" width="360" /> | <img src="docs/screenshots/web-insurer.png" alt="Redacted insurer view" width="360" /> |
+
+All screenshots and demo flows use sample data.
 
 ## Live demo
 
@@ -28,7 +38,10 @@ Never put real ride data or production credentials in the public demo.
 Most ride apps ask riders to upload everything, then sell them a dashboard.
 Ridary takes the opposite position:
 
-- The raw route, IMU samples, and incident evidence stay on the phone.
+- The full-resolution raw route, IMU samples, and incident evidence stay on the
+  phone.
+- A rider can separately opt in to a capped route preview for the dashboard;
+  that is not the full raw GPS trace.
 - On-device AI explains the ride and drafts sensitive incident notes while
   offline.
 - Cloud AI only sees derived event points, summaries, and a coarse geohash.
@@ -52,18 +65,20 @@ credential**.
   plain-language summary, risk moments, safety score, and a coaching tip.
 - `ONLY_ON_DEVICE` incident interview drafts a factual statement and evidence
   checklist. Sensitive evidence is never silently sent to the cloud.
-- “Lock last 30 seconds” creates an encrypted local evidence packet with a
-  SHA-256 hash and a PDF export.
-- Sends only derived summaries and event points to Firestore when the rider
-  enables sharing.
+- “Lock last 30 seconds” creates a protected local evidence packet with a
+  SHA-256 integrity hash and a PDF export.
+- Sends derived summaries and event points to Firestore when the rider enables
+  sharing; a separate opt-in capped route preview can be included.
 - Issues a Ridary Proof credential and a time-limited insurer link.
 
 ### Web dashboard
 
 - Sign in with the same Firebase account as the phone (or use the demo).
 - View recent rides, a community risk map, and the latest private snapshot.
-- Run a Chrome Nano review of a ride, with visible on-device / cloud origin.
-- Ask cloud Gemini to explain the community risk map, with visible provenance.
+- Run an on-device-first review of a ride (Chrome Nano when available, Gemini
+  cloud fallback), with visible source badges.
+- Generate a cloud community insight from aggregate risk cells, with visible
+  provenance.
 - Verify a credential signature and create an insurer view.
 - A public `/insurer/:token` page shows only the signed credential; it never
   exposes the rider's raw route or identity.
@@ -89,7 +104,9 @@ credential**.
 | Insurer report (roadmap) | `PREFER_IN_CLOUD` | Gemini cloud | Final document generation |
 
 The app shows the inference origin (`On device`, `In cloud`, `Fallback`, or
-`Rules`) in the UI. The cloud does not receive raw GPS or IMU samples.
+`Rules`) in the UI. The cloud does not receive the full raw GPS trace or IMU
+samples; an opt-in simplified route preview is a separate consent and is never
+sent to the AI.
 
 Read [docs/hybrid-ai.md](docs/hybrid-ai.md) for the detailed reasoning and
 platform limitations.
@@ -222,22 +239,29 @@ npm --prefix functions run build
 
 Current verification on this machine:
 
-- iOS: 24 unit tests passing; Debug simulator build succeeds with Swift warnings
-  treated as errors.
-- Web: 23 Vitest tests passing; ESLint, TypeScript, and production build clean.
-- Functions: 33 Vitest tests passing; ESLint, TypeScript, and build clean.
+- iOS: 40 XCTest unit tests and 17 XCUITest flows; the demo capture flows are in
+  `ios/RidaryUITests/DemoCaptureUITests.swift`.
+- Web: 23 Vitest tests and 6 test files passing; ESLint, TypeScript, and
+  production build are expected to be clean.
+- Functions: 33 Vitest tests and 6 test files passing; ESLint, TypeScript, and
+  build are expected to be clean.
 - Node 24 is used for local builds; the deployed Functions runtime is Node 22.
+- Run the commands above before publishing; the Home sheet UI test is
+  data-dependent on simulator content.
 
 ## Demo script
 
-The three-minute recording is sketched in
-[docs/demo-script.md](docs/demo-script.md). It shows the phone in a pocket, an
-offline hard brake, a locked evidence window, an on-device snapshot, the
-community map, and the insurer view.
+The final demo cut is **2:42** (the contest maximum is 3:00). The storyboard,
+voiceover guide, and capture notes live in
+[docs/demo-script.md](docs/demo-script.md) and `video/`. It shows the private
+ride and timer, the 30-second evidence lock, the on-device recap, Ask Ridary,
+the community map, and the redacted insurer proof.
 
 ## Privacy and security
 
-- Raw GPS routes and IMU samples are never written to Firestore.
+- The full raw GPS route and IMU samples are never written to Firestore. A
+  separate opt-in simplified route preview (capped at 128 points) can be
+  shared; it is not used as AI input.
 - Firestore rules only allow a user to read/write their own ride and event
   documents; risk cells and insurer views are written by Admin only.
 - Locked evidence is stored locally with file protection and a SHA-256 hash.

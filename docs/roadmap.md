@@ -6,7 +6,7 @@
 - Web dashboard, community risk map, credential, insurer view.
 - Firebase AI Logic hybrid routing with visible provenance.
 - Deterministic fallback for every AI path.
-- 80 automated tests across iOS, web, and Functions.
+- 113 automated tests across iOS, web, and Functions (40 iOS unit, 17 iOS UI, 23 web, 33 Functions).
 
 ## Next
 

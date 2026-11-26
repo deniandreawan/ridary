@@ -4,7 +4,8 @@
 
 | Data | Where it lives | Who can read it |
 |---|---|---|
-| Raw GPS route, speed, altitude | iPhone local store | Rider, on-device app |
+| Full raw GPS route, speed, altitude | iPhone local store | Rider, on-device app |
+| Optional simplified route preview (opt-in, max 128 points) | Firestore `rides/{id}.routePreview` | Owner; never sent to AI |
 | Raw accelerometer / gyroscope windows | iPhone local store / evidence file | Rider, on-device app |
 | Incident statement and evidence PDF | iPhone local store | Rider; exported only by rider |
 | Ride summary, score, inference source | Firestore `rides/{id}` | Owner |
