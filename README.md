@@ -23,8 +23,11 @@ Gemini cloud fallback for the jobs that need it.
 
 All screenshots and demo flows use sample data.
 
+<a href="https://youtu.be/-5rdIeQ5ssE"><img src="docs/screenshots/demo-video.png" alt="Watch the 2:42 Ridary demo" width="720" /></a>
+
 ## Live demo
 
+- Demo video (2:42): <https://youtu.be/-5rdIeQ5ssE>
 - Web dashboard: <https://ridary-demo.web.app>
 - Open the dashboard and choose **Explore the demo dashboard** (no account
   needed).
@@ -251,7 +254,7 @@ Current verification on this machine:
 
 ## Demo script
 
-The final demo cut is **2:42** (the contest maximum is 3:00). The storyboard,
+The final demo cut is **2:42** (the contest maximum is 3:00) and is on YouTube: <https://youtu.be/-5rdIeQ5ssE>. The storyboard,
 voiceover guide, and capture notes live in
 [docs/demo-script.md](docs/demo-script.md) and `video/`. It shows the private
 ride and timer, the 30-second evidence lock, the on-device recap, Ask Ridary,
