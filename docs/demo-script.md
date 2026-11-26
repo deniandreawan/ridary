@@ -1,6 +1,6 @@
 # Demo video
 
-Final cut: **2:42**. Watch the published video: <https://youtu.be/-5rdIeQ5ssE>. The contest allows up to 3 minutes; the first 3 minutes are
+Final cut: **2:42**. Watch the published video: <https://youtu.be/-5rdIeQ5ssE>. The public project page is <https://devpost.com/software/ridary>. The contest allows up to 3 minutes; the first 3 minutes are
 evaluated if a video is longer. The first 30 seconds explain the idea, the
 rider, the problem, and the Firebase AI Logic hybrid reason.
 

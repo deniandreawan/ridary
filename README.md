@@ -28,6 +28,7 @@ All screenshots and demo flows use sample data.
 ## Live demo
 
 - Demo video (2:42): <https://youtu.be/-5rdIeQ5ssE>
+- Devpost project: <https://devpost.com/software/ridary>
 - Web dashboard: <https://ridary-demo.web.app>
 - Open the dashboard and choose **Explore the demo dashboard** (no account
   needed).

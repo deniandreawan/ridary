@@ -23,6 +23,14 @@ export const RemotionRoot: React.FC = () => {
         width={1280}
         height={720}
       />
+      <Composition
+        id="RidaryThumbnailDevpost"
+        component={Thumbnail}
+        durationInFrames={1}
+        fps={30}
+        width={1200}
+        height={800}
+      />
     </>
   );
 };
